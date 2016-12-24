@@ -1,0 +1,3 @@
+0 Iris-setosa
+50 Iris-versicolor
+100 Iris-virginica

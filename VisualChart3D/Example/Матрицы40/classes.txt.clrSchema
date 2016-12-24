@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<SettingsClasses xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArrayClass>
+    <AloneSettClass>
+      <ColorObject>
+        <A>255</A>
+        <R>0</R>
+        <G>255</G>
+        <B>0</B>
+        <ScA>1</ScA>
+        <ScR>0</ScR>
+        <ScG>1</ScG>
+        <ScB>0</ScB>
+      </ColorObject>
+      <Shape>Ellipse3D</Shape>
+      <NameClass>1</NameClass>
+    </AloneSettClass>
+    <AloneSettClass>
+      <ColorObject>
+        <A>255</A>
+        <R>215</R>
+        <G>13</G>
+        <B>49</B>
+        <ScA>1</ScA>
+        <ScR>0.6795425</ScR>
+        <ScG>0.004024717</ScG>
+        <ScB>0.0307134446</ScB>
+      </ColorObject>
+      <Shape>Ellipse3D</Shape>
+      <NameClass>2</NameClass>
+    </AloneSettClass>
+  </ArrayClass>
+  <CountPoligonStr>13</CountPoligonStr>
+  <SizeObjectStr>0.09</SizeObjectStr>
+  <CountPoligon>13</CountPoligon>
+  <SizeObject>0.09</SizeObject>
+</SettingsClasses>
