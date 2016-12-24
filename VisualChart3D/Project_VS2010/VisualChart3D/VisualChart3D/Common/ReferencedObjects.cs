@@ -22,7 +22,7 @@ namespace VisualChart3D
             double currentReferencedDistance = 0;
             for (int i = 1; i < SourceArray.GetLength(0); i++)
             {  // посчитать для первого элемента каждого класса отдельно посчитать дистанцию!
-                //currentReferencedDistance = FindSumOfDistances(cords, currentClassFirstElement, 
+                //currentReferencedDistance = FindSumOfDistances(currentCoords, currentClassFirstElement, 
                 //    currentClassLastElement);
                 if ((currentReferencedDistance = FindSumOfDistances(SourceArray, currentClassFirstElement,
                    currentClassLastElement, i)) < referencedDistance)

@@ -35,8 +35,10 @@ namespace VisualChart3D
         /// Настройки исходных данных, используемых в данный момент
         /// </summary>
         private SettingsFiles _settFilesCurrent;
-
-        private double[,] cords;
+        /// <summary>
+        /// Текущие координаты объектов
+        /// </summary>
+        private double[,] currentCoords;
         /// <summary>
         /// Настройки исходных данных, при визуализации основных компонентов
         /// </summary>
@@ -238,9 +240,9 @@ namespace VisualChart3D
         }*/
         private void DissimilitarySpaceGeneration(DisSpace DissimiliaritySpace,bool firstGeneration = false)
         {
-            //double[,] cords = DissimilitarySpaceGetCoords(_settFilesCurrent, FirstObject, SecondObject); //,123,143
-            cords = DissimiliaritySpace.GetCoords(_settFilesCurrent);
-            int countCords = cords.Length / DissimiliaritySpace.getBasicObjectsNumber();
+            //double[,] currentCoords = DissimilitarySpaceGetCoords(_settFilesCurrent, FirstObject, SecondObject); //,123,143
+            currentCoords = DissimiliaritySpace.GetCoords(_settFilesCurrent);
+            int countCords = currentCoords.Length / DissimiliaritySpace.getBasicObjectsNumber();
             _coordCurrent = new Vertex3D[countCords];
             if(firstGeneration)
               _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
@@ -250,8 +252,8 @@ namespace VisualChart3D
                   {
                       _coordCurrent[i] = new Vertex3D
                       {
-                          X = cords[0, i],
-                          Y = cords[1, i],
+                          X = currentCoords[0, i],
+                          Y = currentCoords[1, i],
                           Z = 0.1
                       };
                   }
@@ -261,9 +263,9 @@ namespace VisualChart3D
                   {
                       _coordCurrent[i] = new Vertex3D
                       {
-                          X = cords[0, i],
-                          Y = cords[1, i],
-                          Z = cords[2, i]
+                          X = currentCoords[0, i],
+                          Y = currentCoords[1, i],
+                          Z = currentCoords[2, i]
                       };
                   }
         }
@@ -276,8 +278,8 @@ namespace VisualChart3D
                 ? new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics)
                 : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects), _settFilesCurrent.Metrics);
             const int countProj = 3;
-            cords = fastMap.GetCoordinates(countProj);
-            int countCords = cords.Length/countProj;
+            currentCoords = fastMap.GetCoordinates(countProj);
+            int countCords = currentCoords.Length/countProj;
             _coordCurrent = new Vertex3D[countCords];
             if (!firstGeneration)
             {
@@ -285,9 +287,9 @@ namespace VisualChart3D
                 {
                     _coordCurrent[i] = new Vertex3D
                     {
-                        X = cords[i, 0],
-                        Y = cords[i, 1],
-                        Z = cords[i, 2]
+                        X = currentCoords[i, 0],
+                        Y = currentCoords[i, 1],
+                        Z = currentCoords[i, 2]
                     };
                 }
             }
@@ -301,13 +303,13 @@ namespace VisualChart3D
                     {
                         for (int i = 0; i < countCords; i++)
                         {
-                            file.WriteLineFormat("{0}\t{1}\t{2}\t{3}", _settFilesCurrent.ClassesName[i], cords[i, 0],
-                                cords[i, 1], cords[i, 2]);
+                            file.WriteLineFormat("{0}\t{1}\t{2}\t{3}", _settFilesCurrent.ClassesName[i], currentCoords[i, 0],
+                                currentCoords[i, 1], currentCoords[i, 2]);
                             _coordCurrent[i] = new Vertex3D
                             {
-                                X = cords[i, 0],
-                                Y = cords[i, 1],
-                                Z = cords[i, 2]
+                                X = currentCoords[i, 0],
+                                Y = currentCoords[i, 1],
+                                Z = currentCoords[i, 2]
                             };
                         }
                     }
@@ -319,9 +321,9 @@ namespace VisualChart3D
                     {
                         _coordCurrent[i] = new Vertex3D
                         {
-                            X = cords[i, 0],
-                            Y = cords[i, 1],
-                            Z = cords[i, 2]
+                            X = currentCoords[i, 0],
+                            Y = currentCoords[i, 1],
+                            Z = currentCoords[i, 2]
                         };
                     }
                 }
@@ -386,14 +388,14 @@ namespace VisualChart3D
                     _selectedIndex = _3DChartCurrent.Select(_selectRect, _transformMatrix, MainViewport);
                     _3DChartCurrent.HighlightSelection(meshGeometry, Color.FromRgb(200, 200, 200));
                     if (_listObjectWindow != null)
-                        _listObjectWindow.SetListObjects(_settFilesCurrent, _selectedIndex, cords);
+                        _listObjectWindow.SetListObjects(_settFilesCurrent, _selectedIndex, currentCoords);
                 }
                 else
                 {
                     int[] selectedIndex = _3DChartCurrent.Select(_selectRect, _transformMatrix, MainViewport);
                     _3DChartCurrent.HighlightSelection(meshGeometry, Color.FromRgb(200, 200, 200));
                     if (_listObjectWindow != null)
-                        _listObjectWindow.SetListObjects(_settFilesCurrent, selectedIndex, cords);
+                        _listObjectWindow.SetListObjects(_settFilesCurrent, selectedIndex, currentCoords);
                 }
             }
         }
@@ -462,10 +464,14 @@ namespace VisualChart3D
                 // создаем окошко и передаем туда сеттингфайлз, получаем -
             DissimilitarySpaceGeneration(DissimiliaritySpace, true);
             DrawScatterPlot();
-            if (_listObjectWindow!=null)
-                _listObjectWindow.Close();
-            _listObjectWindow = new ListObjects();
-            _listObjectWindow.Show();
+            if (MnListObjects.IsChecked)
+            {
+                _listObjectWindow.setCoords(currentCoords);
+                _listObjectWindow.displayObjectCoords(_listObjectWindow.ListBoxObjects.SelectedIndex);
+                //MnListObjects.IsChecked = false; //допилить сохранение координат и размера. А в теории -
+                //запилить просто без обновления перерасчет координат!
+            }
+            //MnListObjects.IsChecked = true;
         }
 
         private void MnSettings_Click(object sender, RoutedEventArgs e)
@@ -555,9 +561,12 @@ namespace VisualChart3D
 
         private void MnListObjects_Checked(object sender, RoutedEventArgs e)
         {
-            _listObjectWindow = new ListObjects();
-            _listObjectWindow.CloseEvent += CloseListObjects;
-            _listObjectWindow.Show();
+            //if (_listObjectWindow == null)
+            {
+                _listObjectWindow = new ListObjects();
+                _listObjectWindow.CloseEvent += CloseListObjects;
+                _listObjectWindow.Show();
+            }
         }
 
         private void MnListObjects_Unchecked(object sender, RoutedEventArgs e)

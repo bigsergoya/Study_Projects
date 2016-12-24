@@ -33,6 +33,7 @@ namespace VisualChart3D
         bool isPicturesByName;
         bool isPicturesByClassInterval; //- 3 пункт меню, для файла с только номерами начал классов
         bool isPicturesByClassStartObject; // - 4 пункт меню, для файла с номерами начал и названиями классов
+        bool currentIndexFlag = false; // - для того, чтобы компенсировать баг сброса индекса при обновлении бокса
         //------------------------------------
 		public bool IsClosing = false;
         
@@ -69,6 +70,10 @@ namespace VisualChart3D
                 return false;
             }
         }
+        public void setCoords(double [,] newCoords){
+            coords = newCoords;
+        }
+
         private bool Is_Picture_Exist(string adress, string name_of_object)
         {
             try
@@ -197,36 +202,45 @@ namespace VisualChart3D
             Picture.Source = Add_Picture_On_Screen(result);
             return result;
         }
+        public void displayObjectCoords(int selectedInted){
+            if (!isDisSpaceMode)
+            {
+                tbCurrentObjectCoords.Text =
+                    "Координаты: x=" + coords[(numberOfObjects[selectedInted]), 0] +
+                    " y=" + coords[(numberOfObjects[selectedInted]), 1] +
+                    " z=" + coords[(numberOfObjects[selectedInted]), 2];
+            }
+            else
+            {
+                if (coords.GetLength(0) == 2)
+                {
+                    tbCurrentObjectCoords.Text =
+                        "Координаты: x=" + coords[0, (numberOfObjects[selectedInted])] +
+                        " y=" + coords[1, (numberOfObjects[selectedInted])] +
+                        " z=0";
+                }
+                else
+                {
+                    tbCurrentObjectCoords.Text =
+                        "Координаты: x=" + coords[0, (numberOfObjects[selectedInted])] +
+                        " y=" + coords[1, (numberOfObjects[selectedInted])] +
+                        " z=" + coords[2, (numberOfObjects[selectedInted])];
+                }
+            }
+
+        }
         private void ListBoxObjects_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             /*
 Пофиксить вывод координат, не все оси соответствуют изображенным.
              */
+            if (currentIndexFlag)
+            {
+                currentIndexFlag = false;
+                return;
+            }
             if ((ListBoxObjects.SelectedIndex != -1) && ((string)ListBoxObjects.Items[ListBoxObjects.SelectedIndex] != String.Empty) && (isInformationLoaded)){
-                if (!isDisSpaceMode)
-                {
-                    tbCurrentObjectCoords.Text = 
-                        "Координаты: x=" + coords[(numberOfObjects[ListBoxObjects.SelectedIndex]), 0] +
-                        " y=" + coords[(numberOfObjects[ListBoxObjects.SelectedIndex]), 1] +
-                        " z=" + coords[(numberOfObjects[ListBoxObjects.SelectedIndex]), 2];
-                }
-                else
-                {
-                    if (coords.GetLength(0) == 2)
-                    {
-                        tbCurrentObjectCoords.Text =
-                            "Координаты: x=" + coords[0, (numberOfObjects[ListBoxObjects.SelectedIndex])] +
-                            " y=" + coords[1, (numberOfObjects[ListBoxObjects.SelectedIndex])] +
-                            " z=0";
-                    }
-                    else
-                    {
-                        tbCurrentObjectCoords.Text =
-                            "Координаты: x=" + coords[0, (numberOfObjects[ListBoxObjects.SelectedIndex])] +
-                            " y=" + coords[1, (numberOfObjects[ListBoxObjects.SelectedIndex])] +
-                            " z=" + coords[2, (numberOfObjects[ListBoxObjects.SelectedIndex])];
-                    }
-                }
+                displayObjectCoords(ListBoxObjects.SelectedIndex);
                 if ((isPicturesByID) || (isPicturesByName))
                 { 
                     List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(adressPictureDirectory));
@@ -272,9 +286,11 @@ namespace VisualChart3D
                         }
                     if ((!ListBoxObjects.SelectedValue.ToString().Contains("\tФайл:")) && (ListBoxObjects.SelectedIndex != -1))
                     {
+                        currentIndexFlag = true;
                         int current_index = ListBoxObjects.SelectedIndex;         
                         ListBoxObjects.Items[ListBoxObjects.SelectedIndex] += string.Format(" \tФайл: " + substring);
-                        ListBoxObjects.SelectedIndex = current_index;
+                        currentIndexFlag = true;
+                        ListBoxObjects.SelectedIndex = current_index; //ПЕРЕДЕЛАТЬ КОНСТРУКЦИЮ!!! Двойной список, полностью повторяющий вывод картинки и инфы о ней
                     }
                 }
             }

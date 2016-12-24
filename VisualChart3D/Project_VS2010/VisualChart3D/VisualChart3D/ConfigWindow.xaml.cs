@@ -388,33 +388,9 @@ namespace VisualChart3D
                     
                     uniqueClassesNames = new System.Collections.Generic.List<string>();
                     uniqueClassesNames.AddRange(temp.UniqClassesName.ToArray());
-                    int countOfClasses = temp.UniqClassesName.Count; //переделать лейблы в эдиты
-                    switch (temp.ClassObjectType)
-                    {
-                        case ClassObjecEnum.OneToOne:
-                            numberOfObjectsOfClass = temp.GetClassPositionsOnOneToOneMode(uniqueClassesNames); // получаем длинну каждого класса 
-                            break;
-                        case ClassObjecEnum.CountObj:
-                            numberOfObjectsOfClass = new int[countOfClasses];
-                            //uniqueClassesNames
-                            for (int i = 0; i < countOfClasses; i++)
-                            {
-                                numberOfObjectsOfClass[i] =Int32.Parse(temp.ArrayClassesCountObj[i, 0]);
-                            }  
-                            break;
-                        case ClassObjecEnum.StartObjects:
-                            numberOfObjectsOfClass = new int[countOfClasses];
-                            //uniqueClassesNames
-                            for(int i=1;i<countOfClasses+1;i++){
-                                numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.Class_Start_Position[i]) - Int32.Parse(temp.Class_Start_Position[i - 1]);
-                            }       
-                            break;
-                        default:
-                            MessageBox.Show("Ошибка при выводе списка классов.");
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    getNumberOfObjectsOfClass(temp);
                     lbUniqueClasses.IsEnabled = true;
-                    
+                    numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
                     
                     //if(temp.ClassObjectType.Equals(
                     int k=0;
@@ -428,7 +404,37 @@ namespace VisualChart3D
                 }
             }
         }
+        private int[] getNumberOfObjectsOfClass(SettingsFiles temp)
+        {
+            int countOfClasses = temp.UniqClassesName.Count; //переделать лейблы в эдиты
+            switch (temp.ClassObjectType)
+            {
+                case ClassObjecEnum.OneToOne:
+                    numberOfObjectsOfClass = temp.GetClassPositionsOnOneToOneMode(uniqueClassesNames); // получаем длинну каждого класса 
+                    break;
+                case ClassObjecEnum.CountObj:
+                    numberOfObjectsOfClass = new int[countOfClasses];
+                    //uniqueClassesNames
+                    for (int i = 0; i < countOfClasses; i++)
+                    {
+                        numberOfObjectsOfClass[i] = Int32.Parse(temp.ArrayClassesCountObj[i, 0]);
+                    }
+                    break;
+                case ClassObjecEnum.StartObjects:
+                    numberOfObjectsOfClass = new int[countOfClasses];
+                    //uniqueClassesNames
+                    for (int i = 1; i < countOfClasses + 1; i++)
+                    {
+                        numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.Class_Start_Position[i]) - Int32.Parse(temp.Class_Start_Position[i - 1]);
+                    }
+                    break;
+                default:
+                    MessageBox.Show("Ошибка при выводе списка классов.");
+                    throw new ArgumentOutOfRangeException();
+            }
+            return numberOfObjectsOfClass;
 
+        }
 		private void rbMatrixDistance_Checked(object sender, RoutedEventArgs e)
 		{
 			tbMatrixDistancePath.IsEnabled = true;
@@ -532,7 +538,7 @@ namespace VisualChart3D
 		private void btMatrixDistanceBrowse_Click(object sender, RoutedEventArgs e)
 		{
             OpenFile(tbMatrixDistancePath, false);
-            if (tbMatrixDistancePath.Text != null)
+            if (tbMatrixDistancePath.Text != "")
             {
                 cbNamesPictures.IsEnabled = true;
                 cbClassObject.IsChecked = false;
@@ -602,7 +608,8 @@ namespace VisualChart3D
 			string errors = temp.Validation();
             if ((bool)cbClassObject.IsChecked)
             {
-                temp.numberOfObjectsOfClass = new int[numberOfObjectsOfClass.Length];
+                numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
+                temp.numberOfObjectsOfClass = new int[numberOfObjectsOfClass.Length]; 
                 Array.Copy(numberOfObjectsOfClass, temp.numberOfObjectsOfClass, numberOfObjectsOfClass.Length);
             }
             if (temp.UniqClassesName == null)
