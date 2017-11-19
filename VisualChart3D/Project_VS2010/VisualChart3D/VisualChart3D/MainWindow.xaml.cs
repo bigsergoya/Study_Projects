@@ -103,13 +103,17 @@ namespace VisualChart3D
 
         public MainWindow()
         {
+            CallBackPoint.callbackEventHandler = new CallBackPoint.callbackEvent(this.LightCurrentObject);
             InitializeComponent();
             _selectRect.SetRect(new Point(-0.5, -0.5), new Point(-0.5, -0.5));
             Model3D model3D = new Model3D();
             List<Mesh3D> meshs = _selectRect.GetMeshes();
             _nRectModelIndex = model3D.UpdateModel(meshs, null, _nRectModelIndex, MainViewport);
         }
-
+        void LightCurrentObject(int objectNumber)
+        {
+            //MessageBox.Show("Номер объекта - " + objectNumber);
+        }
 
         /// <summary>
         ///  Отображение точек на графике
@@ -120,6 +124,11 @@ namespace VisualChart3D
                 return;
             if (_settFilesCurrent != null)
                 MnDisSpaceSett.IsEnabled = _settFilesCurrent.DisSpaceMod;
+            else
+            {
+                MessageBox.Show("Исключительная ситуация. Код 1");
+                return;
+            }
             // Установить данные разброса графика
             _3DChartCurrent = new ScatterChart3D(true, _settingsClasses.CountPoligon);
             _3DChartCurrent.SetDataNo(_coordCurrent.Length);

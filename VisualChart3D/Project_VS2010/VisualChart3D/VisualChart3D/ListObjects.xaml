@@ -10,8 +10,8 @@
             <ColumnDefinition Width="48*"/>
         </Grid.ColumnDefinitions>
         <ListBox x:Name="ListBoxObjects" Margin="10,10,6,10" SelectionChanged="ListBoxObjects_SelectionChanged"/>
-        <Image Grid.Column="1" Margin="29,28,-135,36" Source="Resources/empty_picture.jpg" RenderTransformOrigin="0.5,0.5" Name="Picture" Grid.ColumnSpan="3" />
-        <Label Content="Изображение объекта" Grid.Column="3" Margin="22,0,-108,0" VerticalAlignment="Top" />
-        <TextBox Name ="tbCurrentObjectCoords" Text="Координаты:" Grid.Column="1" Margin="29,0,-135,-8" VerticalAlignment="Bottom" VerticalContentAlignment="Top" FontStretch="Normal" Grid.ColumnSpan="3" IsReadOnly="True" HorizontalScrollBarVisibility="Visible" Height="46" />
+        <Image Grid.Column="1" Margin="29,16,-135,48" Source="Resources/empty_picture.jpg" RenderTransformOrigin="0.5,0.5" Name="Picture" Grid.ColumnSpan="3" />
+        <Label Content="Изображение объекта" Grid.Column="3" Margin="22,-5,-108,0" VerticalAlignment="Top" />
+        <TextBox Name ="tbCurrentObjectCoords" Text="Координаты:" Grid.Column="1" Margin="29,0,-135,-6" VerticalAlignment="Bottom" VerticalContentAlignment="Top" FontStretch="Normal" Grid.ColumnSpan="3" IsReadOnly="True" HorizontalScrollBarVisibility="Hidden" Height="57" Visibility="Visible" />
     </Grid>
 </Window>

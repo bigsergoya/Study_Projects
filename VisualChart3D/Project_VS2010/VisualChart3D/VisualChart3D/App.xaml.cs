@@ -10,4 +10,12 @@ namespace VisualChart3D
     public partial class App
     {
     }
+    /// <summary>
+    /// Обработчик события отрисовки выбранного объекта
+    /// </summary>
+    public static class CallBackPoint
+    {
+        public delegate void callbackEvent(int objectNumber);
+        public static callbackEvent callbackEventHandler;
+    }
 }

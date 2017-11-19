@@ -290,7 +290,7 @@ namespace VisualChart3D
                     ? tbMatrixDistancePath.Text.ToString()
                     : string.Empty;
             }
-            if (tbPictureDirectoryPath.Text != null)
+            if ((tbPictureDirectoryPath.Text != null)&&(cbNamesPictures.IsChecked==true))
             {
                 if (((rbPicturesById.IsChecked == true) || (rbPicturesByObjectsName.IsChecked == true) || (rbPicturesByClassName.IsChecked == true)) && (!tbPictureDirectoryPath.Text.Equals("")))
                 {
@@ -497,6 +497,10 @@ namespace VisualChart3D
 			rbClassObjectCountObj.IsEnabled = false;
 			rbClassObjectStartObjects.IsEnabled = false;
 			cbClassEqual.IsEnabled = true;
+            rbPicturesByClassName.IsEnabled = false;
+            rbPicturesByClassName.IsChecked = false;
+            tbPictureDirectoryPath.Text = "";
+
 		}
 
 		private void cbNamesObject_Checked(object sender, RoutedEventArgs e)
@@ -519,6 +523,10 @@ namespace VisualChart3D
 
 		private void rbClassObject_Checked(object sender, RoutedEventArgs e)
 		{
+
+            tbClassObjectPath.Text = "";
+            lbUniqueClasses.Items.Clear();
+
             if ((cbNamesPictures.IsChecked == true) && ((rbClassObjectCountObj.IsChecked == true) || (rbClassObjectStartObjects.IsChecked == true)))
             {
                 rbPicturesByClassName.IsEnabled = true;
@@ -584,6 +592,47 @@ namespace VisualChart3D
 		private void btObjectAttributeBrowse_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFile(tbObjectAttributePath,false);
+            if (tbObjectAttributePath.Text != "")
+            {
+                cbNamesPictures.IsEnabled = true;
+                cbClassObject.IsChecked = false;
+                rbClassObjectOneToOne.IsChecked = false;
+                rbClassObjectCountObj.IsChecked = false;
+                rbClassObjectStartObjects.IsChecked = false;
+                tbClassObjectPath.Text = "";
+                lbUniqueClasses.Items.Clear();
+                string[] logData = GetDataFromPictureLogFile(tbObjectAttributePath.Text.ToString());
+                if (logData != null)
+                {
+                    cbNamesPictures.IsEnabled = true;
+                    cbNamesPictures.IsChecked = true;
+                    tbPictureDirectoryPath.Text = logData[0];
+                    switch (logData[1])
+                    {
+                        case "PicturesById":
+                            rbPicturesById.IsChecked = true;
+                            break;
+                        case "PicturesByObjectsName":
+                            rbPicturesByObjectsName.IsChecked = true;
+                            break;
+                        case "PicturesByClassName":
+                            //rbPicturesByClassName.IsEnabled = true;
+                            rbPicturesByClassName.IsChecked = true;
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    cbNamesPictures.IsChecked = false;
+                    tbPictureDirectoryPath.Text = "";
+                    rbPicturesById.IsChecked = false;
+                    rbPicturesByObjectsName.IsChecked = false;
+                    rbPicturesByClassName.IsChecked = false;
+                }
+            }
 		}
 
 		private void btClassObjectBrowse_Click(object sender, RoutedEventArgs e)
@@ -604,6 +653,11 @@ namespace VisualChart3D
 
 		private void btSave_Click(object sender, RoutedEventArgs e)
 		{
+            if (((bool)cbClassObject.IsChecked) && (tbClassObjectPath.Text == ""))
+            {
+                MessageBox.Show("Ошибка! Файл с классами объектов не выбран");
+                return;
+            }
 		    SettingsFiles temp = ReadValues(); 
 			string errors = temp.Validation();
             if ((bool)cbClassObject.IsChecked)

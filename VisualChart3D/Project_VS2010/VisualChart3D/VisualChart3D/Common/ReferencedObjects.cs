@@ -9,7 +9,7 @@ namespace VisualChart3D
 {
     class ReferencedObjects
     {
-        private int[] referencedObjects; //проблема. Неверно выбран источник!!!!!!!!! Источник - первоначальный массив!!!!
+        private int[] referencedObjects; 
         public ReferencedObjects (double[,] SourceArray, int[] countOfClassObjects)
         { //+= countOfClassObjects[f] после первого конца класса. Первый конец - нулевой элемент.
             referencedObjects = new int[countOfClassObjects.Length];

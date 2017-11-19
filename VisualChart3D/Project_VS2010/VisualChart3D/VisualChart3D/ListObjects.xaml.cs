@@ -26,6 +26,7 @@ namespace VisualChart3D
         List<string> namesOfObjects;
         List<string> namesOfClasses;
         List<string> countOfClasses;
+        List<SavedPictureInfo> savedPathsToPictures;
         double[,] coords;
         bool isDisSpaceMode = false;
         bool isInformationLoaded; // Поймали ли в фокус объекты и будет ли отражена инфа о них
@@ -36,6 +37,17 @@ namespace VisualChart3D
         bool currentIndexFlag = false; // - для того, чтобы компенсировать баг сброса индекса при обновлении бокса
         //------------------------------------
 		public bool IsClosing = false;
+
+        struct SavedPictureInfo
+        {
+            public string label;
+            public string path;
+            public SavedPictureInfo(string newLabel, string newPath)
+            {
+                label = newLabel;
+                path = newPath;
+            }
+        }
         
 		public ListObjects()
 		{
@@ -135,6 +147,7 @@ namespace VisualChart3D
 			Title = "Список объектов. Количество:" + idxArr.Length;
             numberOfObjects.AddRange(idxArr);
             isDisSpaceMode = settFiles.DisSpaceMod;
+            savedPathsToPictures = new List<SavedPictureInfo>();
 			if (settFiles.NamesObjectSelected) 
 				foreach (int i in idxArr)
 				{	
@@ -192,39 +205,54 @@ namespace VisualChart3D
         }
         private string Get_Picture_Adress(List<string> Pics, int order_of_picture)
         {
-            string result = Pics.Find(pic => (Is_Picture_Exist(pic, order_of_picture))) ?? "Resources / empty_picture.jpg";
+
+            string result = savedPathsToPictures.Find(path => path.label.Equals(order_of_picture.ToString())).path;
+            if (result != "")
+            {
+                Picture.Source = Add_Picture_On_Screen(result);
+                return result;
+            }//нужен тест!!!!
+            result = Pics.Find(pic => (Is_Picture_Exist(pic, order_of_picture))) ?? "Resources / empty_picture.jpg";
             Picture.Source = Add_Picture_On_Screen(result);
+            savedPathsToPictures.Add(new SavedPictureInfo(order_of_picture.ToString(),result));
             return result;
         }
         private string Get_Picture_Adress(List<string> Pics, string name_of_picture)
         {
-            string result = Pics.Find(pic => (Is_Picture_Exist(pic, name_of_picture))) ?? "Resources / empty_picture.jpg";
+            string result = savedPathsToPictures.Find(path => path.label.Equals(name_of_picture)).path;
+            if (result != null)
+            {
+                Picture.Source = Add_Picture_On_Screen(result);
+                return result;
+            }//нужен тест!!!!
+            result = Pics.Find(pic => (Is_Picture_Exist(pic, name_of_picture))) ?? "Resources / empty_picture.jpg";
             Picture.Source = Add_Picture_On_Screen(result);
+            savedPathsToPictures.Add(new SavedPictureInfo(name_of_picture.ToString(), result));
             return result;
         }
         public void displayObjectCoords(int selectedInted){
             if (!isDisSpaceMode)
             {
                 tbCurrentObjectCoords.Text =
-                    "Координаты: x=" + coords[(numberOfObjects[selectedInted]), 0] +
-                    " y=" + coords[(numberOfObjects[selectedInted]), 1] +
-                    " z=" + coords[(numberOfObjects[selectedInted]), 2];
+                    "x=" + coords[(numberOfObjects[selectedInted]), 0] + Environment.NewLine +
+                    "y=" + coords[(numberOfObjects[selectedInted]), 1] + Environment.NewLine +
+                    "z=" + coords[(numberOfObjects[selectedInted]), 2];
             }
             else
             {
                 if (coords.GetLength(0) == 2)
                 {
                     tbCurrentObjectCoords.Text =
-                        "Координаты: x=" + coords[0, (numberOfObjects[selectedInted])] +
-                        " y=" + coords[1, (numberOfObjects[selectedInted])] +
-                        " z=0";
+                        "x=" + coords[0, (numberOfObjects[selectedInted])] + Environment.NewLine +
+                        "y=" + coords[1, (numberOfObjects[selectedInted])] + Environment.NewLine +
+                        "z=0";
                 }
                 else
                 {
                     tbCurrentObjectCoords.Text =
-                        "Координаты: x=" + coords[0, (numberOfObjects[selectedInted])] +
-                        " y=" + coords[1, (numberOfObjects[selectedInted])] +
-                        " z=" + coords[2, (numberOfObjects[selectedInted])];
+                        "x=" + coords[0, (numberOfObjects[selectedInted])] + Environment.NewLine +
+                        "y=" + coords[1, (numberOfObjects[selectedInted])] + Environment.NewLine +
+                        "z=" + coords[2, (numberOfObjects[selectedInted])];
                 }
             }
 
@@ -239,8 +267,11 @@ namespace VisualChart3D
                 currentIndexFlag = false;
                 return;
             }
+           
+
             if ((ListBoxObjects.SelectedIndex != -1) && ((string)ListBoxObjects.Items[ListBoxObjects.SelectedIndex] != String.Empty) && (isInformationLoaded)){
                 displayObjectCoords(ListBoxObjects.SelectedIndex);
+                CallBackPoint.callbackEventHandler(ListBoxObjects.SelectedIndex);
                 if ((isPicturesByID) || (isPicturesByName))
                 { 
                     List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(adressPictureDirectory));
@@ -258,32 +289,49 @@ namespace VisualChart3D
 
                 if ((isPicturesByClassStartObject) || (isPicturesByClassInterval))
                 {
+                    string result = savedPathsToPictures.Find(path => path.label.Equals((Int32.Parse(namesOfObjects[ListBoxObjects.SelectedIndex]) - 1).ToString())).path;
+                    if (result != null)
+                    {
+                        Picture.Source = Add_Picture_On_Screen(result);
+                        return;
+                    }
+
+
                     String substring="";
                     int k;
                     List<string> Pictures;
                     int cur_index;
-                    DirectoryInfo[] dirs = new DirectoryInfo(adressPictureDirectory).GetDirectories();
-                    foreach (var item in dirs)
-                        if (item.Name.Equals(namesOfClasses[ListBoxObjects.SelectedIndex]))
-                        {
-                            Pictures = Get_Pictures_Files_List(Directory.GetFiles(item.FullName));
-                            cur_index = Int32.Parse(namesOfObjects[ListBoxObjects.SelectedIndex])-1;
-                            for(k=0;k<countOfClasses.Count-1;k++)
-                                if((cur_index>=Int32.Parse(countOfClasses[k]))&&(cur_index<Int32.Parse(countOfClasses[k+1]))){
-                                    cur_index -= Int32.Parse(countOfClasses[k]);
-                                    break;
+                    if (Directory.Exists(adressPictureDirectory))
+                    {
+                        DirectoryInfo[] dirs = new DirectoryInfo(adressPictureDirectory).GetDirectories();
+                        foreach (var item in dirs)
+                            if (item.Name.Equals(namesOfClasses[ListBoxObjects.SelectedIndex]))
+                            {
+                                Pictures = Get_Pictures_Files_List(Directory.GetFiles(item.FullName));
+                                cur_index = Int32.Parse(namesOfObjects[ListBoxObjects.SelectedIndex]) - 1;
+                                for (k = 0; k < countOfClasses.Count - 1; k++)
+                                    if ((cur_index >= Int32.Parse(countOfClasses[k])) && (cur_index < Int32.Parse(countOfClasses[k + 1])))
+                                    {
+                                        cur_index -= Int32.Parse(countOfClasses[k]);
+                                        break;
+                                    }
+                                if ((Pictures.Count == (Int32.Parse(countOfClasses[k + 1]) - Int32.Parse(countOfClasses[k]))))
+                                {
+                                    substring = Pictures[cur_index];
+                                    savedPathsToPictures.Add(new SavedPictureInfo(cur_index.ToString(), substring));
+                                    Picture.Source = Add_Picture_On_Screen(substring);
                                 }
-                            if((Pictures.Count == (Int32.Parse(countOfClasses[k + 1]) - Int32.Parse(countOfClasses[k])))){
-                                substring = Pictures[cur_index];                              
-                                Picture.Source = Add_Picture_On_Screen(substring);                             
+                                else
+                                {
+                                    substring = Get_Picture_Adress(Pictures, cur_index + 1);
+                                    Picture.Source = Add_Picture_On_Screen(substring);
+                                }
+
+                                break;
                             }
-                            else{
-                                substring = Get_Picture_Adress(Pictures, cur_index + 1);                              
-                                Picture.Source = Add_Picture_On_Screen(substring);
-                            }
-                            
-                            break;
-                        }
+                    }
+                    else { MessageBox.Show("Ошибка. Не найдена папка с картинками по адресу '" + adressPictureDirectory+"'"
+                        +Environment.NewLine+ "Возможно, удаление лог-файла PictureAdressLog.txt в папке с исходными данными и перезапуск программы поможет решить проблему."); }
                     if ((!ListBoxObjects.SelectedValue.ToString().Contains("\tФайл:")) && (ListBoxObjects.SelectedIndex != -1))
                     {
                         currentIndexFlag = true;
