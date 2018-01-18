@@ -30,12 +30,15 @@ namespace VisualChart3D
         {
             int nVertNo = nRes + 2;
             int nTriNo = 2 * nRes;
+
             SetSize(nVertNo, nTriNo);
+
             for (int i = 0; i < nRes - 1; i++)
             {
                 SetTriangle(i, i, i + 1, nRes + 1);
                 SetTriangle(nRes + i, i + 1, i, nRes);
             }
+
             SetTriangle(nRes - 1, nRes - 1, 0, nRes + 1);
             SetTriangle(2 * nRes - 1, 0, nRes - 1, nRes);
         }
@@ -50,11 +53,13 @@ namespace VisualChart3D
         private void SetData(double a, double b, double h, int nRes)
         {
             double stepXandY = 2.0f * 3.1415926f / ((double)nRes);
+
             for (int i = 0; i < nRes; i++)
             {
                 double aXandY = i * stepXandY;
                 SetPoint(i, a * System.Math.Cos(aXandY), b * System.Math.Sin(aXandY), 0);
             }
+
             SetPoint(nRes, 0, 0, 0);
             SetPoint(nRes + 1, 0, 0, h);
 

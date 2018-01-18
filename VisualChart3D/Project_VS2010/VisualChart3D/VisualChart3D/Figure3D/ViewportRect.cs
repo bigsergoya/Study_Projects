@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
+using VisualChart3D.Common;
 
 namespace VisualChart3D
 {
@@ -121,18 +122,26 @@ namespace VisualChart3D
         /// <summary>
         /// Реагирование на нажатие клавиши мыши
         /// </summary>
-        /// <param name="pt">координаты курсора</param>
+        /// <param name="point">координаты курсора</param>
         /// <param name="viewport3D">окно просмотра</param>
         /// <param name="nModelIndex">индекс модели прямоугольника в окне просмотра</param>
-        public void OnMouseDown(Point pt, Viewport3D viewport3D, int nModelIndex)
+        public void OnMouseDown(Point point, Viewport3D viewport3D, int nModelIndex)
         {
-            if (nModelIndex == -1) return;
+            if (nModelIndex == -1)
+            {
+                return;
+            }
+
             MeshGeometry3D meshGeometry = Model3D.GetGeometry(viewport3D, nModelIndex);
-            if (meshGeometry == null) return;
 
-            Point pt1 = TransformMatrix.ScreenPtToViewportPt(pt, viewport3D);
+            if (meshGeometry == null)
+            {
+                return;
+            }
 
-            SetRect(pt1, pt1);
+            Point viewPoint = TransformMatrix.ScreenPointToViewportPoint(point, viewport3D);
+
+            SetRect(viewPoint, viewPoint);
             UpdatePositions(meshGeometry);
         }
 
@@ -144,10 +153,19 @@ namespace VisualChart3D
         /// <param name="nModelIndex">индекс модели прямоугольника в окне просмотра</param>
         public void OnMouseMove(Point pt, Viewport3D viewport3D, int nModelIndex)
         {
-            if (nModelIndex == -1) return;
+            if (nModelIndex == -1)
+            {
+                return;
+            }
+
             MeshGeometry3D meshGeometry = Model3D.GetGeometry(viewport3D, nModelIndex);
-            if (meshGeometry == null) return;
-            Point pt2 = TransformMatrix.ScreenPtToViewportPt(pt, viewport3D);
+
+            if (meshGeometry == null)
+            {
+                return;
+            }
+
+            Point pt2 = TransformMatrix.ScreenPointToViewportPoint(pt, viewport3D);
             _secondPoint = pt2;
             SetRect();
             UpdatePositions(meshGeometry);

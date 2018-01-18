@@ -65,17 +65,17 @@ namespace VisualChart3D
         /// <param name="height">Глубина прямоугольника</param>
         private void SetData(double x0, double y0, double z0, double width, double lenght, double height)
         {
-            SetPoint(0, x0 - width/2, y0 + lenght/2, z0 + height/2);
-            SetPoint(1, x0 + width/2, y0 + lenght/2, z0 + height/2);
-            SetPoint(2, x0 + width/2, y0 - lenght/2, z0 + height/2);
-            SetPoint(3, x0 - width/2, y0 - lenght/2, z0 + height/2);
+            SetPoint(0, x0 - width / 2, y0 + lenght / 2, z0 + height / 2);
+            SetPoint(1, x0 + width / 2, y0 + lenght / 2, z0 + height / 2);
+            SetPoint(2, x0 + width / 2, y0 - lenght / 2, z0 + height / 2);
+            SetPoint(3, x0 - width / 2, y0 - lenght / 2, z0 + height / 2);
 
-            SetPoint(4, x0 - width/2, y0 + lenght/2, z0 - height/2);
-            SetPoint(5, x0 + width/2, y0 + lenght/2, z0 - height/2);
-            SetPoint(6, x0 + width/2, y0 - lenght/2, z0 - height/2);
-            SetPoint(7, x0 - width/2, y0 - lenght/2, z0 - height/2);
+            SetPoint(4, x0 - width / 2, y0 + lenght / 2, z0 - height / 2);
+            SetPoint(5, x0 + width / 2, y0 + lenght / 2, z0 - height / 2);
+            SetPoint(6, x0 + width / 2, y0 - lenght / 2, z0 - height / 2);
+            SetPoint(7, x0 - width / 2, y0 - lenght / 2, z0 - height / 2);
 
-            MinPoint = new Point3D(x0 - width/2, y0 - lenght/2, z0 - height/2);
+            MinPoint = new Point3D(x0 - width / 2, y0 - lenght / 2, z0 - height / 2);
             MaxPoint = new Point3D(x0 + width / 2, y0 + lenght / 2, z0 + height / 2);
         }
     }

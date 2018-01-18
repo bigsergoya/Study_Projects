@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
-namespace VisualChart3D
+namespace VisualChart3D.Common
 {
     /// <summary>
     /// класс для 3d вращения, перемещения и зума.
@@ -16,25 +16,24 @@ namespace VisualChart3D
         private Matrix3D _projMatrix = new Matrix3D();
         private Matrix3D _totalMatrix;
 
-        public Matrix3D TotalMatrix
-        {
+        public Matrix3D TotalMatrix {
             get { return _totalMatrix; }
         }
 
         /// <summary>
         /// чувствительность для увеличения
         /// </summary>
-        public const double ScaleFactor = 1.3;   
-        
+        public const double ScaleFactor = 1.3;
+
         /// <summary>
         /// Нажата ли кнопка мыши
         /// </summary>
-        private bool _isMouseDown;          
-        
+        private bool _isMouseDown;
+
         /// <summary>
         /// Предыдущее месторасположение мыши
         /// </summary>
-        private Point _movePoint;                             
+        private Point _movePoint;
 
         public void ResetView()
         {
@@ -54,12 +53,12 @@ namespace VisualChart3D
             double width = viewPort.ActualWidth;
             double height = viewPort.ActualHeight;
 
-            
+
 
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                double shiftX = 2 *(pt.X - _movePoint.X) /( width);
-                double shiftY = -2 *(pt.Y - _movePoint.Y)/( width);
+                double shiftX = 2 * (pt.X - _movePoint.X) / (width);
+                double shiftY = -2 * (pt.Y - _movePoint.Y) / (width);
                 _viewMatrix.Translate(new Vector3D(shiftX, shiftY, 0));
                 _movePoint = pt;
             }
@@ -74,7 +73,7 @@ namespace VisualChart3D
             }
             _totalMatrix = Matrix3D.Multiply(_projMatrix, _viewMatrix);
         }
-		
+
         public void OnLBtnUp()
         {
             _isMouseDown = false;
@@ -85,16 +84,16 @@ namespace VisualChart3D
             switch (args.Key)
             {
                 case Key.Home:
-                     _viewMatrix.SetIdentity();
-                     break;
+                    _viewMatrix.SetIdentity();
+                    break;
                 case Key.OemPlus:
-                     _viewMatrix.Scale(new Vector3D(ScaleFactor, ScaleFactor, ScaleFactor));
-                     break;
+                    _viewMatrix.Scale(new Vector3D(ScaleFactor, ScaleFactor, ScaleFactor));
+                    break;
                 case Key.OemMinus:
-                     _viewMatrix.Scale(new Vector3D(1/ScaleFactor, 1/ScaleFactor, 1/ScaleFactor));
-                     break;
+                    _viewMatrix.Scale(new Vector3D(1 / ScaleFactor, 1 / ScaleFactor, 1 / ScaleFactor));
+                    break;
                 default:
-                     return;
+                    return;
             }
             _totalMatrix = Matrix3D.Multiply(_projMatrix, _viewMatrix);
         }
@@ -102,31 +101,31 @@ namespace VisualChart3D
         public void OnWheel(MouseWheelEventArgs e)
         {
             double coef = (double)e.Delta / 100;
-            _viewMatrix.Scale(coef > 0 ? new Vector3D(coef, coef, coef) : new Vector3D(1/-coef, 1/-coef, 1/-coef));
+            _viewMatrix.Scale(coef > 0 ? new Vector3D(coef, coef, coef) : new Vector3D(1 / -coef, 1 / -coef, 1 / -coef));
             _totalMatrix = Matrix3D.Multiply(_projMatrix, _viewMatrix);
         }
 
         public static Point3D Transform(Point3D pt1, Point3D center, double aX, double aZ)
         {
- 			double angleX = 3.1415926f*aX/180;
-			double angleZ = 3.1415926f*aZ/180;
+            double angleX = 3.1415926f * aX / 180;
+            double angleZ = 3.1415926f * aZ / 180;
 
-			// вращение z-оси
+            // вращение z-оси
             double x2 = pt1.X * Math.Cos(angleZ) + pt1.Z * Math.Sin(angleZ);
             double y2 = pt1.Y;
             double z2 = -pt1.X * Math.Sin(angleZ) + pt1.Z * Math.Cos(angleZ);
 
             double x3 = center.X + x2 * Math.Cos(angleX) - y2 * Math.Sin(angleX);
             double y3 = center.Y + x2 * Math.Sin(angleX) + y2 * Math.Cos(angleX);
-			double z3 = center.Z + z2;
+            double z3 = center.Z + z2;
 
             return new Point3D(x3, y3, z3);
         }
 
         public static void Transform(Mesh3D model, Point3D center, double aX, double aZ)
         {
- 			double angleX = 3.1415926f*aX/180;
-			double angleZ = 3.1415926f*aZ/180;
+            double angleX = 3.1415926f * aX / 180;
+            double angleZ = 3.1415926f * aZ / 180;
 
             int nVertNo = model.VertexNo;
             for (int i = 0; i < nVertNo; i++)
@@ -152,7 +151,7 @@ namespace VisualChart3D
 
         public void CalculateProjectionMatrix(double min, double max, double scaleFactor)
         {
-            CalculateProjectionMatrix(new Point3D(min, min, min), new Point3D(max,max,max), scaleFactor);
+            CalculateProjectionMatrix(new Point3D(min, min, min), new Point3D(max, max, max), scaleFactor);
         }
 
         public void CalculateProjectionMatrix(Point3D min, Point3D max, double scaleFactor)
@@ -170,9 +169,9 @@ namespace VisualChart3D
 
             if (xRange < 1e-10) return;
 
-            double sX = scaleFactor/xRange;
-            double sY = scaleFactor/yRange;
-            double sZ = scaleFactor/zRange;
+            double sX = scaleFactor / xRange;
+            double sY = scaleFactor / yRange;
+            double sZ = scaleFactor / zRange;
             _projMatrix.Scale(new Vector3D(sX, sY, sZ));
 
             _totalMatrix = Matrix3D.Multiply(_projMatrix, _viewMatrix);
@@ -194,15 +193,15 @@ namespace VisualChart3D
             return new Point(x3, y3);
         }
 
-        public static Point ScreenPtToViewportPt(Point point, System.Windows.Controls.Viewport3D viewPort)
+        public static Point ScreenPointToViewportPoint(Point point, System.Windows.Controls.Viewport3D viewPort)
         {
             double width = viewPort.ActualWidth;
             double height = viewPort.ActualHeight;
 
             double x3 = (double)point.X;
             double y3 = (double)point.Y;
-            double x2 = (x3 - width / 2)*2/width;
-            double y2 = (height / 2 - y3)*2/width;
+            double x2 = (x3 - width / 2) * 2 / width;
+            double y2 = (height / 2 - y3) * 2 / width;
 
             return new Point(x2, y2);
         }
