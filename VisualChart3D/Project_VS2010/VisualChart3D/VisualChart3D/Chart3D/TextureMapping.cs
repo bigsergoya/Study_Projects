@@ -5,7 +5,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 
-
 namespace VisualChart3D
 {
     /// <summary>
@@ -36,7 +35,7 @@ namespace VisualChart3D
             unsafe
             {
                 // Получить указатель на задний буфер
-                byte* pStart = (byte*) (void*) writeableBitmap.BackBuffer;
+                byte* pStart = (byte*)(void*)writeableBitmap.BackBuffer;
                 int nL = writeableBitmap.BackBufferStride;
 
                 for (int r = 0; r < 16; r++)
@@ -45,12 +44,12 @@ namespace VisualChart3D
                     {
                         for (int b = 0; b < 16; b++)
                         {
-                            int nX = (g%4)*16 + b;
-                            int nY = r*4 + g/4;
+                            int nX = (g % 4) * 16 + b;
+                            int nY = r * 4 + g / 4;
 
-                            *(pStart + nY*nL + nX*3 + 0) = (byte) (b*17);
-                            *(pStart + nY*nL + nX*3 + 1) = (byte) (g*17);
-                            *(pStart + nY*nL + nX*3 + 2) = (byte) (r*17);
+                            *(pStart + nY * nL + nX * 3 + 0) = (byte)(b * 17);
+                            *(pStart + nY * nL + nX * 3 + 1) = (byte)(g * 17);
+                            *(pStart + nY * nL + nX * 3 + 2) = (byte)(r * 17);
                         }
                     }
                 }
@@ -60,8 +59,8 @@ namespace VisualChart3D
             // Разблокировать задний буфер и сделать его открытым для показа
             writeableBitmap.Unlock();
 
-            ImageBrush imageBrush = new ImageBrush(writeableBitmap) {ViewportUnits = BrushMappingMode.Absolute};
-            Material = new DiffuseMaterial {Brush = imageBrush};
+            ImageBrush imageBrush = new ImageBrush(writeableBitmap) { ViewportUnits = BrushMappingMode.Absolute };
+            Material = new DiffuseMaterial { Brush = imageBrush };
 
             _isPseudoColor = false;
         }
@@ -73,21 +72,21 @@ namespace VisualChart3D
 
             unsafe
             {
-                byte* pStart = (byte*) (void*) writeableBitmap.BackBuffer;
+                byte* pStart = (byte*)(void*)writeableBitmap.BackBuffer;
                 int nL = writeableBitmap.BackBufferStride;
 
                 for (int nY = 0; nY < 64; nY++)
                 {
                     for (int nX = 0; nX < 64; nX++)
                     {
-                        int nI = nY*64 + nX;
-                        double k = ((double) nI)/4095;
+                        int nI = nY * 64 + nX;
+                        double k = ((double)nI) / 4095;
 
                         Color color = PseudoColor(k);
 
-                        *(pStart + nY*nL + nX*3 + 0) = color.B;
-                        *(pStart + nY*nL + nX*3 + 1) = color.G;
-                        *(pStart + nY*nL + nX*3 + 2) = color.R;
+                        *(pStart + nY * nL + nX * 3 + 0) = color.B;
+                        *(pStart + nY * nL + nX * 3 + 1) = color.G;
+                        *(pStart + nY * nL + nX * 3 + 2) = color.R;
                     }
                 }
 
@@ -96,9 +95,9 @@ namespace VisualChart3D
 
             writeableBitmap.Unlock();
 
-            ImageBrush imageBrush = new ImageBrush(writeableBitmap) {ViewportUnits = BrushMappingMode.Absolute};
+            ImageBrush imageBrush = new ImageBrush(writeableBitmap) { ViewportUnits = BrushMappingMode.Absolute };
 
-            Material = new DiffuseMaterial {Brush = imageBrush};
+            Material = new DiffuseMaterial { Brush = imageBrush };
 
             _isPseudoColor = true;
         }
@@ -110,22 +109,22 @@ namespace VisualChart3D
 
         public static Point GetMappingPosition(Color color, bool bPseudoColor)
         {
-            if(bPseudoColor)
+            if (bPseudoColor)
             {
-                double r = ((double)color.R)/255;
-                double g = ((double)color.G)/255;
-                double b = ((double)color.B)/255;
+                double r = ((double)color.R) / 255;
+                double g = ((double)color.G) / 255;
+                double b = ((double)color.B) / 255;
 
                 double k;
-                if ((b>=g)&&(b>r))
+                if ((b >= g) && (b > r))
                 {
                     k = 0.25 * g;
                 }
-                else if((g>b)&&(b>=r))
+                else if ((g > b) && (b >= r))
                 {
-                    k = 0.25 + 0.25 *(1- b);
+                    k = 0.25 + 0.25 * (1 - b);
                 }
-                else if((g>=r)&&(r>b))
+                else if ((g >= r) && (r > b))
                 {
                     k = 0.5 + 0.25 * r;
                 }
@@ -142,11 +141,11 @@ namespace VisualChart3D
 
                 double x1 = nX;
                 double y1 = nY;
-                return new Point(x1/64, y1/64);
+                return new Point(x1 / 64, y1 / 64);
             }
             else
             {
-                int nR = (color.R ) / 17;
+                int nR = (color.R) / 17;
                 int nG = (color.G) / 17;
                 int nB = (color.B) / 17;
 
@@ -155,7 +154,7 @@ namespace VisualChart3D
 
                 double x1 = nX;
                 double y1 = nY;
-                return new Point(x1/63, y1/63);
+                return new Point(x1 / 63, y1 / 63);
             }
         }
 
@@ -176,11 +175,11 @@ namespace VisualChart3D
             {
                 r = 0;
                 g = 1;
-                b = 1 - 4 * (k-0.25);
+                b = 1 - 4 * (k - 0.25);
             }
             else if (k < 0.75)
             {
-                r = 4*(k-0.5);
+                r = 4 * (k - 0.5);
                 g = 1;
                 b = 0;
             }

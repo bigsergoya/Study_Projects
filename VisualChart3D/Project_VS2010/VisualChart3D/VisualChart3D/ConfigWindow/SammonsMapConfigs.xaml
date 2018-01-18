@@ -1,0 +1,73 @@
+﻿<Window x:Class="VisualChart3D.ConfigWindow.SammonsMapConfigs"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
+        mc:Ignorable="d"
+        Title="Настройка SammonMapping" Height="500" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" Icon="/Resources/VC3D.ico">
+    <Grid>
+        <Grid Margin="10,10,10,230">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition MaxHeight="100"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" FontSize="9" VerticalContentAlignment="Center" HorizontalAlignment="Center">
+                <Label.Content>
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap">Верхняя граница спуска</TextBlock>
+                </Label.Content>
+            </Label>
+
+            <Label Grid.Row="1" Grid.Column="0" FontSize="9" VerticalContentAlignment="Center" HorizontalAlignment="Center">
+                <Label.Content>
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap">Шаг спуска</TextBlock>
+                </Label.Content>
+            </Label>
+
+            <Label Grid.Row="2" Grid.Column="0" FontSize="9" VerticalContentAlignment="Center" HorizontalAlignment="Center">
+                <Label.Content>
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap">Нижняя граница спуска</TextBlock>
+                </Label.Content>
+            </Label>
+
+            <Label Grid.Row="3" Grid.Column="0" FontSize="9" VerticalContentAlignment="Center" HorizontalAlignment="Center">
+                <Label.Content>
+                    <TextBlock TextAlignment="Center" TextWrapping="Wrap">Достигаемое значение критерия</TextBlock>
+                </Label.Content>
+            </Label>
+
+            <toolkit:DoubleUpDown x:Name="ddUpperBound" Grid.Column="1" HorizontalAlignment="Left" Margin="23.996,7,0,0" Grid.Row="0" Width="90" Height="21" VerticalAlignment="Top" Minimum="1" Maximum="100000" Increment="0.1"/>
+            <toolkit:DoubleUpDown x:Name="ddStep" Grid.Column="1" HorizontalAlignment="Left" Margin="23.996,7,0,0" Grid.Row="1" Width="90" Height="21" VerticalAlignment="Top" Minimum="1" Maximum="10000" Increment="0.1"/>
+            <toolkit:DoubleUpDown x:Name="ddLowerBound" Grid.Column="1" HorizontalAlignment="Left" Margin="23.996,7,0,0" Grid.Row="2" Width="90" Height="21" VerticalAlignment="Top" Minimum="0" Maximum="10000" Increment="0.005"/>
+            <toolkit:DoubleUpDown x:Name="ddCriteria" Grid.Column="1" HorizontalAlignment="Left" Margin="23.996,7,0,0" Grid.Row="3" Width="90" Height="21" VerticalAlignment="Top" Minimum="0.05" Maximum="1000" Increment="0.1"/>
+
+            <Button x:Name="BtnRecalculate" Content="Пересчитать" Margin="0,0,29,6" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="82" Click="BtnRecalculate_Click"  Grid.Column="0" Grid.Row="4" IsEnabled="False"/>
+            <Button x:Name="BtnCancel" Content="Отмена" Margin="42,0,42,6" VerticalAlignment="Bottom" Click="BtnCancel_Click" Grid.Column="1" Grid.Row="5"/>
+            <Button x:Name="BtnSave" Content="Сохранить" Margin="29,0,36,6" VerticalAlignment="Bottom" Click="BtnSave_Click" Grid.Column="1" Grid.Row="4"/>
+
+            <Grid x:Name="LayoutRoot" Background="White" Grid.ColumnSpan="2" Margin="14,72,-2,-147" Grid.Row="4">
+                <d3:Chart Name="plotter" Margin="-10,10,10,-123">
+                    <d3:Chart.Title>
+                        <TextBlock HorizontalAlignment="Center" FontSize="15" Margin="0,5,0,5">Критерий Сэммона</TextBlock>
+                    </d3:Chart.Title>
+                    <d3:Plot>
+                        <d3:CircleMarkerGraph Name="circles" Description="Criteria" Min="1" Max="20"/>
+                    </d3:Plot>
+                    
+                </d3:Chart>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

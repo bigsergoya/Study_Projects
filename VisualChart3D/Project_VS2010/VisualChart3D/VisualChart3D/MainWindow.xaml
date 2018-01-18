@@ -50,8 +50,6 @@
                 Background="Transparent" 
             Margin="0,0,0,0" MouseMove="canvasOn3D_MouseMove" MouseUp="canvasOn3D_MouseUp" MouseWheel="canvasOn3D_MouseWheel" MouseDown="canvasOn3D_MouseDown"/>
 
-
-
         <TextBlock x:Name ="StatusPane" 
                 Grid.Row="2" 
                 Grid.Column="0"
@@ -65,24 +63,27 @@
                 HorizontalAlignment="Left" 
                 Margin="0,10" 
                 Width="0">
-
-
-
-
         </Canvas>
+        
         <Menu Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Margin="0,0,2,0">
+            
             <MenuItem Header="Файл">
                 <MenuItem x:Name="MnOpen" Header="Исходные данные" Click="MnOpen_Click"></MenuItem>
                 <MenuItem x:Name="MnExit" Header="Выход" Click="MnExit_Click" />
 
             </MenuItem>
+            
             <MenuItem Header="Настройки">
                 <MenuItem x:Name="MnSettings" Header="Настройка классов" Click="MnSettings_Click" />
-                <MenuItem x:Name="MnDisSpaceSett" Header="Настройка dissimilarity space" Click="MnDisSpaceSett_Click" />
+                <MenuItem x:Name="MnDisSpaceSett" Header="Настройка Dissimilarity Space" Click="MnDisSpaceSett_Click" />
+                <MenuItem x:Name="MnSamMapSett" Header="Настройка Sammon Mapping" Click="MnSamMapSett_Click" />
+                <MenuItem x:Name="MnKohonenMapSett" Header="Настройка Kohonen Mapping" Click="MnKohonenMapSett_Click" />
             </MenuItem>
+            
             <MenuItem Header="Вид">
                 <MenuItem x:Name="MnListObjects" IsCheckable="True"  Header="Список объектов" Checked="MnListObjects_Checked" Unchecked="MnListObjects_Unchecked" />
             </MenuItem>
+            
             <MenuItem Header="Помощь" Click="MenuItem_Click">
                 <MenuItem x:Name="MnHelp" Header="Справка"  />
             </MenuItem>

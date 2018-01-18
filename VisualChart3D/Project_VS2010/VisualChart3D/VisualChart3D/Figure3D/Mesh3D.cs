@@ -12,22 +12,22 @@ namespace VisualChart3D
         /// <summary>
         /// Координаты вершины
         /// </summary>
-        protected Point3D [] Points;  
-        
+        protected Point3D[] Points;
+
         /// <summary>
         /// Индексы в массиве позиций 
         /// </summary>
-        protected int[] VertIndices;                      
+        protected int[] VertIndices;
 
         /// <summary>
         /// Цвет
         /// </summary>
-        protected Color Color;             
+        protected Color Color;
 
         /// <summary>
         /// Треугольник
         /// </summary>
-        protected Triangle3D[] Tris;                    
+        protected Triangle3D[] Tris;
 
         /// <summary>
         /// минимальная точка
@@ -42,21 +42,17 @@ namespace VisualChart3D
         /// <summary>
         /// получить кол-во вершин в этой сетке
         /// </summary>
-        public int VertexNo
-        {
-            get
-            {
+        public int VertexNo {
+            get {
                 return Points == null ? 0 : Points.Length;
             }
         }
 
-       /// <summary>
-       /// получить кол-во треугольников в этой сетке
-       /// </summary>
-        public int TriangleNo
-        {
-            get
-            {
+        /// <summary>
+        /// получить кол-во треугольников в этой сетке
+        /// </summary>
+        public int TriangleNo {
+            get {
                 return Tris == null ? 0 : Tris.Length;
             }
         }
@@ -163,8 +159,8 @@ namespace VisualChart3D
         public Vector3D GetTriangleNormal(int n)
         {
             Triangle3D tri = GetTriangle(n);
-            Point3D pt0 = GetPoint(tri.N0); 
-            Point3D pt1 = GetPoint(tri.N1); 
+            Point3D pt0 = GetPoint(tri.N0);
+            Point3D pt1 = GetPoint(tri.N1);
             Point3D pt2 = GetPoint(tri.N2);
 
             double dx1 = pt1.X - pt0.X;
@@ -175,11 +171,11 @@ namespace VisualChart3D
             double dy2 = pt2.Y - pt0.Y;
             double dz2 = pt2.Z - pt0.Z;
 
-            double vx = dy1*dz2 - dz1*dy2;
-            double vy = dz1*dx2 - dx1*dz2;
-            double vz = dx1*dy2 - dy1*dx2;
+            double vx = dy1 * dz2 - dz1 * dy2;
+            double vy = dz1 * dx2 - dx1 * dz2;
+            double vz = dx1 * dy2 - dy1 * dx2;
 
-            double length = Math.Sqrt(vx*vx + vy*vy + vz*vz);
+            double length = Math.Sqrt(vx * vx + vy * vy + vz * vz);
 
             return new Vector3D(vx / length, vy / length, vz / length);
         }
@@ -237,9 +233,9 @@ namespace VisualChart3D
             SetPoint(1, 0.5, 0.5, 0.3);
             SetPoint(2, 0, 0.5, 0);
             SetTriangle(0, 0, 2, 1);
-            MinPoint = new Point3D(0,0, -size);
-            MaxPoint = new Point3D(2*size, size, size);
+            MinPoint = new Point3D(0, 0, -size);
+            MaxPoint = new Point3D(2 * size, size, size);
         }
- 
+
     }
 }

@@ -13,12 +13,12 @@ namespace VisualChart3D
         /// <summary>
         /// Цвет точки
         /// </summary>
-        public System.Windows.Media.Color Color;    
+        public System.Windows.Media.Color Color;
 
         /// <summary>
         /// расположение точки
         /// </summary>
-        public double X, Y, Z;                  
+        public double X, Y, Z;
 
         /// <summary>
         /// link to the viewport positions array index
@@ -32,12 +32,12 @@ namespace VisualChart3D
 
         static public Vertex3D ParseCoord(string strCoord)
         {
-            string[] coord = strCoord.Split(new[] {'\t'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] coord = strCoord.Split(new[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
             return new Vertex3D()
             {
-				X = double.Parse(coord[0]),
-				Y = double.Parse(coord[1]),
-				Z = double.Parse(coord[2])
+                X = double.Parse(coord[0]),
+                Y = double.Parse(coord[1]),
+                Z = double.Parse(coord[2])
             };
         }
     }

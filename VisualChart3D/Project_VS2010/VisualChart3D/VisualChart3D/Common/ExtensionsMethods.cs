@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 
-namespace VisualChart3D
+namespace VisualChart3D.Common
 {
     public static class ExtensionsMethods
     {

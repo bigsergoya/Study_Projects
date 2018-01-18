@@ -99,7 +99,7 @@ namespace VisualChart3D
                 int nVertNo = mesh.VertexNo;
                 int nTriNo = mesh.TriangleNo;
                 if ((nVertNo <= 0) || (nTriNo <= 0)) continue;
-                
+
                 double[] vx = new double[nVertNo];
                 double[] vy = new double[nVertNo];
                 double[] vz = new double[nVertNo];
@@ -129,7 +129,7 @@ namespace VisualChart3D
                 }
                 for (int i = 0; i < nVertNo; i++)
                 {
-                    double length = Math.Sqrt(vx[i]*vx[i] + vy[i]*vy[i] + vz[i]*vz[i]);
+                    double length = Math.Sqrt(vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i]);
                     if (length > 1e-20)
                     {
                         vx[i] /= length;
@@ -153,7 +153,7 @@ namespace VisualChart3D
                     triangleMesh.TriangleIndices.Add(nTotalVertNo + n0);
                     triangleMesh.TriangleIndices.Add(nTotalVertNo + n1);
                     triangleMesh.TriangleIndices.Add(nTotalVertNo + n2);
-                 }
+                }
                 nTotalVertNo += nVertNo;
             }
             Material material = _mapping.Material;

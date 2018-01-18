@@ -112,7 +112,7 @@ namespace VisualChart3D
             }
             SetPoint((nRes - 2) * nRes + 1, 0, 0, -h);
 
-            MinPoint = new Point3D(-a,-b,-h);
+            MinPoint = new Point3D(-a, -b, -h);
             MaxPoint = new Point3D(a, b, h);
         }
     }

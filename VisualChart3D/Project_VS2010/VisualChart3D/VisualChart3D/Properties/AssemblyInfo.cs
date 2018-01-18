@@ -1,8 +1,6 @@
 ﻿// This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -10,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("VisualChart3D")]
-[assembly: AssemblyDescription("The software for visualization of data by various methods. Cooperation - bigsergoya@gmail.com")]
+[assembly: AssemblyDescription("The software for  data visualization by various methods. Cooperation - bigsergoya@gmail.com")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tula State University")]
 [assembly: AssemblyProduct("VisualChart3D")]

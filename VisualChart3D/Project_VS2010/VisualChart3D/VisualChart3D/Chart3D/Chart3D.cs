@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using VisualChart3D.Common;
 
 namespace VisualChart3D
 {
@@ -13,34 +14,29 @@ namespace VisualChart3D
     /// </summary>
     abstract class Chart3D
     {
-        
+
         /// <summary>
         /// Индексатор точек
         /// </summary>
         /// <param name="n">индекс</param>
         /// <returns>точка в 3D пространстве</returns>
-        public Vertex3D this[int n]
-        {
-            get
-            {
+        public Vertex3D this[int n] {
+            get {
                 return Vertices[n];
             }
-            set
-            {
+            set {
                 Vertices[n] = value;
             }
         }
 
-        public double MaxLenghtAxis
-        {
+        public double MaxLenghtAxis {
             get { return Math.Max(AxisLenght.X, Math.Max(AxisLenght.Y, AxisLenght.Z)); }
         }
 
-        public double ViewRange
-        {
-            get { return Math.Max(Math.Max(AxisLenght.X,AxisLenght.Y), AxisLenght.Z); }
+        public double ViewRange {
+            get { return Math.Max(Math.Max(AxisLenght.X, AxisLenght.Y), AxisLenght.Z); }
         }
-      
+
         /// <summary>
         /// Массив точек в графике
         /// </summary>
@@ -69,7 +65,7 @@ namespace VisualChart3D
         /// <summary>
         /// длина оси
         /// </summary>
-        private const float AxisLengthWidthRatio = 200; 
+        private const float AxisLengthWidthRatio = 200;
 
         /// <summary>
         /// true - рисовать ось
@@ -89,7 +85,7 @@ namespace VisualChart3D
         {
             _useAxes = useAxis;
         }
-        
+
         /// <summary>
         /// Задать кол-во точек
         /// </summary>
@@ -102,14 +98,15 @@ namespace VisualChart3D
         /// <summary>
         /// Задать оси
         /// </summary>
-        public void SetAxes(Color clrAxis,bool is_Dis_Space_Mod)
+        public void SetAxes(Color clrAxis, float offset)
         {
             _axisColor = clrAxis;
             CalcDataRange();
-            if (is_Dis_Space_Mod)
-                SetAxes(0.0f);
-            else
-                SetAxes(0.07f);
+            SetAxes(offset);
+            //if (offset)
+            //    SetAxes(0.0f);
+            //else
+            //    SetAxes(0.07f);
         }
 
         /// <summary>
@@ -129,13 +126,17 @@ namespace VisualChart3D
             int nDataNo = GetDataNo();
             if (nDataNo == 0) return;
             MinPoint3D = new Point3D(Single.MaxValue, Single.MaxValue, Single.MaxValue);
+            //MinPoint3D = new Point3D(0d, 0d, 0d);
             MaxPoint3D = new Point3D(Single.MinValue, Single.MinValue, Single.MinValue);
 
             for (int i = 0; i < nDataNo; i++)
             {
                 Vertex3D tempVert = this[i];
-                if(tempVert==null)
+                if (tempVert == null)
+                {
                     continue;
+                }
+
                 Point3D currentPoint = new Point3D(tempVert.X, tempVert.Y, tempVert.Z);
                 if (MinPoint3D.X > currentPoint.X) MinPoint3D.X = currentPoint.X;
                 if (MinPoint3D.Y > currentPoint.Y) MinPoint3D.Y = currentPoint.Y;
@@ -158,16 +159,16 @@ namespace VisualChart3D
 
             Point3D center = new Point3D
             {
-                X = MinPoint3D.X - margin*xRange,
-                Y = MinPoint3D.Y - margin*yRange,
-                Z = MinPoint3D.Z - margin*zRange
+                X = MinPoint3D.X - margin * xRange,
+                Y = MinPoint3D.Y - margin * yRange,
+                Z = MinPoint3D.Z - margin * zRange
             };
 
             Point3D lenght = new Point3D
             {
-                X = (1 + 2*margin)*xRange,
-                Y = (1 + 2*margin)*yRange,
-                Z = (1 + 2*margin)*zRange
+                X = (1 + 2 * margin) * xRange,
+                Y = (1 + 2 * margin) * yRange,
+                Z = (1 + 2 * margin) * zRange
             };
 
             AxisLenght = lenght;
@@ -184,11 +185,11 @@ namespace VisualChart3D
 
             const int countPolygan = 15;
 
-            double radius = (AxisLenght.X+AxisLenght.Y+AxisLenght.Z) / (3*AxisLengthWidthRatio);
+            double radius = (AxisLenght.X + AxisLenght.Y + AxisLenght.Z) / (3 * AxisLengthWidthRatio);
 
             Mesh3D xAxisCylinder = new Cylinder3D(radius, radius, AxisLenght.X, countPolygan);
             xAxisCylinder.SetColor(_axisColor);
-            TransformMatrix.Transform(xAxisCylinder, new Point3D( AxisCenter.X + AxisLenght.X / 2, AxisCenter.Y, AxisCenter.Z), 0, 90);
+            TransformMatrix.Transform(xAxisCylinder, new Point3D(AxisCenter.X + AxisLenght.X / 2, AxisCenter.Y, AxisCenter.Z), 0, 90);
             meshs.Add(xAxisCylinder);
 
             Mesh3D xAxisCone = new Cone3D(2 * radius, 2 * radius, radius * 5, countPolygan);
@@ -198,7 +199,7 @@ namespace VisualChart3D
 
             Mesh3D yAxisCylinder = new Cylinder3D(radius, radius, AxisLenght.Y, countPolygan);
             yAxisCylinder.SetColor(_axisColor);
-            TransformMatrix.Transform(yAxisCylinder, new Point3D(AxisCenter.X ,AxisCenter.Y+ AxisLenght.Y / 2,AxisCenter.Z), 90, 90);
+            TransformMatrix.Transform(yAxisCylinder, new Point3D(AxisCenter.X, AxisCenter.Y + AxisLenght.Y / 2, AxisCenter.Z), 90, 90);
             meshs.Add(yAxisCylinder);
 
             Mesh3D yAxisCone = new Cone3D(2 * radius, 2 * radius, radius * 5, countPolygan);
@@ -208,14 +209,14 @@ namespace VisualChart3D
 
             Mesh3D zAxisCylinder = new Cylinder3D(radius, radius, AxisLenght.Z, countPolygan);
             zAxisCylinder.SetColor(_axisColor);
-            TransformMatrix.Transform(zAxisCylinder, new Point3D(AxisCenter.X , AxisCenter.Y, AxisCenter.Z + AxisLenght.Z / 2), 0, 0);
+            TransformMatrix.Transform(zAxisCylinder, new Point3D(AxisCenter.X, AxisCenter.Y, AxisCenter.Z + AxisLenght.Z / 2), 0, 0);
             meshs.Add(zAxisCylinder);
 
             Mesh3D zAxisCone = new Cone3D(2 * radius, 2 * radius, radius * 5, countPolygan);
             zAxisCone.SetColor(_axisColor);
             TransformMatrix.Transform(zAxisCone, new Point3D(AxisCenter.X, AxisCenter.Y, AxisCenter.Z + AxisLenght.Z), 0, 0);
             meshs.Add(zAxisCone);
-            
+
         }
 
         /// <summary>
@@ -226,7 +227,7 @@ namespace VisualChart3D
         /// <param name="viewport3D">поле просмотра</param>
         public virtual int[] Select(ViewportRect rect, TransformMatrix matrix, Viewport3D viewport3D)
         {
-	        return null;
+            return null;
         }
 
         /// <summary>

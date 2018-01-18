@@ -10,3 +10,30 @@ VisualChart3D/Project_VS2010/VisualChart3D/VisualChart3D/obj/Debug/
 VisualChart3D/Project_VS2010/VisualChart3D/VisualChart3D.VC.db
 VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/.suo
 VisualChart3D/Project_VS2010/VisualChart3D/VisualChart3D/app.config
+VisualChart3D/Example/
+VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/Server/sqlite3/
+VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/Server/sqlite3/db.lock
+VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/Server/sqlite3/storage.ide
+VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/Server/sqlite3/storage.ide-shm
+VisualChart3D/Project_VS2010/VisualChart3D/.vs/VisualChart3D/v15/Server/sqlite3/storage.ide-wal
+
+.gitignore.orig
+VisualChart3D/Project_VS2010/VisualChart3D/VisualChart3D/obj/
+
+# Ignore NuGet Packages
+*.nupkg
+
+# Ignore the packages folder
+**/packages/*
+
+# Include packages/build/, which is used as an MSBuild target
+!**/packages/build/
+
+# Uncomment if necessary; generally it's regenerated when needed
+#!**/packages/repositories.config
+
+# Ignore other intermediate files that NuGet might create. project.lock.json is used in conjunction
+# with project.json; project.assets.json is used in conjunction with the PackageReference format.
+project.lock.json
+project.assets.json
+*.nuget.props

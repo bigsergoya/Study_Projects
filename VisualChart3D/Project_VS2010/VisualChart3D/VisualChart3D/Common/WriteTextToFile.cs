@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace VisualChart3D
+namespace VisualChart3D.Common
 {
 
     class WriteTextToFile : IDisposable

@@ -28,8 +28,8 @@ namespace VisualChart3D
         /// <param name="nRes">кол-во треугольников</param>
         private void SetMesh(int nRes)
         {
-            int nVertNo = 2*nRes + 2;
-            int nTriNo = 4*nRes;
+            int nVertNo = 2 * nRes + 2;
+            int nTriNo = 4 * nRes;
             SetSize(nVertNo, nTriNo);
             for (int i = 0; i < nRes; i++)
             {
@@ -37,10 +37,10 @@ namespace VisualChart3D
                 int n2;
                 if (i == (nRes - 1)) n2 = 0;
                 else n2 = i + 1;
-                SetTriangle(i*4 + 0, n1, n2, nRes + n1); // side
-                SetTriangle(i*4 + 1, nRes + n1, n2, nRes + n2); // side
-                SetTriangle(i*4 + 2, n2, n1, 2*nRes); // bottom
-                SetTriangle(i*4 + 3, nRes + n1, nRes + n2, 2*nRes + 1); // top
+                SetTriangle(i * 4 + 0, n1, n2, nRes + n1); // side
+                SetTriangle(i * 4 + 1, nRes + n1, n2, nRes + n2); // side
+                SetTriangle(i * 4 + 2, n2, n1, 2 * nRes); // bottom
+                SetTriangle(i * 4 + 3, nRes + n1, nRes + n2, 2 * nRes + 1); // top
             }
         }
 
@@ -56,20 +56,20 @@ namespace VisualChart3D
             double stepXandY = 2.0f * 3.1415926f / ((double)nRes);
             for (int i = 0; i < nRes; i++)
             {
-                double aXandY = i*stepXandY;
-                SetPoint(i, a*System.Math.Cos(aXandY), b*System.Math.Sin(aXandY), -h/2);
+                double aXandY = i * stepXandY;
+                SetPoint(i, a * System.Math.Cos(aXandY), b * System.Math.Sin(aXandY), -h / 2);
             }
 
             for (int i = 0; i < nRes; i++)
             {
-                double aXandY = i*stepXandY;
+                double aXandY = i * stepXandY;
                 SetPoint(nRes + i, a * System.Math.Cos(aXandY), b * System.Math.Sin(aXandY), h / 2);
             }
 
             SetPoint(2 * nRes, 0, 0, -h / 2);
             SetPoint(2 * nRes + 1, 0, 0, h / 2);
 
-            MinPoint = new Point3D(-a, -b, -h/2);
+            MinPoint = new Point3D(-a, -b, -h / 2);
             MaxPoint = new Point3D(a, b, h / 2);
         }
 

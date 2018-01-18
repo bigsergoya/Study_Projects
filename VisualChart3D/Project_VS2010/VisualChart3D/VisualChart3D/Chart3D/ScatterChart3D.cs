@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using VisualChart3D.Common;
 
 namespace VisualChart3D
 {
@@ -36,11 +37,9 @@ namespace VisualChart3D
 
         private int _countPolygon;
 
-        public int CountPolygon
-        {
+        public int CountPolygon {
             get { return _countPolygon; }
-            set
-            {
+            set {
                 if (value > 0 && value < 21)
                     _countPolygon = value;
                 else
@@ -55,7 +54,7 @@ namespace VisualChart3D
         /// <returns>точка</returns>
         public ScatterPlotItem Get(int n)
         {
-            return (ScatterPlotItem) Vertices[n];
+            return (ScatterPlotItem)Vertices[n];
         }
 
         /// <summary>
@@ -76,19 +75,30 @@ namespace VisualChart3D
         public List<Mesh3D> GetMeshes()
         {
             int nDotNo = GetDataNo();
-            if (nDotNo == 0) return null;
+
+            if (nDotNo == 0)
+            {
+                return null;
+            }
+
             List<Mesh3D> meshs = new List<Mesh3D>();
 
             int nVertIndex = 0;
+
             for (int i = 0; i < nDotNo; i++)
             {
                 ScatterPlotItem plotItem = Get(i);
+
                 if (plotItem == null)
+                {
                     continue;
+                }
+
                 double w = plotItem.W;
                 double h = plotItem.H;
                 Mesh3D dot;
                 Vertices[i].NMinI = nVertIndex;
+
                 switch (plotItem.ShapeType)
                 {
                     case Shapes.Bar3D:
@@ -109,6 +119,7 @@ namespace VisualChart3D
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
                 nVertIndex += dot.VertexNo;
                 Vertices[i].NMaxI = nVertIndex - 1;
 
@@ -116,6 +127,7 @@ namespace VisualChart3D
                 dot.SetColor(plotItem.Color);
                 meshs.Add(dot);
             }
+
             AddAxesMeshes(meshs);
 
             return meshs;
@@ -130,25 +142,31 @@ namespace VisualChart3D
         public override int[] Select(ViewportRect rect, TransformMatrix matrix, Viewport3D viewport3D)
         {
             int nDotNo = GetDataNo();
-            if (nDotNo == 0) return null;
+            if (nDotNo == 0)
+            {
+                return null;
+            }
 
             double xMin = rect.XMin;
             double xMax = rect.XMax;
             double yMin = rect.YMin;
             double yMax = rect.YMax;
-			List<int> result = new List<int>();
+            List<int> result = new List<int>();
 
             for (int i = 0; i < nDotNo; i++)
             {
                 ScatterPlotItem plotItem = Get(i);
                 if (plotItem == null)
+                {
                     continue;
+                }
+
                 Point pt = matrix.VertexToViewportPt(new Point3D(plotItem.X, plotItem.Y, plotItem.Z),
                     viewport3D);
 
                 if ((pt.X > xMin) && (pt.X < xMax) && (pt.Y > yMin) && (pt.Y < yMax))
                 {
-					result.Add(i);
+                    result.Add(i);
                     Vertices[i].Selected = true;
                 }
                 else
@@ -156,7 +174,8 @@ namespace VisualChart3D
                     Vertices[i].Selected = false;
                 }
             }
-	        return result.ToArray();
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -167,24 +186,30 @@ namespace VisualChart3D
         public override void HighlightSelection(MeshGeometry3D meshGeometry, Color selectColor)
         {
             int nDotNo = GetDataNo();
-            if (nDotNo == 0) return;
+            if (nDotNo == 0)
+            {
+                return;
+            }
 
             for (int i = 0; i < nDotNo; i++)
             {
                 if (Vertices[i] == null)
+                {
                     continue;
+                }
+
                 Point mapPt = TextureMapping.GetMappingPosition
-                    (Vertices[i].Selected 
-                    ? selectColor 
+                    (Vertices[i].Selected
+                    ? selectColor
                     : Vertices[i].Color, false);
                 int nMin = Vertices[i].NMinI;
                 int nMax = Vertices[i].NMaxI;
+
                 for (int j = nMin; j <= nMax; j++)
                 {
                     meshGeometry.TextureCoordinates[j] = mapPt;
                 }
             }
         }
-
     }
 }

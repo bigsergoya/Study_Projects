@@ -24,6 +24,6 @@ namespace VisualChart3D
         /// <summary>
         /// Вершина 2
         /// </summary>
-        public int N2 { get; private set; } 
+        public int N2 { get; private set; }
     }
 }
