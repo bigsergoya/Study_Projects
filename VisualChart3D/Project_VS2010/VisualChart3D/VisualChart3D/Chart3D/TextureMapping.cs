@@ -116,6 +116,7 @@ namespace VisualChart3D
                 double b = ((double)color.B) / 255;
 
                 double k;
+
                 if ((b >= g) && (b > r))
                 {
                     k = 0.25 * g;
@@ -132,6 +133,7 @@ namespace VisualChart3D
                 {
                     k = 0.75 + 0.25 * (1 - g);
                 }
+
                 int nI = (int)(k * 4095);
                 if (nI < 0) nI = 0;
                 if (nI > 4095) nI = 4095;
@@ -141,6 +143,7 @@ namespace VisualChart3D
 
                 double x1 = nX;
                 double y1 = nY;
+
                 return new Point(x1 / 64, y1 / 64);
             }
             else
@@ -154,6 +157,7 @@ namespace VisualChart3D
 
                 double x1 = nX;
                 double y1 = nY;
+
                 return new Point(x1 / 63, y1 / 63);
             }
         }
@@ -165,6 +169,7 @@ namespace VisualChart3D
 
             double g, b;
             double r;
+
             if (k < 0.25)
             {
                 r = 0;

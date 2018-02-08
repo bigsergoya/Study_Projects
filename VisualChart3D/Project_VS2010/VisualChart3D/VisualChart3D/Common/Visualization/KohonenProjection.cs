@@ -14,11 +14,13 @@ namespace VisualChart3D.Common.Visualization
     [Serializable]
     public class KohonenProjection
     {
+        const string BadInputMessage = "Ошибка исходных данных в методе Sammons Mapping";
+
         #region Fields
         private int _maxIteration;
-        private double _lambda = 1;     // Start value
-        private int[] _indicesI;
-        private int[] _indicesJ;
+        private double _lambda = 1;     // 1 - Start value
+        private int[] _indexesI;
+        private int[] _indexesJ;
 
         /// <summary>
         /// The precalculated distance-matrix.
@@ -98,7 +100,7 @@ namespace VisualChart3D.Common.Visualization
         {
             if (inputData == null || inputData.Length == 0)
             {
-                throw new ArgumentNullException("Ошибка исходных данных в методе Sammons Mapping");
+                throw new ArgumentNullException(BadInputMessage);
             }
 
             //-----------------------------------------------------------------
@@ -110,10 +112,10 @@ namespace VisualChart3D.Common.Visualization
             // Initialize the projection:
             Initialize();
 
-            // Create the indices-arrays:
-            _indicesI = Enumerable.Range(0, this.Count).ToArray();
-            _indicesJ = new int[this.Count];
-            _indicesI.CopyTo(_indicesJ, 0);
+            // Create the index-arrays:
+            _indexesI = Enumerable.Range(0, this.Count).ToArray();
+            _indexesJ = new int[this.Count];
+            _indexesI.CopyTo(_indexesJ, 0);
         }
         #endregion
 
@@ -135,30 +137,33 @@ namespace VisualChart3D.Common.Visualization
         /// </summary>
         public void Iterate()
         {
-            int[] indicesI = _indicesI;
-            int[] indicesJ = _indicesJ;
+            int[] indexI = _indexesI;
+            int[] indexJ = _indexesJ;
             double[][] distanceMatrix = _distanceMatrix;
             double[][] projection = this.Projection;
 
             // Shuffle the indices-array for random pick of the points:
-            indicesI.FisherYatesShuffle();
-            indicesJ.FisherYatesShuffle();
+            indexI.FisherYatesShuffle();
+            indexJ.FisherYatesShuffle();
 
-            for (int i = 0; i < indicesI.Length; i++)
+            for (int i = 0; i < indexI.Length; i++)
             {
-                double[] distancesI = distanceMatrix[indicesI[i]];
-                double[] projectionI = projection[indicesI[i]];
+                //Столбец матрицы расстояний для индекса[i]
+                double[] distancesI = distanceMatrix[indexI[i]];
 
-                for (int j = 0; j < indicesJ.Length; j++)
+                //Строка - проекция для индекса[i]
+                double[] projectionI = projection[indexI[i]];
+
+                for (int j = 0; j < indexJ.Length; j++)
                 {
-                    if (indicesI[i] == indicesJ[j])
+                    if (indexI[i] == indexJ[j])
                     {
                         continue;
                     }
 
-                    double[] projectionJ = projection[indicesJ[j]];
+                    double[] projectionJ = projection[indexJ[j]];
 
-                    double dij = distancesI[indicesJ[j]];
+                    double dij = distancesI[indexJ[j]];
                     double Dij = Utils.ManhattenDistance(
                             projectionI,
                             projectionJ);
@@ -166,8 +171,8 @@ namespace VisualChart3D.Common.Visualization
                     // Avoid division by zero:
                     if (Dij == 0)
                     {
-                        //Dij = 1e-10;
-                        Dij = Double.MinValue;
+                        Dij = 1e-10;
+                        //Dij = Double.MinValue;
                     }
 
 
@@ -199,6 +204,7 @@ namespace VisualChart3D.Common.Visualization
             Random rnd = new Random();
             double[][] projection = new double[this.Count][];
             this.Projection = projection;
+
             for (int i = 0; i < projection.Length; i++)
             {
                 double[] projectionI = new double[this.OutputDimension];
@@ -210,40 +216,6 @@ namespace VisualChart3D.Common.Visualization
                 }
             }
         }
-
-        /*
-		/// <summary>
-		/// Calculates the distance matrix.
-		/// </summary>
-		private double[][] CalculateDistanceMatrix()
-		{
-            //return this.InputData;
-            double[][] distanceMatrix = new double[this.Count][];
-			double[][] inputData = this.InputData;
-
-			for (int i=0;i<distanceMatrix.Length;i++)
-			{
-				double[] distances = new double[this.Count];
-				distanceMatrix[i] = distances;
-
-				double[] inputI = inputData[i];
-
-				for (int j = 0; j < distances.Length; j++)
-				{
-					if (j == i)
-					{
-						distances[j] = 0;
-						continue;
-					}
-
-					distances[j] = Utils.ManhattenDistance(
-						inputI,
-						inputData[j]);
-				}
-			}
-            
-            return distanceMatrix;
-		}*/
 
         /// <summary>
         /// Reducing lambda depending on iterations.

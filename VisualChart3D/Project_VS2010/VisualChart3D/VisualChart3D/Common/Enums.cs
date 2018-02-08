@@ -19,10 +19,19 @@
     /// <summary>
     /// Типы исходной матрицы
     /// </summary>
-    public enum SourceFileMatrix
+    public enum SourceFileMatrixType
     {
         MatrixDistance,
         ObjectAttribute
+    };
+
+    /// <summary>
+    /// Тип файла с матрицей данных
+    /// </summary>
+    public enum InputFileType
+    {
+        Text,
+        CSV
     };
 
     /// <summary>

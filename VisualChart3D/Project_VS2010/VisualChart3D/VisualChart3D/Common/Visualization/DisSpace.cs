@@ -6,75 +6,85 @@ namespace VisualChart3D.Common.Visualization
 {
     public class DisSpace
     {
-        private int firstBasisObject;
-        private int secondBasisObject;
-        private int thirdBasisObject;
-        private bool basicObjectsColorMode;
+        private const int DefaultFirstObjectID = 1;
+        private const int DefaultSecondObjectID = 2;
+        private const int DefaultThirdObjectID = 3;
+        private const int ObjectsCount = 3;
 
-        private Space space = Space.TwoDimensional;
-        private double[,] coords;
+        private int _firstBasisObject;
+        private int _secondBasisObject;
+        private int _thirdBasisObject;
+        private bool _basicObjectsColorMode;
+        private double[,] _arraySource;
+        private int _countOfObjects;
 
-        public int FirstBasisObject { get => firstBasisObject; set => firstBasisObject = value; }
-        public int SecondBasisObject { get => secondBasisObject; set => secondBasisObject = value; }
-        public int ThirdBasisObject { get => thirdBasisObject; set => thirdBasisObject = value; }
-        public Space Space { get => space; set => space = value; }
-        public bool BasicObjectsColorMode { get => basicObjectsColorMode; set => basicObjectsColorMode = value; }
+        private Space _space = Space.TwoDimensional;
+        private double[,] _coords;
 
-        public DisSpace()
+        public int FirstBasisObject { get => _firstBasisObject; set => _firstBasisObject = value; }
+        public int SecondBasisObject { get => _secondBasisObject; set => _secondBasisObject = value; }
+        public int ThirdBasisObject { get => _thirdBasisObject; set => _thirdBasisObject = value; }
+        public Space Space { get => _space; set => _space = value; }
+        public bool BasicObjectsColorMode { get => _basicObjectsColorMode; set => _basicObjectsColorMode = value; }
+        public double[,] ArraySource { get => _arraySource; }
+
+        public DisSpace(double[,] arraySource, int countOfObjects)
         {
-            firstBasisObject = 1;
-            secondBasisObject = 2;
-            thirdBasisObject = 3;
-            coords = null;
-            basicObjectsColorMode = false;
+            _firstBasisObject = DefaultFirstObjectID;
+            _secondBasisObject = DefaultSecondObjectID;
+            _thirdBasisObject = DefaultThirdObjectID;
+            _coords = null;
+            _basicObjectsColorMode = false;
+            _arraySource = arraySource;
+            _countOfObjects = countOfObjects;
         }
 
         public int[] getBasicObjectsArray()
         {
-            int[] arr = new int[3];
-            arr[0] = firstBasisObject;
-            arr[1] = secondBasisObject;
-            arr[2] = thirdBasisObject;
+            int[] arr = new int[ObjectsCount];
+            arr[0] = _firstBasisObject;
+            arr[1] = _secondBasisObject;
+            arr[2] = _thirdBasisObject;
             return arr;
 
         }
 
         //public int getBasicObjectsNumber() { return (int)Char.GetNumericValue(space[0]); }
-        public int getBasicObjectsNumber() { return (int)space; }
+        public int getBasicObjectsNumber() { return (int)_space; }
 
         public DisSpace setBasicObjects(int firstObject, int secondObject, int thirdObject)
         {
-            firstBasisObject = firstObject;
-            secondBasisObject = secondObject;
-            thirdBasisObject = thirdObject;
+            _firstBasisObject = firstObject;
+            _secondBasisObject = secondObject;
+            _thirdBasisObject = thirdObject;
             return this;
         }
 
-        public double[,] GetCoords(Engine SetFile)
+        public double[,] ToProject()
         {
-            if (space.Equals(Space.TwoDimensional))
+            if (_space.Equals(Space.TwoDimensional))
             {
-                coords = new double[2, SetFile.CountObjects];
+                _coords = new double[2, _countOfObjects];
 
-                for (int j = 0; j < SetFile.CountObjects; j++)
+                for (int j = 0; j < _countOfObjects; j++)
                 {
-                    coords[0, j] = SetFile.ArraySource[firstBasisObject - 1, j];
-                    coords[1, j] = SetFile.ArraySource[secondBasisObject - 1, j];
+                    _coords[0, j] = _arraySource[_firstBasisObject - 1, j];
+                    _coords[1, j] = _arraySource[_secondBasisObject - 1, j];
                 }
             }
             else
             {
-                coords = new double[3, SetFile.CountObjects];
+                _coords = new double[3, _countOfObjects];
 
-                for (int j = 0; j < SetFile.CountObjects; j++)
+                for (int j = 0; j < _countOfObjects; j++)
                 {
-                    coords[0, j] = SetFile.ArraySource[firstBasisObject - 1, j];
-                    coords[1, j] = SetFile.ArraySource[secondBasisObject - 1, j];
-                    coords[2, j] = SetFile.ArraySource[thirdBasisObject - 1, j];
+                    _coords[0, j] = _arraySource[_firstBasisObject - 1, j];
+                    _coords[1, j] = _arraySource[_secondBasisObject - 1, j];
+                    _coords[2, j] = _arraySource[_thirdBasisObject - 1, j];
                 }
             }
 
-            return coords;
+            return _coords;
         }
     }
 }

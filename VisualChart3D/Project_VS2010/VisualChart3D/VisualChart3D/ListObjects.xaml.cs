@@ -159,8 +159,8 @@ namespace VisualChart3D
                 {
                     _namesOfObjects.Add(settFiles.NamesObjects[i]);
                     _namesOfClasses.Add(settFiles.ClassesName[i]);
-                    ListBoxObjects.Items.Add(string.Format("Объект №{0}\tИмя: {1}\tКласс: {2}", i, settFiles.NamesObjects[i],
-                        settFiles.ClassesName[i]));
+                    ListBoxObjects.Items.Add(string.Format("Объект №{0}\tКласс: {1}\tИмя: {2}", i, settFiles.ClassesName[i],
+                        settFiles.NamesObjects[i]));
                     //даже если у нас есть имена объектов по текущей логике всеравно можно загрузить посредством айди
                 }
             }
@@ -286,7 +286,6 @@ namespace VisualChart3D
                 return;
             }
 
-
             if ((ListBoxObjects.SelectedIndex != -1) && ((string)ListBoxObjects.Items[ListBoxObjects.SelectedIndex] != String.Empty) && (_isInformationLoaded))
             {
                 displayObjectCoords(ListBoxObjects.SelectedIndex);
@@ -299,6 +298,7 @@ namespace VisualChart3D
                     {
                         Picture.Source = Add_Picture_On_Screen(Get_Picture_Adress(Pictures, _numberOfObjects[ListBoxObjects.SelectedIndex]));
                     }
+
                     //нужен рефакторинг массивов и флаговой структуры, все устарело.
                     if (_isPicturesByName)
                     {
@@ -315,7 +315,6 @@ namespace VisualChart3D
                         Picture.Source = Add_Picture_On_Screen(result);
                         return;
                     }
-
 
                     String substring = String.Empty;
                     int k;

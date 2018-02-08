@@ -123,6 +123,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\DataReader\IDataReader.cs" />
+    <Compile Include="Common\DataReader\SCVDataReader.cs" />
+    <Compile Include="Common\DataReader\StandartDataReader.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Visualization\IVisualizer.cs" />
     <Compile Include="Common\Visualization\SammonsProjection.cs" />
@@ -142,6 +145,12 @@
     </Compile>
     <Compile Include="Common\WriteTextToFile.cs" />
     <Compile Include="Common\ExtensionsMethods.cs" />
+    <Compile Include="InputDataWindows\SCVInputWindow.xaml.cs">
+      <DependentUpon>SCVInputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InputDataWindows\StandartInputWindow.xaml.cs">
+      <DependentUpon>StandartInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings\AloneSettClass.cs" />
     <Compile Include="Settings\ClassVisualisationSettings.cs" />
     <Compile Include="Common\Visualization\FastMap.cs" />
@@ -187,6 +196,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControlls\AnimationControll.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputDataWindows\SCVInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InputDataWindows\StandartInputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

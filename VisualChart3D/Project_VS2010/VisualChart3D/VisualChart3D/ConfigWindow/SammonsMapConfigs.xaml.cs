@@ -1,5 +1,6 @@
 ﻿using InteractiveDataDisplay.WPF;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using VisualChart3D.Common.Visualization;
@@ -12,7 +13,20 @@ namespace VisualChart3D.ConfigWindow
     /// </summary>
     public partial class SammonsMapConfigs : Window
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private ISammon _sammonProjection;
+        private double _maxHeight;
+
+        /*public double PlotHeight {
+            get {
+                return _maxHeight;
+            }
+            set {
+                _maxHeight = value;
+                OnPropertyChanged("PlotHeight");
+            }
+        }*/
 
         public ISammon SamProjection {
             get {
@@ -29,10 +43,9 @@ namespace VisualChart3D.ConfigWindow
         {
             InitializeComponent();
 
-            ddCriteria.ValueChanged += ddAll_ValueChanged;
-            ddLowerBound.ValueChanged += ddAll_ValueChanged;
+            idIterationNumber.ValueChanged += ddAll_ValueChanged;
             ddUpperBound.ValueChanged += ddAll_ValueChanged;
-            ddStep.ValueChanged += ddAll_ValueChanged;
+            //ddStep.ValueChanged += ddAll_ValueChanged;
 
             SamProjection = sammonProjection;
             RepaintChart();
@@ -57,10 +70,8 @@ namespace VisualChart3D.ConfigWindow
 
         private void SetValues()
         {
-            ddCriteria.Value = SamProjection.Criteria;
-            ddLowerBound.Value = SamProjection.MinStep;
-            ddUpperBound.Value = SamProjection.MaxStep;
-            ddStep.Value = SamProjection.IterationStep;
+            ddUpperBound.Value = SamProjection.IterationStep;
+            idIterationNumber.Value = SamProjection.IterationNumber;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
@@ -74,44 +85,29 @@ namespace VisualChart3D.ConfigWindow
 
             for (int i = 0; i < SamProjection.CalculatedCriteria.Count; i++)
             {
-                labels[i] = i;
+                labels[i] = i+1;
             }
-
-            circles.PlotColorSize(labels, SamProjection.CalculatedCriteria.ToArray(), 1d, 1d);
-
+            
+            circles.PlotColorSize(labels, SamProjection.CalculatedCriteria.ToArray(), 10d, 10d);
         }
 
         private void Recalculate()
         {
-            SamProjection.Criteria = (double)ddCriteria.Value;
-            SamProjection.MinStep = (double)ddLowerBound.Value;
-            SamProjection.MaxStep = (double)ddUpperBound.Value;
-            SamProjection.IterationStep = (double)ddStep.Value;
+            SamProjection.IterationStep = (double)ddUpperBound.Value;
+            SamProjection.IterationNumber = (int)idIterationNumber.Value;
 
             SamProjection.ToProject();
         }
 
         private void ddAll_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (SamProjection.Criteria != ddCriteria.Value)
+            if (SamProjection.IterationStep != ddUpperBound.Value)
             {
                 SwitchButtons();
                 return;
             }
 
-            if (SamProjection.MinStep != ddLowerBound.Value)
-            {
-                SwitchButtons();
-                return;
-            }
-
-            if (SamProjection.MaxStep != ddUpperBound.Value)
-            {
-                SwitchButtons();
-                return;
-            }
-
-            if (SamProjection.IterationStep != ddStep.Value)
+            if (SamProjection.IterationNumber != idIterationNumber.Value)
             {
                 SwitchButtons();
                 return;

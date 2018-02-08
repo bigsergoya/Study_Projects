@@ -30,6 +30,7 @@ namespace VisualChart3D
         private const string FileNotFoundErrorMessage = "Файл \"{0}\" не найден";
         private const string CreatingFileErrorMessage = "Не удалось создать файл {0}";
         private const string NotInitializedDataErrorMessage = "Не заданы исходные данные!";
+        private const string CannotLogDataMessage = "Внимание. Не удалось создать лог-файл {0}.";
 
         /// <summary>
         /// Расширение для файла настроек класса
@@ -156,7 +157,9 @@ namespace VisualChart3D
 
         private void DissimilitarySpaceGeneration(DisSpace DissimiliaritySpace, bool firstGeneration = false)
         {
-            _projectionCoords = DissimiliaritySpace.GetCoords(_settFilesCurrent);
+            _projectionCoords = Utils.GetNormalizedDataForDIZZZSPASSSEEEEEEE(DissimiliaritySpace.ToProject());
+
+            //_projectionCoords = DissimiliaritySpace.ToProject();
             int countCords = _projectionCoords.Length / DissimiliaritySpace.getBasicObjectsNumber();
             _coordCurrent = new Vertex3D[countCords];
 
@@ -261,7 +264,7 @@ namespace VisualChart3D
 
         private void SaveResultsAsFile(int countCords)
         {
-            string fileName = _settFilesCurrent.SourceMatrixFile + ".3D";
+            string fileName = _settFilesCurrent.UniversalReader.SourceMatrixFile + ".3D";
             try
             {
                 using (WriteTextToFile file = new WriteTextToFile(fileName))
@@ -308,10 +311,14 @@ namespace VisualChart3D
         private void FastMapGeneration(bool firstGeneration = false)
         {
             int countCords = 0;
-            FastMap fastMap = _settFilesCurrent.SourceMatrix == SourceFileMatrix.MatrixDistance
-                ? new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics)
-                : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.MinkovskiDegree), _settFilesCurrent.Metrics);
-            _projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
+            FastMap fastMap = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance
+                ? new FastMap(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.Metrics)
+                : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree), _settFilesCurrent.Metrics);
+
+            //_projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
+
+            _projectionCoords = Utils.GetNormalizedData(fastMap.GetCoordinates(fastMap.CountOfProjection));
+
             countCords = _projectionCoords.Length / fastMap.CountOfProjection;
 
             _coordCurrent = new Vertex3D[countCords];
@@ -331,39 +338,7 @@ namespace VisualChart3D
             else
             {
                 _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
-                SaveResultsAsFile(countCords);
-                /*string fileName = _settFilesCurrent.SourceMatrixFile + ".3D";
-                try
-                {
-                    using (WriteTextToFile file = new WriteTextToFile(fileName))
-                    {
-                        for (int i = 0; i < countCords; i++)
-                        {
-                            file.WriteLineFormat("{0}\t{1}\t{2}\t{3}", _settFilesCurrent.ClassesName[i], _currentCoords[i, 0],
-                                _currentCoords[i, 1], _currentCoords[i, 2]);
-                            _coordCurrent[i] = new Vertex3D
-                            {
-                                X = _currentCoords[i, 0],
-                                Y = _currentCoords[i, 1],
-                                Z = _currentCoords[i, 2]
-                            };
-                        }
-                    }
-                }
-                catch
-                {
-                    //В ФУНКЦИИЮ! Повторяющийся код
-                    Utils.ShowWarningMessage(String.Format(CreatingFileErrorMessage, fileName));
-                    for (int i = 0; i < countCords; i++)
-                    {
-                        _coordCurrent[i] = new Vertex3D
-                        {
-                            X = _currentCoords[i, 0],
-                            Y = _currentCoords[i, 1],
-                            Z = _currentCoords[i, 2]
-                        };
-                    }
-                }*/
+                SaveResultsAsFile(countCords);               
             }
         }
 
@@ -372,8 +347,10 @@ namespace VisualChart3D
         /// </summary>
         private void SizeDetection()
         {
-            double nDataRange = _coordCurrent.Max(d => d.X);
-            _settingsClasses.SizeObject = nDataRange / 100;
+            const double OptimalSize = 0.1;
+            _settingsClasses.SizeObject = OptimalSize;
+            //double nDataRange = _coordCurrent.Max(d => d.X);
+            //_settingsClasses.SizeObject = nDataRange / 100;
         }
 
         private void canvasOn3D_MouseMove(object sender, MouseEventArgs e)
@@ -382,6 +359,11 @@ namespace VisualChart3D
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                if (_3DChartCurrent == null)
+                {
+                    return;
+                }
+
                 if (Math.Abs(_selectRect.XMax - _selectRect.XMin) > 0.01)
                 {
                     _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
@@ -458,12 +440,18 @@ namespace VisualChart3D
                 MeshGeometry3D meshGeometry = Model3D.GetGeometry(MainViewport, _nChartModelIndex);
                 _3DChartCurrent.HighlightSelection(meshGeometry, Color.FromRgb(200, 200, 200));
             }
+
             _transformMatrix.OnWheel(e);
             TransformChart();
         }
 
         private void canvasOn3D_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (_settFilesCurrent == null)
+            {
+                return;
+            }
+
             if ((e.ClickCount == 2) && (_settFilesCurrent.AlgorithmType != AlgorithmType.DisSpace))
             {
                 if (_typePlot == TypePlot.Main && _selectedIndex.Length > 0)
@@ -475,8 +463,8 @@ namespace VisualChart3D
                     _sizeMain = _settingsClasses.SizeObject;
 
                     SettingsFilesSubsidiary settTemp = new SettingsFilesSubsidiary(_settFilesCurrent, _selectedIndex);
-
                     _settFilesCurrent = settTemp;
+
                     switch (_settFilesCurrent.AlgorithmType)
                     {
                         case AlgorithmType.FastMap:
@@ -510,6 +498,7 @@ namespace VisualChart3D
             {
                 _transformMatrix.OnLBtnDown(pt);
             }
+
             else if (e.ChangedButton == MouseButton.Right)
             {
                 _selectRect.OnMouseDown(pt, MainViewport, _nRectModelIndex);
@@ -582,13 +571,19 @@ namespace VisualChart3D
                     System.Xml.Serialization.XmlSerializer writer =
                         new System.Xml.Serialization.XmlSerializer(typeof(ClassVisualisationSettings));
                     var path = _settFilesCurrent.ClassObjectFile + ExtColorSchema;
-                    FileStream file = File.Create(path);
-                    writer.Serialize(file, _settingsClasses);
-                    file.Close();
+                    try
+                    {
+                        FileStream file = File.Create(path);
+                        writer.Serialize(file, _settingsClasses);
+                        file.Close();
+                    }
+                    catch
+                    {                        
+                        Utils.ShowWarningMessage(string.Format(CannotLogDataMessage, path));
+                    }
                 }
                 DrawScatterPlot();
             }
-
         }
 
         private void MnOpen_Click(object sender, RoutedEventArgs e)
@@ -629,25 +624,35 @@ namespace VisualChart3D
                         break;
 
                     case AlgorithmType.DisSpace:
-                        _dissimiliaritySpace = new DisSpace();
+                        _dissimiliaritySpace = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                            ? new DisSpace(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects) 
+                            : new DisSpace(
+                                CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree),
+                                _settFilesCurrent.CountObjects);
+
                         DissimilitarySpaceGeneration(_dissimiliaritySpace, true);
                         break;
 
                     case AlgorithmType.KohonenMap:
-                        const int StartCountOfIterations = 10;
+                        const int Iterations = 10;
 
-                        _kohonenProjection = new KohonenProjection(
-                            Utils.GetAnotherStyleOfData(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.MinkovskiDegree)),
-                            LowerSpaceDimensional,
-                            StartCountOfIterations);
+                        _kohonenProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                            ? new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional, Iterations) 
+                            : new KohonenProjection(Utils.GetAnotherStyleOfData(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree)),
+                            LowerSpaceDimensional, Iterations);
+
                         KohonenMapGeneration(_kohonenProjection, true);
                         break;
 
                     case AlgorithmType.SammonsMap:
-                        _sammonsProjection = new SammonsProjection(LowerSpaceDimensional,
-                            CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.MinkovskiDegree));
-                        _sammonsProjection.ToProject();
 
+                        _sammonsProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                            ? new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.UniversalReader.ArraySource) 
+                            : new SammonsProjection(LowerSpaceDimensional,
+                            CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree));
+
+
+                        _sammonsProjection.ToProject();
                         SammonsMapGeneration(_sammonsProjection, true);
                         break;
 
@@ -690,7 +695,7 @@ namespace VisualChart3D
                     _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
                     SizeDetection();
                 }
-                Title = "Visual Chart 3D " + System.IO.Path.GetFileName(_settFilesCurrent.SourceMatrixFile);
+                Title = "Visual Chart 3D " + System.IO.Path.GetFileName(_settFilesCurrent.UniversalReader.SourceMatrixFile);
                 DrawScatterPlot();
             }
             else
