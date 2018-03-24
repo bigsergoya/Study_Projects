@@ -334,14 +334,14 @@ namespace VisualChart3D.ConfigWindow
         {
             //обратно отправлять флажок с режимом центровки и с списком описания центровых объектов
             List<string> referedObjectsSavedInfo; //SettFile.SourceMatrixFile
-            referedObjectsSavedInfo = GetDataFromReferenceLogFile(settFile.SourceMatrixFile);
+            referedObjectsSavedInfo = GetDataFromReferenceLogFile(settFile.UniversalReader.SourceMatrixFile);
 
             if (referedObjectsSavedInfo == null)
             {
-                ReferencedObjects refObjects = new ReferencedObjects(settFile.ArraySource, settFile.numberOfObjectsOfClass);
+                ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
                 referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
                 lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
-                WriteDataToReferenceLog(settFile.SourceMatrixFile, referedObjectsSavedInfo);
+                WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
                 btRefreshReferenceObjects.IsEnabled = true;
             }
             else
@@ -400,11 +400,10 @@ namespace VisualChart3D.ConfigWindow
 
         private void btRefreshReferenceObjects_Click(object sender, RoutedEventArgs e)
         {
-            List<string> referedObjectsSavedInfo;
-            ReferencedObjects refObjects = new ReferencedObjects(settFile.ArraySource, settFile.numberOfObjectsOfClass);
-            referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
+            ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
+            List<string>  referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
             lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
-            WriteDataToReferenceLog(settFile.SourceMatrixFile, referedObjectsSavedInfo);
+            WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
         }
     }
 }

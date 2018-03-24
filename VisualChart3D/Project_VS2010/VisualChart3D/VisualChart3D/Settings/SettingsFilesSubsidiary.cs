@@ -50,9 +50,9 @@ namespace VisualChart3D
         private double[,] GetSourceMatrix()
         {
             double[,] result;
-            switch (SourceMatrix)
+            switch (UniversalReader.SourceMatrixType)
             {
-                case SourceFileMatrix.MatrixDistance:
+                case SourceFileMatrixType.MatrixDistance:
                     result = new double[CountObjects, CountObjects];
 
                     for (int i = 0; i < CountObjects; i++)
@@ -65,22 +65,22 @@ namespace VisualChart3D
                             }
                             else
                             {
-                                result[i, j] = base.ArraySource[_selectedIdx[i], _selectedIdx[j]];
+                                result[i, j] = UniversalReader.ArraySource[_selectedIdx[i], _selectedIdx[j]];
                             }
                         }
                     }
 
                     break;
 
-                case SourceFileMatrix.ObjectAttribute:
-                    int countColumn = base.ArraySource.Length / base.CountObjects;
+                case SourceFileMatrixType.ObjectAttribute:
+                    int countColumn = UniversalReader.ArraySource.Length / base.CountObjects;
                     result = new double[CountObjects, countColumn];
 
                     for (int i = 0; i < CountObjects; i++)
                     {
                         for (int j = 0; j < countColumn; j++)
                         {
-                            result[i, j] = base.ArraySource[_selectedIdx[i], j];
+                            result[i, j] = UniversalReader.ArraySource[_selectedIdx[i], j];
                         }
                     }
 
@@ -90,14 +90,14 @@ namespace VisualChart3D
                     throw new ArgumentOutOfRangeException();
             }
 
-            string fileName = this.SourceMatrixFile + SavingMatrixFileFormat;
+            string fileName = UniversalReader.SourceMatrixFile + SavingMatrixFileFormat;
             try
             {
                 using (WriteTextToFile file = new WriteTextToFile(fileName))
                 {
-                    switch (SourceMatrix)
+                    switch (UniversalReader.SourceMatrixType)
                     {
-                        case SourceFileMatrix.MatrixDistance:
+                        case SourceFileMatrixType.MatrixDistance:
                             for (int i = 0; i < CountObjects; i++)
                             {
 
@@ -111,8 +111,8 @@ namespace VisualChart3D
                             }
                             break;
 
-                        case SourceFileMatrix.ObjectAttribute:
-                            int countColumn = base.ArraySource.Length / base.CountObjects;
+                        case SourceFileMatrixType.ObjectAttribute:
+                            int countColumn = UniversalReader.ArraySource.Length / base.CountObjects;
                             for (int i = 0; i < CountObjects; i++)
                             {
                                 StringBuilder str = new StringBuilder(countColumn * 5);
@@ -153,7 +153,7 @@ namespace VisualChart3D
         /// <summary>
         ///  Получить массив с исходной матрицей
         /// </summary>
-        public override double[,] ArraySource {
+        public double[,] ArraySource {
             get {
                 //Заменить функцией, принимающей тип object и чекающей его на нулл. Или мб есть стандартные яз. конструкции. 
                 if (_arraySource != null)
@@ -178,7 +178,7 @@ namespace VisualChart3D
 
                 _classesName =
                     new List<string>(base.ClassesName).Where((s, i) => _selectedIdx.Any(i1 => i == i1)).ToList();
-                string fileName = this.SourceMatrixFile + ".partClass";
+                string fileName = UniversalReader.SourceMatrixFile + ".partClass";
 
                 try
                 {

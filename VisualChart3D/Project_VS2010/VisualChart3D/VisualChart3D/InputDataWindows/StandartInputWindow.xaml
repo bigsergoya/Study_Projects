@@ -1,0 +1,52 @@
+﻿<Window x:Class="VisualChart3D.InputDataWindows.StandartInputWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Настройка входных данных" Height="300" Width="300" ResizeMode="NoResize">
+    <Grid>
+        <Grid Margin="10,10,10,193">
+            <Grid.RowDefinitions>
+                <RowDefinition MaxHeight="100"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+
+            <GroupBox x:Name="gbMatrixType" Header="Тип матрицы" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="172" Height="59" Grid.ColumnSpan="2">
+                <StackPanel>
+                    <RadioButton Content="Матрица расстояний" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbDistanceMatrix" VerticalAlignment="Top" TabIndex="0" IsChecked="true" Checked="rbDistanceMatrix_Checked" />
+                    <RadioButton Content="Матрица объект-признак" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix" VerticalAlignment="Top" TabIndex="1" />
+                </StackPanel>
+            </GroupBox>
+            
+            <Button Content="Выбрать файл" FontSize="9" Name="btChooseFile" Margin="59,15,10,15" Grid.Column="1" Click="btChooseFile_Click" TabIndex="2"/>
+        </Grid>
+
+        <Grid Margin="10,77,10,54">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition MaxHeight="100"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+            
+            <TextBox x:Name="tbDataMatrixPath" Grid.Row="0" Grid.Column="0" Text=""  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
+            <Label Content="Порядок расстояния Минковского: " Margin="0,0,71,0" Grid.Row="1" />
+            <toolkit:IntegerUpDown x:Name="tbMinkovskiDegree" HorizontalAlignment="Left" Margin="206,5,0,0" Grid.Row="1" Text="1" Width="56" Height="21" VerticalAlignment="Top" Minimum="1" Maximum="100" Value="2" TabIndex="3" IsEnabled="false"/>
+
+            <Button Content="Сохранить" Grid.Row="3" HorizontalAlignment="Left" Width="98" Name="btSave" Click="btSave_Click" Margin="5,5,5,5"/>
+            <Button Content="Отмена" Grid.Row="3" HorizontalAlignment="Right" Width="98" Name="btCancel" Click="btCancel_Click" Margin="5,5,5,5"/>
+        </Grid>
+    </Grid>
+</Window>

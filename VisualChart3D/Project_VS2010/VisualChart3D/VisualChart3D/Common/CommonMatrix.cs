@@ -33,6 +33,7 @@ namespace VisualChart3D.Common
             for (int i = 0; i < sourceData.Length; i++)
             {
                 string[] values = sourceData[i].Replace(',', '.').Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
                 for (int j = 0; j < values.Length; j++)
                 {
                     result[i, j] = double.Parse(values[j], cult);
@@ -69,6 +70,7 @@ namespace VisualChart3D.Common
                     result[i, j] = double.Parse(values[j], cult);
                 }
             }
+
             return result;
         }
 
@@ -124,6 +126,7 @@ namespace VisualChart3D.Common
             {
                 string[] values = sourceData[i].Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 result[i, 0] = values[0];
+
                 if (values.Length == 2)
                 {
                     result[i, 1] = values[1];
@@ -132,43 +135,6 @@ namespace VisualChart3D.Common
 
             return result;
         }
-
-        /*/// <summary>
-        /// Преобразование матрицы признаков в матрицу расстояний
-        /// </summary>
-        /// <param name="matr">матрица признаков</param>
-        /// <param name="countRow">количество строк в матрице признаков</param>
-        /// <returns>матрица расстояний</returns>
-        public static double[,] ObjectAttributeToDistance(double[,] matr, int countRow)
-        {
-            int countColumn = matr.Length / countRow;
-            double[,] result = new double[countRow, countRow];
-
-            for (int i = 0; i < countRow; i++)
-            {
-                for (int j = 0; j < countRow; j++)
-                {
-                    if (i == j)
-                    {
-                        result[i, j] = 0;
-                    }
-                    else
-                    {
-                        double temp = 0;
-
-                        for (int k = 0; k < countColumn; k++)
-                        {
-                            temp += Math.Pow(matr[i, k] - matr[j, k], 2);
-                        }
-
-                        temp = Math.Sqrt(temp);
-                        result[i, j] = result[j, i] = temp;
-                    }
-                }
-            }
-            return result;
-        }
-        */
 
         /// <summary>
         /// Преобразование матрицы признаков в матрицу расстояний
@@ -211,6 +177,5 @@ namespace VisualChart3D.Common
 
             return result;
         }
-
     }
 }

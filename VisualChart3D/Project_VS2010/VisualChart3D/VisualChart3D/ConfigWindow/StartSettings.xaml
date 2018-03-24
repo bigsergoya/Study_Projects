@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
         x:Class="VisualChart3D.ConfigWindow.StartSettings"
-        Title="Настройка исходных данных" Height="600" Width="1000" MinWidth="450" MinHeight="370" Icon="/Resources/VC3D.ico" WindowStartupLocation="CenterOwner" Closing="Window_Closing">
+        Title="Настройка исходных данных" Height="600" Width="1000" MinWidth="450" MinHeight="370" Icon="/Resources/VC3D.ico" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,0,32">
         <Grid Margin="10,10,10,-36" Height="Auto" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -20,7 +20,7 @@
             </Grid.ColumnDefinitions>
 
 
-            <RadioButton x:Name="rbMatrixDistance" GroupName="SourceFiles" Content="Матрица расстояний" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="rbMatrixDistance_Checked" Unchecked="rbMatrixDistance_Unchecked" Margin="5,6,0,0" />
+            <!--<RadioButton x:Name="rbMatrixDistance" GroupName="SourceFiles" Content="Матрица расстояний" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="rbMatrixDistance_Checked" Unchecked="rbMatrixDistance_Unchecked" Margin="5,6,0,0" />
             <TextBox x:Name="tbMatrixDistancePath" Grid.Row="0" Grid.Column="1" Text=""  HorizontalAlignment="Left"  Margin="0,30,0,0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
             <Button x:Name="btMatrixDistanceBrowse" Grid.Row="0" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="75" Click="btMatrixDistanceBrowse_Click" DataContext="{Binding}" />
 
@@ -30,23 +30,36 @@
             <TextBox x:Name="tbObjectAttributePath" Grid.Row="1" Grid.Column="1" Text=""  HorizontalAlignment="Left" Margin="0,30,0,0"  VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
             <Button x:Name="btObjectAttributeBrowse" Grid.Row="1" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"  VerticalAlignment="Top" Width="75" Click="btObjectAttributeBrowse_Click"/>
 
+            -->
+
+            <GroupBox x:Name="gbInputFileType" Grid.Row="0" Grid.Column="0" Header="Тип входного файла" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" >
+                <StackPanel>
+                    <RadioButton Content="Стандартный файл" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbStandartInput" VerticalAlignment="Top" IsChecked="true" />
+                    <RadioButton Content="CSV-файл" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbCSVInput" VerticalAlignment="Top" />
+                </StackPanel>
+            </GroupBox>
+            <Button Margin="186,0,0,0" VerticalAlignment="Center" Height="40" Content="Выбрать" Name="btDataFileBrowse" Click="btDataFileBrowse_Click"/>
+            <TextBox x:Name="tbDataFilePath" Grid.Row="0" Grid.Column="1" Text=""  HorizontalAlignment="Left" Margin="5,0,0,0"  VerticalAlignment="Center" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
+            <TextBox x:Name="tbDataFileType" Grid.Row="0" Grid.Column="1" Text=""  HorizontalAlignment="Left" Margin="5,0,0,0"  VerticalAlignment="Bottom"  HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Background="LightGray"/>
+
             <CheckBox x:Name="cbClassObject" Grid.Row="2" Grid.Column="0" Content="Файл с классами объектов" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbClassObject_Checked" Unchecked="cbClassObject_Unchecked"/>
             <RadioButton x:Name="rbClassObjectOneToOne" Margin="10,15,0,0" GroupName="ClassObjects"  Grid.Row="2" Grid.Column="0" Content="Один-к-одному" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="rbClassObject_Checked" ToolTip="Дается список объектов, где каждый объект именован классом, к которому принадлежит" />
-            <RadioButton x:Name="rbClassObjectCountObj" Margin="10,30,0,48" GroupName="ClassObjects"  Grid.Row="2" Content="Число объектов класса" HorizontalAlignment="Left" Checked="rbClassObject_Checked" Unchecked="rbClassObjectCountObj_Unchecked" ToolTip="Дается список с числом объектов каждого класса по порядку" />
+            <RadioButton x:Name="rbClassObjectCountObj" Margin="10,30,0,83" GroupName="ClassObjects"  Grid.Row="2" Content="Число объектов класса" HorizontalAlignment="Left" Checked="rbClassObject_Checked" Unchecked="rbClassObjectCountObj_Unchecked" ToolTip="Дается список с числом объектов каждого класса по порядку" />
             <RadioButton x:Name="rbClassObjectStartObjects" Margin="10,45,0,0" GroupName="ClassObjects"  Grid.Row="2" Grid.Column="0" Content="Начало класса" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="rbClassObject_Checked" Unchecked="rbClassObjectStartObjects_Unchecked" ToolTip="Дается список стартовых номеров объектов классов по порядку" />
 
 
             <TextBox x:Name="tbClassObjectPath" Grid.Row="2" Grid.Column="1" Text=""  HorizontalAlignment="Left" Margin="81,1,0,0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" Width="360" IsReadOnly="True" />
-            <Button x:Name="btClassObjectBrowse" Grid.Row="2" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="btClassObjectBrowse_Click" DataContextChanged="btClassObjectBrowse_DataContextChanged"/>
+            <Button x:Name="btClassObjectBrowse" Grid.Row="2" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="btClassObjectBrowse_Click" IsEnabled="False"/>
 
+            <!-- NOT VISIBLE!!!!!!!!!!!!!!!!!!!!! -->
             <CheckBox x:Name="cbClassEqual" Grid.Row="3" Grid.Column="0" 
-                      Content="Число объектов в классе" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbClassEqual_Checked" Unchecked="cbClassEqual_Unchecked" IsEnabled="False" />
-            <TextBox x:Name="tbcbClassEqual" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"   VerticalAlignment="Top" Width="75" IsEnabled="False" />
+                      Content="Число объектов в классе" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbClassEqual_Checked" Unchecked="cbClassEqual_Unchecked" IsEnabled="False" Visibility="Hidden"/>
+            <TextBox x:Name="tbcbClassEqual" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"   VerticalAlignment="Top" Width="75" IsEnabled="False" Visibility="Hidden"/>
+            <!-- NOT VISIBLE!!!!!!!!!!!!!!!!!!!!! -->
 
-
-            <CheckBox x:Name="cbNamesObject" Grid.Row="4" Grid.Column="0" Content="Файл с именами объектов" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbNamesObject_Checked" Unchecked="cbNamesObject_Unchecked" />
+            <CheckBox x:Name="cbNamesObject" Grid.Row="4" Grid.Column="0" Content="Файл с именами объектов" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbNamesObject_Checked" Unchecked="cbNamesObject_Unchecked" IsEnabled="false" />
             <TextBox x:Name="tbNamesObjectPath" Grid.Row="4" Grid.Column="1" Text=""  HorizontalAlignment="Left"  Margin="84,0,0,0" VerticalAlignment="Top" IsReadOnly="True" />
-            <Button x:Name="btNamesObjectBrowse" Grid.Row="4" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"   VerticalAlignment="Top" Width="75" Click="btNamesObjectBrowse_Click" Visibility="Visible" Margin="0,1,0,0" />
+            <Button x:Name="btNamesObjectBrowse" Grid.Row="4" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"   VerticalAlignment="Bottom" Width="75" Click="btNamesObjectBrowse_Click" Visibility="Visible" Margin="0,0,0,97" IsEnabled="false"/>
 
             <!--<RadioButton x:Name="rbMetricEuclidean" Margin="173,21,0,0" GroupName="Metric"  Grid.Row="5" Content="Евклидова метрика" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
             <RadioButton x:Name="rbMetricNonEuclidean" Margin="173,36,0,0" GroupName="Metric"  Grid.Row="5" Content="Неевклидова метрика" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2" />

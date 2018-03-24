@@ -49,6 +49,7 @@ namespace VisualChart3D
             set {
                 SizeObjectStr = value.ToString();
                 string error = ValidadionTextField("Размер объектов", 0, 1000, SizeObjectStr, out value);
+
                 if (!String.IsNullOrEmpty(error))
                 {
                     throw new ArgumentOutOfRangeException("value", error);
