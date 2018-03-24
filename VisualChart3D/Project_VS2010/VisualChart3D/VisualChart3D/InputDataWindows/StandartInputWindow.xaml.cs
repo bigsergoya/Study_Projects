@@ -24,20 +24,20 @@ namespace VisualChart3D.InputDataWindows
 
             if (reader == null)
             {
-                _reader = InitializeReader(WindowFileType);
+                _reader = InitializeReader();
             }
             else
-            {
-                _reader = reader;
+            {                
+                _reader = reader.InputFileType == WindowFileType? reader : InitializeReader(); 
             }
 
             CheckVisibility(_reader.SourceMatrixType, _reader.SourceMatrixFile);
             FillValues();
         }
 
-        private IUniversalReader InitializeReader(InputFileType windowFileType)
+        private IUniversalReader InitializeReader()
         {
-            IUniversalReader reader = new StandartDataReader(windowFileType);
+            IUniversalReader reader = new StandartDataReader(WindowFileType);
             return reader;
         }
 

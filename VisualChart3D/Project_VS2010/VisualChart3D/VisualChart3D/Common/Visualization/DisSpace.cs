@@ -17,7 +17,7 @@ namespace VisualChart3D.Common.Visualization
         private bool _basicObjectsColorMode;
         private double[,] _arraySource;
         private int _countOfObjects;
-
+        private ITimer _timer;
         private Space _space = Space.TwoDimensional;
         private double[,] _coords;
 
@@ -30,6 +30,7 @@ namespace VisualChart3D.Common.Visualization
 
         public DisSpace(double[,] arraySource, int countOfObjects)
         {
+            _timer = new CustomTimer();
             _firstBasisObject = DefaultFirstObjectID;
             _secondBasisObject = DefaultSecondObjectID;
             _thirdBasisObject = DefaultThirdObjectID;
@@ -62,6 +63,8 @@ namespace VisualChart3D.Common.Visualization
 
         public double[,] ToProject()
         {
+            _timer.Start();
+
             if (_space.Equals(Space.TwoDimensional))
             {
                 _coords = new double[2, _countOfObjects];
@@ -84,6 +87,7 @@ namespace VisualChart3D.Common.Visualization
                 }
             }
 
+            _timer.Stop();
             return _coords;
         }
     }

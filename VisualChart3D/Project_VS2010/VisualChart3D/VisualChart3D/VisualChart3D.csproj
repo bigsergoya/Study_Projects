@@ -123,6 +123,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\CustomTimer.cs" />
+    <Compile Include="Common\DataReader\FastSCVDataReader.cs" />
     <Compile Include="Common\DataReader\IDataReader.cs" />
     <Compile Include="Common\DataReader\SCVDataReader.cs" />
     <Compile Include="Common\DataReader\StandartDataReader.cs" />

@@ -25,20 +25,15 @@ namespace VisualChart3D.ConfigWindow
         private const string PictureDirLogFileWarningMessage = "Не удалось создать лог-файл для сохранения выбранного путя к директории с изображениями.";
         private const string NotImplementedMessage = "Some algorithm has not been implemented";
         private const string BadInputFileType = "Ошибка чтения выбранного типа файла";
+        private const string ClassObjectsInfoFormat = "Имя класса - {0}; Количество: {1}.";
 
-        private int[] numberOfObjectsOfClass;
-
-        /// <summary>
-        /// Получить настроку исходных данных
-        /// </summary>
-        //public System.Collections.Generic.List<string> uniqueClassesNames;
-        public Engine SettFiles { get; private set; }
+        private int[] _numberOfObjectsOfClass;
 
         /// <summary>
         /// Успешность принятия настройки
         /// </summary>
         /// 
-		public bool ResultDialog = false;
+        private bool _resultDialog = false;
 
         /// <summary>
         /// Конструктор
@@ -480,44 +475,47 @@ namespace VisualChart3D.ConfigWindow
                     //SettFiles.UniqClassesName.AddRange(temp.UniqClassesName.ToArray());
                     //getNumberOfObjectsOfClass(temp);
                     lbUniqueClasses.IsEnabled = true;
-                    numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
+                    _numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
 
                     int k = 0;
                     foreach (string className in SettFiles.UniqClassesName)
                     {
-                        lbUniqueClasses.Items.Add("Имя класса - " + className + " ; Количество: " + numberOfObjectsOfClass[k]);
+                        lbUniqueClasses.Items.Add("Имя класса - " + className + " ; Количество: " + _numberOfObjectsOfClass[k]);
                         k++;
                     }
                 }
             }
         }
+
         private int[] getNumberOfObjectsOfClass(Engine temp)
         {
             int countOfClasses = temp.UniqClassesName.Count; //переделать лейблы в эдиты
             switch (temp.ClassObjectType)
             {
                 case ClassInfoType.OneToOne:
-                    numberOfObjectsOfClass = temp.GetClassPositionsOnOneToOneMode(temp.UniqClassesName); // получаем длинну каждого класса 
+                    _numberOfObjectsOfClass = temp.GetClassPositionsOnOneToOneMode(temp.UniqClassesName); // получаем длинну каждого класса 
                     break;
 
                 case ClassInfoType.CountObj:
-                    numberOfObjectsOfClass = new int[countOfClasses];
+                    _numberOfObjectsOfClass = new int[countOfClasses];
 
                     //uniqueClassesNames
                     for (int i = 0; i < countOfClasses; i++)
                     {
-                        numberOfObjectsOfClass[i] = Int32.Parse(temp.ArrayClassesCountObj[i, 0]);
+                        _numberOfObjectsOfClass[i] = Int32.Parse(temp.ArrayClassesCountObj[i, 0]);
                     }
 
                     break;
 
                 case ClassInfoType.StartObjects:
-                    numberOfObjectsOfClass = new int[countOfClasses];
+                    _numberOfObjectsOfClass = new int[countOfClasses];
 
+                    //костылище. Будет убран как будет переписан интефрейс. 
+                    var x = SettFiles.ClassesName;
                     //uniqueClassesNames
                     for (int i = 1; i < countOfClasses + 1; i++)
                     {
-                        numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.Class_Start_Position[i]) - Int32.Parse(temp.Class_Start_Position[i - 1]);
+                        _numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.Class_Start_Position[i]) - Int32.Parse(temp.Class_Start_Position[i - 1]);
                     }
 
                     break;
@@ -526,45 +524,35 @@ namespace VisualChart3D.ConfigWindow
                     throw new ArgumentOutOfRangeException(DisplayingClassListErrorMessage);
             }
 
-            return numberOfObjectsOfClass;
+            return _numberOfObjectsOfClass;
         }
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //ИСПРАВИТЬ ИЛИ ПЕРЕДЕЛАТЬ СИТУАЦИЮ С ДИСС СПЕЙС
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /*private void rbMatrixDistance_Checked(object sender, RoutedEventArgs e)
+        private void ClearPreviousClassObjectsSetings()
         {
-            tbMatrixDistancePath.IsEnabled = true;
-            btMatrixDistanceBrowse.IsEnabled = true;
-            tbMinkovskiDegree.IsEnabled = false;
-        }*/
+            SettFiles.ClassesName = null;
+            SettFiles.NamesObjects = null;
 
-        /*private void rbMatrixDistance_Unchecked(object sender, RoutedEventArgs e)
+            ClearPreviousSelection();
+
+            if(SettFiles.UniversalReader == null)
+            {
+                return;
+            }
+
+            if (SettFiles.UniversalReader.InputFileType == InputFileType.CSV)
+            {
+                SwitchEnabledClass(true);
+                SwitchEnabledObject(true);
+            }
+        }
+
+        private void ClearPreviousSelection()
         {
-            tbMatrixDistancePath.Text = String.Empty;
-            tbMatrixDistancePath.IsEnabled = false;
-            btMatrixDistanceBrowse.IsEnabled = false;
-            tbMinkovskiDegree.IsEnabled = true;
-        }*/
-
-        /*private void rbObjectAttribute_Checked(object sender, RoutedEventArgs e)
-        {
-            tbObjectAttributePath.IsEnabled = true;
-            btObjectAttributeBrowse.IsEnabled = true;
-
-            cbDisSpaceMod.IsEnabled = false;
-            cbDisSpaceMod.IsChecked = false;
-        }*/
-
-
-        /*private void rbObjectAttribute_Unchecked(object sender, RoutedEventArgs e)
-        {
-            tbObjectAttributePath.Text = String.Empty;
-            tbObjectAttributePath.IsEnabled = false;
-
-            btObjectAttributeBrowse.IsEnabled = false;
-            cbDisSpaceMod.IsEnabled = true;
-        }*/
+            cbClassObject.IsChecked = false;
+            cbNamesObject.IsChecked = false;
+            //cbClassObject_Unchecked(cbClassObject, new RoutedEventArgs());
+            //cbNamesObject_Unchecked(cbNamesObject, new RoutedEventArgs());
+        }
 
         private void cbClassObject_Checked(object sender, RoutedEventArgs e)
         {
@@ -662,104 +650,6 @@ namespace VisualChart3D.ConfigWindow
             }
         }
 
-        /*private void btMatrixDistanceBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFile(tbMatrixDistancePath, false);
-
-            //if (tbMatrixDistancePath.Text != "")
-            if (!String.IsNullOrEmpty(tbMatrixDistancePath.Text))
-            {
-                cbNamesPictures.IsEnabled = true;
-                cbClassObject.IsChecked = false;
-                rbClassObjectOneToOne.IsChecked = false;
-                rbClassObjectCountObj.IsChecked = false;
-                rbClassObjectStartObjects.IsChecked = false;
-                tbClassObjectPath.Text = String.Empty;
-                lbUniqueClasses.Items.Clear();
-
-                string[] logData = GetDataFromPictureLogFile(tbMatrixDistancePath.Text.ToString());
-                if (logData != null)
-                {
-                    cbNamesPictures.IsEnabled = true;
-                    cbNamesPictures.IsChecked = true;
-                    tbPictureDirectoryPath.Text = logData[0];
-
-                    switch (logData[1])
-                    {
-                        case "PicturesById":
-                            rbPicturesById.IsChecked = true;
-                            break;
-
-                        case "PicturesByObjectsName":
-                            rbPicturesByObjectsName.IsChecked = true;
-                            break;
-
-                        case "PicturesByClassName":
-                            rbPicturesByClassName.IsChecked = true;
-                            break;
-
-                        default:
-                            throw new ApplicationException();
-                    }
-                }
-                else
-                {
-                    cbNamesPictures.IsChecked = false;
-                    tbPictureDirectoryPath.Text = String.Empty;
-                    rbPicturesById.IsChecked = false;
-                    rbPicturesByObjectsName.IsChecked = false;
-                    rbPicturesByClassName.IsChecked = false;
-                }
-            }
-        }*/
-
-        /*private void btObjectAttributeBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFile(tbObjectAttributePath, false);
-
-            if (!String.IsNullOrEmpty(tbObjectAttributePath.Text))
-            {
-                cbNamesPictures.IsEnabled = true;
-                cbClassObject.IsChecked = false;
-                rbClassObjectOneToOne.IsChecked = false;
-                rbClassObjectCountObj.IsChecked = false;
-                rbClassObjectStartObjects.IsChecked = false;
-                tbClassObjectPath.Text = String.Empty;
-                lbUniqueClasses.Items.Clear();
-
-                string[] logData = GetDataFromPictureLogFile(tbObjectAttributePath.Text.ToString());
-                if (logData != null)
-                {
-                    cbNamesPictures.IsEnabled = true;
-                    cbNamesPictures.IsChecked = true;
-                    tbPictureDirectoryPath.Text = logData[0];
-                    switch (logData[1])
-                    {
-                        case "PicturesById":
-                            rbPicturesById.IsChecked = true;
-                            break;
-                        case "PicturesByObjectsName":
-                            rbPicturesByObjectsName.IsChecked = true;
-                            break;
-                        case "PicturesByClassName":
-                            rbPicturesByClassName.IsChecked = true;
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    cbNamesPictures.IsChecked = false;
-                    tbPictureDirectoryPath.Text = String.Empty;
-                    rbPicturesById.IsChecked = false;
-                    rbPicturesByObjectsName.IsChecked = false;
-                    rbPicturesByClassName.IsChecked = false;
-                }
-            }
-        }*/
-
         private void btClassObjectBrowse_Click(object sender, RoutedEventArgs e)
         {
             OpenFile(tbClassObjectPath, true);
@@ -795,14 +685,14 @@ namespace VisualChart3D.ConfigWindow
 
             if ((bool)cbClassObject.IsChecked)
             {
-                numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
-                temp.numberOfObjectsOfClass = new int[numberOfObjectsOfClass.Length];
-                Array.Copy(numberOfObjectsOfClass, temp.numberOfObjectsOfClass, numberOfObjectsOfClass.Length);
+                _numberOfObjectsOfClass = getNumberOfObjectsOfClass(temp);
+                temp.numberOfObjectsOfClass = new int[_numberOfObjectsOfClass.Length];
+                Array.Copy(_numberOfObjectsOfClass, temp.numberOfObjectsOfClass, _numberOfObjectsOfClass.Length);
             }
             else if (!String.IsNullOrEmpty(temp.UniversalReader.ClassNameColumn))
             {
-                temp.numberOfObjectsOfClass = new int[numberOfObjectsOfClass.Length];
-                Array.Copy(numberOfObjectsOfClass, temp.numberOfObjectsOfClass, numberOfObjectsOfClass.Length);
+                temp.numberOfObjectsOfClass = new int[_numberOfObjectsOfClass.Length];
+                Array.Copy(_numberOfObjectsOfClass, temp.numberOfObjectsOfClass, _numberOfObjectsOfClass.Length);
 
                 temp.ClassObjectSelected = true;
                 temp.ClassObjectFile = SettFiles.UniversalReader.SourceMatrixFile ;
@@ -1097,41 +987,13 @@ namespace VisualChart3D.ConfigWindow
                         return;
                     }
 
-                    /*
-                string[] logData = GetDataFromPictureLogFile(tbObjectAttributePath.Text.ToString());
-                if (logData != null)
-                {
-                    cbNamesPictures.IsEnabled = true;
-                    cbNamesPictures.IsChecked = true;
-                    tbPictureDirectoryPath.Text = logData[0];
-                    switch (logData[1])
-                    {
-                        case "PicturesById":
-                            rbPicturesById.IsChecked = true;
-                            break;
-                        case "PicturesByObjectsName":
-                            rbPicturesByObjectsName.IsChecked = true;
-                            break;
-                        case "PicturesByClassName":
-                            rbPicturesByClassName.IsChecked = true;
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    cbNamesPictures.IsChecked = false;
-                    tbPictureDirectoryPath.Text = String.Empty;
-                    rbPicturesById.IsChecked = false;
-                    rbPicturesByObjectsName.IsChecked = false;
-                    rbPicturesByClassName.IsChecked = false;
-                }*/
-
                     SettFiles.UniversalReader = dataInputStandartWindow.Reader;
-                    SwitchEnabledClass(true);
-                    SwitchEnabledObject(true);
+
+                    ClearPreviousClassObjectsSetings();
+
+                    //SwitchEnabledClass(true);
+                    //SwitchEnabledObject(true);
+
                     break;
 
                 case InputFileType.CSV:
@@ -1146,45 +1008,36 @@ namespace VisualChart3D.ConfigWindow
                     lbUniqueClasses.Items.Clear();
                     SettFiles.UniversalReader = dataInputCSVWindow.Reader;
 
+                    ClearPreviousClassObjectsSetings();
+
                     //SwitchCheckedClassCSV(true);
 
                     //Разделить на отруб функционала с классами и имен объектов отдельно.
                     //SwitchEnabledObjectAndClassIU(false);
 
-                    if (!String.IsNullOrEmpty(SettFiles.UniversalReader.ClassNameColumn))
+                    if (IsClassesInitialized(SettFiles.UniversalReader))
                     {
                         var uniqueClassesNames = SettFiles.GetUniqClass();
                         SettFiles.UniqClassesName = uniqueClassesNames;
-                        numberOfObjectsOfClass = SettFiles.GetClassPositionsOnOneToOneMode(uniqueClassesNames);
-                        //SettFiles.UniqClassesName = null;
+                        _numberOfObjectsOfClass = SettFiles.GetClassPositionsOnOneToOneMode(uniqueClassesNames);
 
                         int k = 0;
                         foreach (string className in uniqueClassesNames)
                         {
-                            lbUniqueClasses.Items.Add("Имя класса - " + className + " ; Количество: " + numberOfObjectsOfClass[k]);
+                            lbUniqueClasses.Items.Add(String.Format(ClassObjectsInfoFormat, className, _numberOfObjectsOfClass[k]));
                             k++;
                         }
 
                     }
 
-                    if (!String.IsNullOrEmpty(SettFiles.UniversalReader.ObjectNameColumn))
+                    if (IsObjectsInitialized(SettFiles.UniversalReader))
                     {
                         SettFiles.NamesObjectSelected = true;
                         SwitchEnabledObject(false);
                     }
 
                     SwitchEnabledClass(String.IsNullOrEmpty(SettFiles.UniversalReader.ClassNameColumn));
-                    
 
-                    /*if (SettFiles.UniversalReader.ObjectNameColumn != null)
-                    {
-                        SwitchEnabledObject(false);
-                    }
-                    else
-                    {
-                        SwitchEnabledObject(true);
-                    }*/
-                    //SettFiles.UniversalReader = dataInputCSVWindow.Reader;
                     break;
 
                 default:
@@ -1205,6 +1058,16 @@ namespace VisualChart3D.ConfigWindow
 
             //Открыть вкладки. Проверить, все ли значения уйдут по нужным полям. 
             //Опосля перейти к механизму парсинга и сделать заглушку для сиэсви.
+        }
+
+        private bool IsObjectsInitialized(Common.DataReader.IUniversalReader reader)
+        {
+            return !String.IsNullOrEmpty(SettFiles.UniversalReader.ObjectNameColumn);
+        }
+
+        private bool IsClassesInitialized(Common.DataReader.IUniversalReader reader)
+        {
+            return !String.IsNullOrEmpty(SettFiles.UniversalReader.ClassNameColumn);
         }
 
         private void GetDataFromPictureLogger()
@@ -1273,5 +1136,9 @@ namespace VisualChart3D.ConfigWindow
             throw new ArgumentException(BadInputFileType);
 
         }
+
+        public Engine SettFiles { get; private set; }
+        public bool ResultDialog { get => _resultDialog; set => _resultDialog = value; }
+
     }
 }

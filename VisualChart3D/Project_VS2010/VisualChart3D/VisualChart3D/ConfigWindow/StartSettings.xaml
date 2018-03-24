@@ -34,7 +34,7 @@
 
             <GroupBox x:Name="gbInputFileType" Grid.Row="0" Grid.Column="0" Header="Тип входного файла" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Center" >
                 <StackPanel>
-                    <RadioButton Content="Стандартный файл" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbStandartInput" VerticalAlignment="Top" IsChecked="true"/>
+                    <RadioButton Content="Стандартный файл" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbStandartInput" VerticalAlignment="Top" IsChecked="true" />
                     <RadioButton Content="CSV-файл" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbCSVInput" VerticalAlignment="Top" />
                 </StackPanel>
             </GroupBox>

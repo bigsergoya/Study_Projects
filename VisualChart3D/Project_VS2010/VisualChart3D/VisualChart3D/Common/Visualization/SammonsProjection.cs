@@ -16,12 +16,13 @@ namespace VisualChart3D.Common.Visualization
         private const double _startStep = 1000.0;
         private const double _minStep = 1e-10;
         private const double _e = 1e-10;
+        private ITimer _timer;
 
         //private double _e = 5.0;
         //private double _minStep = 0.001;
         private int _iterationNumber = 10;
-        
-        private  double _iterationStep = 2.0;
+
+        private double _iterationStep = 2.0;
 
         private int _dimensions;
         private int _countOfObjects;
@@ -33,14 +34,15 @@ namespace VisualChart3D.Common.Visualization
 
         public SammonsProjection(int dimensions, double[,] distMatrix)
         {
-            _calculatedCriteria = new List<Double>();
-            _distMatrix = distMatrix;
-            _dimensions = dimensions;
-
-            if (_dimensions < 1)
+            if (dimensions < 1)
             {
                 throw new ArgumentException("Некорректное значение числа размерностей");
             }
+
+            _calculatedCriteria = new List<Double>();
+            _distMatrix = distMatrix;
+            _dimensions = dimensions;
+            _timer = new CustomTimer();
         }
 
         private double evaluateCriteria(double[,] dm, double[,] distmatrix, double sum2dist)
@@ -128,6 +130,7 @@ namespace VisualChart3D.Common.Visualization
 
         public void ToProject()
         {
+            _timer.Start();
             _countOfObjects = _distMatrix.GetLength(0);
             _calculatedCriteria.Clear();
 
@@ -136,6 +139,7 @@ namespace VisualChart3D.Common.Visualization
             try
             {
                 double[,] dm = new double[_countOfObjects, _dimensions];
+                double sum2dist = 0;
 
                 for (int i = 0; i < _dimensions; i++)
                 {
@@ -145,7 +149,6 @@ namespace VisualChart3D.Common.Visualization
                     }
                 }
 
-                double sum2dist = 0;
                 for (int i = 0; i < _countOfObjects; i++)
                 {
                     for (int j = i + 1; j < _countOfObjects; j++)
@@ -161,7 +164,7 @@ namespace VisualChart3D.Common.Visualization
                 int iteration = 1;
                 double step = _startStep;
 
-                while ((counter < _countOfObjects) && (criteria > _e)&&(IterationNumber > iteration))
+                while ((counter < _countOfObjects) && (criteria > _e) && (IterationNumber > iteration))
                 //while (criteria > _e)
                 //for (; criteria > _e; (i < N) && (criteria > _e))
                 {
@@ -185,7 +188,7 @@ namespace VisualChart3D.Common.Visualization
                         }
 
                         CorrectProjection(dm, counter, _dimensions, step, gradient);
-                        step /= _iterationStep;                        
+                        step /= _iterationStep;
                     }
 
                     //iteration = 0;
@@ -193,6 +196,7 @@ namespace VisualChart3D.Common.Visualization
                     counter++;
                 }
 
+                _timer.Stop();
                 _projection = dm;
             }
             catch (Exception ex)

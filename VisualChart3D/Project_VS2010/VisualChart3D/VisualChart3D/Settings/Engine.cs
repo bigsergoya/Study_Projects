@@ -185,6 +185,10 @@ namespace VisualChart3D
 
                 return _classesName;
             }
+
+            set {
+                _classesName = value;
+            }
         }
 
         /// <summary>

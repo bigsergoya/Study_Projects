@@ -14,11 +14,6 @@ namespace VisualChart3D.Common.DataReader
         SourceFileMatrixType SourceMatrixType { get; }
 
         /// <summary>
-        /// Получить или задать путь к файлу с исходной матрицей
-        /// </summary>
-        string SourceMatrixFile { get; }
-
-        /// <summary>
         /// Степень Минковского для преобразования объект-признак в мат. расстояний.
         /// Инициализировать двойкой
         /// </summary>
@@ -26,13 +21,21 @@ namespace VisualChart3D.Common.DataReader
 
         /// <summary>
         /// Массив данных, поступаюший на вход методов визуализации.
-        /// </summary>
-        double[,] ArraySource { get; }
+        /// </summary>        
 
         bool CheckSourceMatrix(string SourceMatrixFile, SourceFileMatrixType SourceMatrixType);
+
+        InputFileType InputFileType { get; set; }
+
+        double[,] ArraySource { get; }
+
+        /// <summary>
+        /// Получить или задать путь к файлу с исходной матрицей
+        /// </summary>
+        string SourceMatrixFile { get; }
     }
 
-    public interface ICSVReader
+    public interface ICSVReader: IDataReader
     {
         string ClassNameColumn { get; set; }
 
@@ -43,6 +46,8 @@ namespace VisualChart3D.Common.DataReader
         string[] ObjectNameColumnData { get; }
 
         List<string> FirstLine { get; }
+
+        List<string> IgnoredColumns { get; set; }
     }
 
     /// <summary>
@@ -50,6 +55,6 @@ namespace VisualChart3D.Common.DataReader
     /// </summary>
     public interface IUniversalReader: IDataReader, ICSVReader
     {
-        InputFileType InputFileType { get; set; } 
+        //InputFileType InputFileType { get; set; } 
     }
 }

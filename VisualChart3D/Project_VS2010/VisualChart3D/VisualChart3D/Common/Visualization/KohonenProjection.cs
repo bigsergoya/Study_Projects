@@ -14,13 +14,14 @@ namespace VisualChart3D.Common.Visualization
     [Serializable]
     public class KohonenProjection
     {
-        const string BadInputMessage = "Ошибка исходных данных в методе Sammons Mapping";
+        const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
 
         #region Fields
         private int _maxIteration;
         private double _lambda = 1;     // 1 - Start value
         private int[] _indexesI;
         private int[] _indexesJ;
+        private ITimer _timer;
 
         /// <summary>
         /// The precalculated distance-matrix.
@@ -103,12 +104,12 @@ namespace VisualChart3D.Common.Visualization
                 throw new ArgumentNullException(BadInputMessage);
             }
 
-            //-----------------------------------------------------------------
+            _timer = new CustomTimer();
+
             _distanceMatrix = inputData;
-            //this.InputData = inputData;
             this.OutputDimension = outputDimension;
             _maxIteration = maxIteration;
-            //_matrixType = matrixType;
+
             // Initialize the projection:
             Initialize();
 
@@ -125,10 +126,14 @@ namespace VisualChart3D.Common.Visualization
         /// </summary>
         public void CreateMapping()
         {
+            _timer.Start();
+
             for (int i = _maxIteration; i >= 0; i--)
             {
                 this.Iterate();
             }
+
+            _timer.Stop();
         }
 
         //---------------------------------------------------------------------
@@ -175,13 +180,11 @@ namespace VisualChart3D.Common.Visualization
                         //Dij = Double.MinValue;
                     }
 
-
                     double delta = _lambda * (dij - Dij) / Dij;
 
                     for (int k = 0; k < projectionJ.Length; k++)
                     {
-                        double correction =
-                            delta * (projectionI[k] - projectionJ[k]);
+                        double correction = delta * (projectionI[k] - projectionJ[k]);
 
                         projectionI[k] += correction;
                         projectionJ[k] -= correction;

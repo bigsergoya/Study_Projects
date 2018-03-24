@@ -12,11 +12,13 @@ namespace VisualChart3D.Common.DataReader
     {
         private const int Compensation = 1;
         private const int FirstNumericLine = 1;
+        private const int ColumnLine = 0;
 
         private InputFileType _windowFileType;
         private List<string> _firstColumn;
         private List<List<string>> _fileData;
-        private List<int> _nonReadingColumn;
+        private List<string> _dataColumn;
+        private List<string> _ignoredColumns;
         private string _sourceMatrixFile;
 
         //Я это сделал потому, что все - тлен :(
@@ -33,7 +35,8 @@ namespace VisualChart3D.Common.DataReader
         {
             this._windowFileType = windowFileType;
             _firstColumn = new List<string>();
-            _nonReadingColumn = new List<int>();
+            _dataColumn = new List<string>();
+            _ignoredColumns = new List<string>();
             _needRecalculate = false;
             _minkovskiDegree = 2;
         }
@@ -54,7 +57,7 @@ namespace VisualChart3D.Common.DataReader
                 {
                     for (int j = 0; j < _firstColumn.Count; j++)
                     {
-                        if (_nonReadingColumn.Contains(j))
+                        if (_dataColumn.Contains(_fileData[ColumnLine][j]) || _ignoredColumns.Contains(_fileData[ColumnLine][j]))
                         {
                             continue;
                         }
@@ -81,7 +84,7 @@ namespace VisualChart3D.Common.DataReader
         private void CalculateCountOfDeletedColumns(out int n, out int m)
         {
             n = _fileData.Count - Compensation;
-            m = _firstColumn.Count - _nonReadingColumn.Count;
+            m = _firstColumn.Count - _dataColumn.Count;
             //m = _firstColumn.Count - Convert.ToInt32(IsNull(_classNameColumn)) - Convert.ToInt32(IsNull(_objectNameColumn));
         }
 
@@ -102,7 +105,6 @@ namespace VisualChart3D.Common.DataReader
         /// <returns>столбец данных</returns>
         private string[] GetColumn(string classColumn)
         {
-
             int count = (_fileData.Count);
             string[] data = new string[count - Compensation];
             int column = _firstColumn.FindIndex(p => p == classColumn);
@@ -112,7 +114,7 @@ namespace VisualChart3D.Common.DataReader
                 data[i - Compensation] = _fileData[i][column];
             }
 
-            _nonReadingColumn.Add(column);
+            _dataColumn.Add(classColumn);
             return data;
         }
 
@@ -166,7 +168,7 @@ namespace VisualChart3D.Common.DataReader
                 {
                     RecalculateArraySource();
                     _needRecalculate = false;
-                    _nonReadingColumn.Clear();
+                    _dataColumn.Clear();
                 }
 
                 return _arraySource;
@@ -187,10 +189,10 @@ namespace VisualChart3D.Common.DataReader
 
         private bool ReadFile(string SourceMatrixFile, SourceFileMatrixType SourceMatrixType)
         {
-            /*if (string.IsNullOrEmpty(SourceMatrixFile) || !File.Exists(SourceMatrixFile))
+            if (string.IsNullOrEmpty(SourceMatrixFile) || !File.Exists(SourceMatrixFile))
             {
                 return false;
-            }*/
+            }
 
             _fileData = new List<List<string>>();
 
@@ -218,7 +220,27 @@ namespace VisualChart3D.Common.DataReader
             _inputMatrixType = SourceMatrixType;
             _sourceMatrixFile = SourceMatrixFile;
             _needRecalculate = true;
+
             return true;
+        }
+
+        public List<string> IgnoredColumns {
+            get {
+                if (_ignoredColumns != null)
+                {
+                    return _ignoredColumns;
+                    //return FirstLine.Where(p => _dataColumn.Contains(FirstLine.IndexOf(p))).ToList();
+                }
+
+                return new List<string>();
+            }
+            set {
+                if (value.Count > 0)
+                {
+                    _needRecalculate = true;
+                    _ignoredColumns = value;
+                }
+            }
         }
     }
 }

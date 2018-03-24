@@ -19,10 +19,10 @@ namespace VisualChart3D.Common.DataReader
             _minkovskyDegree = 2;
         }
 
-        public string ClassNameColumn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ClassNameColumn { get => null; set => throw new NotImplementedException(); }
         public string ObjectNameColumn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string[] ClassNameColumnData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string[] ObjectNameColumnData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string[] ObjectNameColumnData { get => null; set => throw new NotImplementedException(); }
 
         public SourceFileMatrixType SourceMatrixType { get => _sourceMatrixType; private set => _sourceMatrixType = value; }
         public string SourceMatrixFile { get => _sourceMatrixFile; private set => _sourceMatrixFile = value; }
@@ -32,6 +32,8 @@ namespace VisualChart3D.Common.DataReader
         public InputFileType InputFileType { get => _inputFileType; set => _inputFileType = value; }
 
         public List<string> FirstLine => throw new NotImplementedException();
+
+        public List<string> IgnoredColumns { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         /// <summary>
         /// Проверка на корректность исходной матрицы

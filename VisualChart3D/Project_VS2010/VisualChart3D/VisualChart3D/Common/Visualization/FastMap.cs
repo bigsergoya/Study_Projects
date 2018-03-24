@@ -14,6 +14,8 @@ namespace VisualChart3D.Common.Visualization
         /// <returns></returns>
         private delegate float Dist(int idx1, int idx2);
 
+        private ITimer _timer;
+
         private const int OptimumSizeOfSpace = 3;
         private int countOfProjection;
 
@@ -77,6 +79,7 @@ namespace VisualChart3D.Common.Visualization
         /// <param name="metric">Метрика</param>
         public FastMap(double[,] distanceArr, FastMapMetric metric)
         {
+            _timer = new CustomTimer();
             _distanceArr = distanceArr;
             _countElements = (int)Math.Sqrt(distanceArr.Length);
             _distanceFunc = (idx1, idx2) => (float)_distanceArr[idx1, idx2];
@@ -92,7 +95,11 @@ namespace VisualChart3D.Common.Visualization
         {
             _arrCoord = new double[_countElements, cntProjection];
             _currentColumn = 0;
+
+            _timer.Start();
             FastMapAlghoritm(cntProjection, _distanceFunc);
+            _timer.Stop();
+
             return _arrCoord;
         }
 

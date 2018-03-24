@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using VisualChart3D.Common;
 using VisualChart3D.Common.DataReader;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VisualChart3D.InputDataWindows
 {
@@ -11,29 +16,44 @@ namespace VisualChart3D.InputDataWindows
     public partial class SCVInputWindow : Window
     {
         private const string NotImplementedSourceMatrixType = "Ошибка типа входной матрицы. ";
-        private const string BadColumnChoiseMessage = "Выбор двух одинаковых стобцов в качестве имен классов и объектов.";
+        private const string BadColumnChoiseMessage = "Ошибка выбора стобцов в качестве имен классов и объектов.";
         private const string BadParsingMessage = "Ошибка преобразования в числовой формат. Среди читаемых столбцов имеется символьный. Чтение невозможно.";
+        private const string CannotIgnoreColumn = "Нельзя игнорировать уже выбранный в качестве имен объектов или имен классов столбец";
+
+        private const int SelectedElementIndex = 0;
+        private const InputFileType WindowFileType = InputFileType.CSV;
 
         private IUniversalReader _reader;
         private SourceFileMatrixType _inputMatrixType;
-        private const InputFileType WindowFileType = InputFileType.CSV;
+
+        private ColumnDataViewModel _columnDataViewModel;
 
         public SCVInputWindow(IUniversalReader reader = null)
         {
             InitializeComponent();
+            _columnDataViewModel = new ColumnDataViewModel();
+
+            DataContext = _columnDataViewModel;
 
             if (reader == null)
             {
-                _reader = InitializeReader(WindowFileType);
+                _reader = InitializeReader();
             }
             else
             {
-                _reader = reader;
+                _reader = reader.InputFileType == WindowFileType ? reader : InitializeReader();
+                InitializeColumnData();
             }
 
             CheckFileVisibility(_reader);
             FillFileValues();
             InitializeColumnsData(_reader);
+        }
+
+        private void InitializeColumnData()
+        {
+            _columnDataViewModel.ActiveItems = new ObservableCollection<string>(_reader.FirstLine.Where(p => !_reader.IgnoredColumns.Contains(p)));
+            _columnDataViewModel.IgnoredItems = new ObservableCollection<string>(_reader.IgnoredColumns);
         }
 
         private void btChooseFile_Click(object sender, RoutedEventArgs e)
@@ -85,8 +105,8 @@ namespace VisualChart3D.InputDataWindows
 
         private void InitializeColumnsData(IUniversalReader universalReader)
         {
-            const int compensation = -1;
-
+            const int StartElement = 0;
+            const int SecondElement = 1;
             if (universalReader.FirstLine == null)
             {
                 return;
@@ -96,6 +116,8 @@ namespace VisualChart3D.InputDataWindows
             {
                 return;
             }
+
+            _columnDataViewModel.ActiveItems = new ObservableCollection<string>(universalReader.FirstLine);
 
             cmbCLassNumberColumn.ItemsSource = cmbObjectNameColumn.ItemsSource = universalReader.FirstLine;
 
@@ -112,7 +134,7 @@ namespace VisualChart3D.InputDataWindows
             }
             else
             {
-                cmbCLassNumberColumn.SelectedIndex = 0;
+                cmbCLassNumberColumn.SelectedIndex = StartElement;
             }
 
             //Если есть ферст лайн при инициализации и имена столбцов равны нулю, то нот чекед поставить.
@@ -123,7 +145,7 @@ namespace VisualChart3D.InputDataWindows
             }
             else
             {
-                cmbObjectNameColumn.SelectedIndex = 0;
+                cmbObjectNameColumn.SelectedIndex = SecondElement;
             }
         }
 
@@ -146,9 +168,9 @@ namespace VisualChart3D.InputDataWindows
             tbMinkovskiDegree.Value = _reader.MinkovskiDegree;
         }
 
-        private IUniversalReader InitializeReader(InputFileType windowFileType)
+        private IUniversalReader InitializeReader()
         {
-            IUniversalReader reader = new SCVDataReader(windowFileType);
+            IUniversalReader reader = new SCVDataReader(WindowFileType);
             return reader;
         }
 
@@ -165,28 +187,12 @@ namespace VisualChart3D.InputDataWindows
             }
         }
 
-        public IUniversalReader Reader {
-            get {
-                return _reader;
-            }
-        }
-
-        private void cbClassNumberColumn_Click(object sender, RoutedEventArgs e)
-        {
-            cmbCLassNumberColumn.IsEnabled = !(cmbCLassNumberColumn.IsEnabled);
-        }
-
-        private void cbObjectNameColumn_Click(object sender, RoutedEventArgs e)
-        {
-            cmbObjectNameColumn.IsEnabled = !(cmbObjectNameColumn.IsEnabled);
-        }
-
         private void btSave_Click(object sender, RoutedEventArgs e)
         {
-            bool isBadChoise = CheckSelectedIndexes();
+            //bool isBadChoise = CheckSelectedIndexes();
             bool isIndexNotInitialize = CheckIInitialzedIndexes();
 
-            if (isBadChoise || isIndexNotInitialize)
+            if (isIndexNotInitialize)
             {
                 Utils.ShowErrorMessage(BadColumnChoiseMessage);
                 return;
@@ -202,8 +208,10 @@ namespace VisualChart3D.InputDataWindows
                 Reader.ObjectNameColumn = (string)cmbObjectNameColumn.SelectedItem;
             }
 
+            Reader.IgnoredColumns = _columnDataViewModel.IgnoredItems.ToList<string>();
+
             if (Reader.ArraySource == null)
-            {                
+            {
                 Utils.ShowErrorMessage(BadParsingMessage);
                 return;
             }
@@ -243,9 +251,9 @@ namespace VisualChart3D.InputDataWindows
             return (cmbCLassNumberColumn.SelectedIndex == -1) || (cmbObjectNameColumn.SelectedIndex == -1);
         }
 
-        private bool CheckSelectedIndexes()
+        private bool CheckIdenticalSelection()
         {
-            if(!IsBothColumnsChecked())
+            if (!IsBothColumnsChecked())
             {
                 return false;
             }
@@ -257,5 +265,212 @@ namespace VisualChart3D.InputDataWindows
         {
             DialogResult = false;
         }
+
+        private void IgnoreSelectedItem(object sender, RoutedEventArgs e)
+        {
+            if (lbAllColumns.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            string transferedColumn = _columnDataViewModel.ActiveItems[lbAllColumns.SelectedIndex];
+
+            if ((bool)cbClassNumberColumn.IsChecked)
+            {
+                if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
+                {
+                    Utils.ShowWarningMessage(CannotIgnoreColumn);
+                    return;
+                }
+            }
+
+            if ((bool)cbObjectNameColumn.IsChecked)
+            {
+                if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
+                {
+                    Utils.ShowWarningMessage(CannotIgnoreColumn);
+                    return;
+                }
+            }
+
+            _columnDataViewModel.ActiveItems.Remove(transferedColumn);
+            _columnDataViewModel.IgnoredItems.Add(transferedColumn);
+
+            return;
+        }
+
+        private void ActivateSelectedItem(object sender, RoutedEventArgs e)
+        {
+            if (lbIgnoredColumns.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            string transferedColumn = _columnDataViewModel.IgnoredItems[lbIgnoredColumns.SelectedIndex];
+
+            _columnDataViewModel.IgnoredItems.Remove(transferedColumn);
+            _columnDataViewModel.ActiveItems.Add(transferedColumn);
+
+            return;
+        }
+
+        public IUniversalReader Reader {
+            get {
+                return _reader;
+            }
+        }
+
+        private void Column_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count == SelectedElementIndex)
+            {
+                return;
+            }
+
+            if (e.AddedItems.Count == SelectedElementIndex)
+            {
+                return;
+            }
+
+            string removedItem = e.RemovedItems[SelectedElementIndex].ToString();
+            bool isIdenticalColumns = CheckIdenticalSelection();
+
+            if (isIdenticalColumns)
+            {
+                Utils.ShowErrorMessage(BadColumnChoiseMessage);
+                RestoreLastValue(sender as ComboBox, removedItem);
+
+                return;
+            }
+
+            string addedItem = e.AddedItems[SelectedElementIndex].ToString();
+
+            RestoreItem(removedItem);
+            DeleteItemFromItems(addedItem);
+            SetToolTip(sender, addedItem);
+
+            return;
+        }
+
+        private void RestoreLastValue(ComboBox comboBox, string lastItem)
+        {            
+            comboBox.SelectedItem = lastItem;
+        }
+
+        private void AddItem(ObservableCollection<string> observableCollection, string item)
+        {
+            observableCollection.Add(item);
+        }
+
+        private void DeleteItemFromItems(string deletedItem)
+        {
+            RemoveItem(_columnDataViewModel.ActiveItems, deletedItem);
+            RemoveItem(_columnDataViewModel.IgnoredItems, deletedItem);
+        }
+
+        private void RemoveItem(ObservableCollection<string> observableCollection, string item)
+        {
+            if (observableCollection.Contains(item))
+            {
+                observableCollection.Remove(item);
+            }
+        }
+
+        private void ToolTip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0)
+            {
+                return;
+            }
+
+            string toolTipText = e.AddedItems[0].ToString();
+            SetToolTip(sender, toolTipText);
+        }
+
+        private void SetToolTip(object uiObject, string toolTip)
+        {
+            Control uiControl = uiObject as Control;
+            uiControl.ToolTip = toolTip;
+        }
+
+        private void cbClassNumberColumn_Checked(object sender, RoutedEventArgs e)
+        {
+            DeleteItemFromItems(cmbCLassNumberColumn.SelectedItem.ToString());
+            cmbCLassNumberColumn.IsEnabled = true;
+        }
+
+        private void cbClassNumberColumn_Unchecked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = cmbCLassNumberColumn.SelectedItem.ToString();
+            RestoreItem(selectedItem);
+            cmbCLassNumberColumn.IsEnabled = false;
+        }
+
+        private void RestoreItem(string item)
+        {
+            if (!_columnDataViewModel.ActiveItems.Contains(item))
+            {
+                AddItem(_columnDataViewModel.ActiveItems, item);
+            }
+        }
+
+        private void cbObjectNameColumn_Checked(object sender, RoutedEventArgs e)
+        {
+            DeleteItemFromItems(cmbObjectNameColumn.SelectedItem.ToString());
+            cmbObjectNameColumn.IsEnabled = true;
+        }
+
+        private void cbObjectNameColumn_Unchecked(object sender, RoutedEventArgs e)
+        {
+            string selectedItem = cmbObjectNameColumn.SelectedItem.ToString();
+            RestoreItem(selectedItem);
+            cmbObjectNameColumn.IsEnabled = false;
+        }
+    }
+
+    public class ColumnDataViewModel : System.ComponentModel.INotifyPropertyChanged
+    {
+        private ObservableCollection<string> _activeItems;
+        private ObservableCollection<string> _ignoredItems;
+
+        public ObservableCollection<string> ActiveItems {
+            get {
+                if (_activeItems == null)
+                {
+                    _activeItems = new ObservableCollection<string>();
+                }
+
+                return _activeItems;
+            }
+
+            set {
+                _activeItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> IgnoredItems {
+            get {
+                if (_ignoredItems == null)
+                {
+                    _ignoredItems = new ObservableCollection<string>();
+                }
+
+                return _ignoredItems;
+            }
+
+            set {
+                _ignoredItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }
