@@ -6,7 +6,6 @@ using System.Windows.Media.Media3D;
 
 namespace VisualChart3D
 {
-
     public class Mesh3D
     {
         /// <summary>
@@ -42,8 +41,10 @@ namespace VisualChart3D
         /// <summary>
         /// получить кол-во вершин в этой сетке
         /// </summary>
-        public int VertexNo {
-            get {
+        public int VertexNo
+        {
+            get
+            {
                 return Points == null ? 0 : Points.Length;
             }
         }
@@ -51,8 +52,10 @@ namespace VisualChart3D
         /// <summary>
         /// получить кол-во треугольников в этой сетке
         /// </summary>
-        public int TriangleNo {
-            get {
+        public int TriangleNo
+        {
+            get
+            {
                 return Tris == null ? 0 : Tris.Length;
             }
         }
@@ -236,6 +239,5 @@ namespace VisualChart3D
             MinPoint = new Point3D(0, 0, -size);
             MaxPoint = new Point3D(2 * size, size, size);
         }
-
     }
 }

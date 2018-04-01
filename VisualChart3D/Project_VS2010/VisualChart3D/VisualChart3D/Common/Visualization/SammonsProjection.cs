@@ -13,13 +13,11 @@ namespace VisualChart3D.Common.Visualization
     {
         private const int MaxAvaibleDimension = 3;
         private const string VisualizationErrorFormat = "Ошибка при работе алгоритма визуализации методом Сэммона: {0}";
-        private const double _startStep = 1000.0;
-        private const double _minStep = 1e-10;
-        private const double _e = 1e-10;
+        private const double StartStep = 1000.0;
+        private const double MinStep = 1e-10;
+        private const double E = 1e-10;
         private ITimer _timer;
 
-        //private double _e = 5.0;
-        //private double _minStep = 0.001;
         private int _iterationNumber = 10;
 
         private double _iterationStep = 2.0;
@@ -45,7 +43,7 @@ namespace VisualChart3D.Common.Visualization
             _timer = new CustomTimer();
         }
 
-        private double evaluateCriteria(double[,] dm, double[,] distmatrix, double sum2dist)
+        private double EvaluateCriteria(double[,] dm, double[,] distmatrix, double sum2dist)
         {
             double result = 0;
             int dimensions = _dimensions;
@@ -73,7 +71,7 @@ namespace VisualChart3D.Common.Visualization
             return result;
         }
 
-        private double[] evaluateGradient(int index, double[,] dm, double[,] distmatrix, double sum2dist)
+        private double[] EvaluateGradient(int index, double[,] dm, double[,] distmatrix, double sum2dist)
         {
             int dimensions = _dimensions;
             double[] result = new double[dimensions];
@@ -101,7 +99,6 @@ namespace VisualChart3D.Common.Visualization
 
             for (int k = 0; k < dimensions; k++)
             {
-                //result[k] = (result[k] * _iterationStep / sum2dist);
                 result[k] = (result[k] * _iterationStep / sum2dist);
             }
 
@@ -134,7 +131,7 @@ namespace VisualChart3D.Common.Visualization
             _countOfObjects = _distMatrix.GetLength(0);
             _calculatedCriteria.Clear();
 
-            int[] indexesOfMostRemoteObjects = ReferencedObjects.GetMostestThreeRemoteObjects(_distMatrix);
+            int[] indexesOfMostRemoteObjects = DisSpace.GetMostestThreeRemoteObjects(_distMatrix);
 
             try
             {
@@ -152,32 +149,26 @@ namespace VisualChart3D.Common.Visualization
                 for (int i = 0; i < _countOfObjects; i++)
                 {
                     for (int j = i + 1; j < _countOfObjects; j++)
-                    {
-                        //double dist = distMatrix[i, j];
+                    {                
                         sum2dist += Math.Pow(_distMatrix[i, j], 2);
                     }
                 }
 
-                double criteria = evaluateCriteria(dm, _distMatrix, sum2dist);
+                double criteria = EvaluateCriteria(dm, _distMatrix, sum2dist);
 
                 int counter = 0;
                 int iteration = 1;
-                double step = _startStep;
+                double step = StartStep;
 
-                while ((counter < _countOfObjects) && (criteria > _e) && (IterationNumber > iteration))
-                //while (criteria > _e)
-                //for (; criteria > _e; (i < N) && (criteria > _e))
+                while ((counter < _countOfObjects) && (criteria > E) && (IterationNumber > iteration))
                 {
-                    //i = 0; continue;
+                    double[] gradient = EvaluateGradient(counter, dm, _distMatrix, sum2dist);
 
-                    double[] gradient = evaluateGradient(counter, dm, _distMatrix, sum2dist);
-
-                    //while (step > _minStep)
                     while (IterationNumber > iteration)
                     {
                         CorrectProjection(dm, counter, _dimensions, -step, gradient);
 
-                        double newcriteria = evaluateCriteria(dm, _distMatrix, sum2dist);
+                        double newcriteria = EvaluateCriteria(dm, _distMatrix, sum2dist);
 
                         iteration++;
 
@@ -190,15 +181,15 @@ namespace VisualChart3D.Common.Visualization
                         CorrectProjection(dm, counter, _dimensions, step, gradient);
                         step /= _iterationStep;
                     }
-
-                    //iteration = 0;
-                    step = _startStep;
+                    
+                    step = StartStep;
                     counter++;
                 }
 
                 _timer.Stop();
                 _projection = dm;
             }
+
             catch (Exception ex)
             {
                 throw new ApplicationException(String.Format(VisualizationErrorFormat, ex.StackTrace));

@@ -167,13 +167,13 @@
     <Compile Include="Figure3D\Ellipse3D.cs" />
     <Compile Include="Figure3D\Mesh3D.cs" />
     <Compile Include="Figure3D\Pyramid3D.cs" />
-    <Compile Include="Chart3D\Model3D.cs" />
-    <Compile Include="Chart3D\ScatterChart3D.cs" />
-    <Compile Include="Chart3D\ScatterPlotItem.cs" />
-    <Compile Include="Chart3D\TextureMapping.cs" />
+    <Compile Include="Common\Chart3D\Model3D.cs" />
+    <Compile Include="Common\Chart3D\ScatterChart3D.cs" />
+    <Compile Include="Common\Chart3D\ScatterPlotItem.cs" />
+    <Compile Include="Common\Chart3D\TextureMapping.cs" />
     <Compile Include="Common\TransformMatrix.cs" />
     <Compile Include="Figure3D\Triangle3D.cs" />
-    <Compile Include="Chart3D\Vertex3D.cs" />
+    <Compile Include="Common\Chart3D\Vertex3D.cs" />
     <Compile Include="Figure3D\ViewportRect.cs" />
     <Compile Include="Common\CommonMatrix.cs" />
     <Compile Include="ListObjects.xaml.cs">
@@ -221,7 +221,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Chart3D\Chart3D.cs" />
+    <Compile Include="Common\Chart3D\Chart3D.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

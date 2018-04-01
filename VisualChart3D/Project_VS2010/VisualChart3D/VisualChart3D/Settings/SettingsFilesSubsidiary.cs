@@ -100,7 +100,6 @@ namespace VisualChart3D
                         case SourceFileMatrixType.MatrixDistance:
                             for (int i = 0; i < CountObjects; i++)
                             {
-
                                 StringBuilder str = new StringBuilder(CountObjects * CapacityConstant);
 
                                 for (int j = 0; j < CountObjects; j++)
@@ -139,8 +138,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить количество объектов
         /// </summary>
-        public override int CountObjects {
-            get {
+        public override int CountObjects
+        {
+            get
+            {
                 if (_selectedIdx != null)
                 {
                     return _selectedIdx.Length;
@@ -153,15 +154,17 @@ namespace VisualChart3D
         /// <summary>
         ///  Получить массив с исходной матрицей
         /// </summary>
-        public double[,] ArraySource {
-            get {
+        public double[,] ArraySource
+        {
+            get
+            {
                 //Заменить функцией, принимающей тип object и чекающей его на нулл. Или мб есть стандартные яз. конструкции. 
                 if (_arraySource != null)
                 {
                     return _arraySource;
                 }
-
                 _arraySource = GetSourceMatrix();
+
                 return _arraySource;
             }
         }
@@ -169,8 +172,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить список названий классов
         /// </summary>
-        public override List<String> ClassesName {
-            get {
+        public override List<String> ClassesName
+        {
+            get
+            {
                 if (_classesName != null)
                 {
                     return _classesName;
@@ -208,8 +213,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить список имён объектов
         /// </summary>
-        public override List<String> NamesObjects {
-            get {
+        public override List<String> NamesObjects
+        {
+            get
+            {
                 return _namesObjects ??
                        (_namesObjects =
                            new List<string>(base.NamesObjects).Where((s, i) => _selectedIdx.Any(i1 => i == i1)).ToList());

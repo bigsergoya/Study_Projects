@@ -6,6 +6,13 @@ namespace VisualChart3D.Common
 {
     public static class ExtensionsMethods
     {
+        private const string Bar = "Брусок";
+        private const string Cone = "Конус";
+        private const string Cylinder = "Цилиндр";
+        private const string Ellipse = "Шар";
+        private const string Pyramid = "Пирамида";
+        private const string Shape = "Shape";
+
         /// <summary>
         /// Преобразует цвет Windows Forms в цвет WPF
         /// </summary>
@@ -26,17 +33,17 @@ namespace VisualChart3D.Common
             switch (shape)
             {
                 case Shapes.Bar3D:
-                    return "Брусок";
+                    return Bar;
                 case Shapes.Cone3D:
-                    return "Конус";
+                    return Cone;
                 case Shapes.Cylinder3D:
-                    return "Цилиндр";
+                    return Cylinder;
                 case Shapes.Ellipse3D:
-                    return "Шар";
+                    return Ellipse;
                 case Shapes.Pyramid3D:
-                    return "Пирамида";
+                    return Pyramid;
                 default:
-                    throw new ArgumentOutOfRangeException("shape");
+                    throw new ArgumentOutOfRangeException(Shape);
             }
         }
     }

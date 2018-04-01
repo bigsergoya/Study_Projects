@@ -123,7 +123,7 @@ namespace VisualChart3D.ConfigWindow
 
             CnvColor.Background = new SolidColorBrush(SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].ColorObject);
             CBshapes.SelectedItem = SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].Shape.GetRusName();
-            cbIsClassVisible.IsChecked = SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].isLiquid;
+            cbIsClassVisible.IsChecked = SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].IsLiquid;
         }
 
         private void CBshapes_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -145,12 +145,12 @@ namespace VisualChart3D.ConfigWindow
 
         private void cbIsClassVisible_Checked(object sender, RoutedEventArgs e)
         {
-            SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].isLiquid = true;
+            SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].IsLiquid = true;
         }
 
         private void cbIsClassVisible_Unchecked(object sender, RoutedEventArgs e)
         {
-            SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].isLiquid = false;
+            SettingsClassesForms.ArrayClass[cbClasses.SelectedIndex].IsLiquid = false;
         }
     }
 }

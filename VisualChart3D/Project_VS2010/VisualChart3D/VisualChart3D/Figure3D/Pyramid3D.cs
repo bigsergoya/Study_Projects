@@ -61,4 +61,3 @@ namespace VisualChart3D
         }
     }
 }
-

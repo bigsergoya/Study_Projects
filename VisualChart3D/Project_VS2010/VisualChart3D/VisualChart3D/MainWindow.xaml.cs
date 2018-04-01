@@ -151,7 +151,7 @@ namespace VisualChart3D
             if (_3dGroup != null)
             {
                 _3dGroup.Children.Clear();
-                _3dGroup.Children.Add(new MatrixTransform3D(_transformMatrix.TotalMatrix));
+                _3dGroup.Children.Add(new MatrixTransform3D(_transformMatrix.GetTotalMatrix()));
             }
         }
 
@@ -160,7 +160,7 @@ namespace VisualChart3D
             _projectionCoords = Utils.GetNormalizedDataForDIZZZSPASSSEEEEEEE(DissimiliaritySpace.ToProject());
 
             //_projectionCoords = DissimiliaritySpace.ToProject();
-            int countCords = _projectionCoords.Length / DissimiliaritySpace.getBasicObjectsNumber();
+            int countCords = _projectionCoords.Length / DissimiliaritySpace.BasicObjectsNumber;
             _coordCurrent = new Vertex3D[countCords];
 
             if (firstGeneration)
@@ -857,7 +857,7 @@ namespace VisualChart3D
 
                     if (!isClassSetNull)
                     {
-                        if (classSet.isLiquid)
+                        if (classSet.IsLiquid)
                         {
                             continue;
                         }
@@ -893,8 +893,8 @@ namespace VisualChart3D
             {
                 if (_dissimiliaritySpace.BasicObjectsColorMode)
                 {
-                    int[] basicArray = _dissimiliaritySpace.getBasicObjectsArray();
-                    for (int i = 0; i < _dissimiliaritySpace.getBasicObjectsNumber(); i++)
+                    int[] basicArray = _dissimiliaritySpace.BasicObjectsArray;
+                    for (int i = 0; i < _dissimiliaritySpace.BasicObjectsNumber; i++)
                     {
                         if (_3DChartCurrent.Get(basicArray[i] - 1) != null)
                         {

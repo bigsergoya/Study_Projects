@@ -10,7 +10,6 @@ namespace VisualChart3D.Common
 
         internal const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
 
-        //---------------------------------------------------------------------
         internal static double ManhattenDistance(double[] vec1, double[] vec2)
         {
             double distance = 0;
@@ -23,7 +22,6 @@ namespace VisualChart3D.Common
             return distance;
         }
 
-        //---------------------------------------------------------------------
         internal static void FisherYatesShuffle<T>(this T[] array)
         {
             Random rnd = new Random();
@@ -71,15 +69,6 @@ namespace VisualChart3D.Common
         internal static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
         {
             double[,] outputArray = new double[firstDim, secondDim];
-            //double maxValue = 0;
-
-            /*for (int i = 0; i < firstDim; i++)
-            {
-                for (int j = 0; j < secondDim; j++)
-                {
-                    maxValue = oldArray[i][j]>maxValue? oldArray[i][j] :maxValue;
-                }
-            }*/
 
             for (int i = 0; i < firstDim; i++)
             {
@@ -105,12 +94,9 @@ namespace VisualChart3D.Common
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    outputArray[i, 0] = (array[i, 0] - minX) / (maxX - minX);
-                    outputArray[i, 1] = (array[i, 1] - minY) / (maxY - minY);
-                    outputArray[i, 2] = (array[i, 2] - minZ) / (maxZ - minZ);
-                }
+                outputArray[i, 0] = (array[i, 0] - minX) / (maxX - minX);
+                outputArray[i, 1] = (array[i, 1] - minY) / (maxY - minY);
+                outputArray[i, 2] = (array[i, 2] - minZ) / (maxZ - minZ);
             }
 
             return outputArray;
@@ -147,8 +133,6 @@ namespace VisualChart3D.Common
                     minZ = array[2, i] < minZ ? array[2, i] : minZ;
                 }
 
-
-
                 for (int i = 0; i < secondDim; i++)
                 {
                     {
@@ -179,7 +163,6 @@ namespace VisualChart3D.Common
                 }
             }
 
-
             return outputArray;
         }
 
@@ -187,22 +170,16 @@ namespace VisualChart3D.Common
         {
             double[,] outputArray = new double[firstDim, secondDim];
 
-            //GetMinAndMax(oldArray, firstDim, secondDim, out double minValue, out double maxValue);
-
             GetMinAndMaxByDimensions(oldArray, firstDim, secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ);
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    outputArray[i, 0] = (oldArray[i][0] - minX) / (maxX - minX);
-                    outputArray[i, 1] = (oldArray[i][1] - minY) / (maxY - minY);
-                    outputArray[i, 2] = (oldArray[i][2] - minZ) / (maxZ - minZ);
-                    //outputArray[i, j] = oldArray[i][j] / maxValue;
-                    //outputArray[i, j] = (oldArray[i][j] - minValue) / (maxValue - minValue);
-                }
+                outputArray[i, 0] = (oldArray[i][0] - minX) / (maxX - minX);
+                outputArray[i, 1] = (oldArray[i][1] - minY) / (maxY - minY);
+                outputArray[i, 2] = (oldArray[i][2] - minZ) / (maxZ - minZ);
+
             }
 
             return outputArray;
@@ -296,8 +273,6 @@ namespace VisualChart3D.Common
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
-            //max = array[0, 0];
-            //min = array[0, 0];
             maxX = array[0][0];
             minX = array[0][0];
 
@@ -309,20 +284,14 @@ namespace VisualChart3D.Common
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    maxX = array[i][0] > maxX ? array[i][0] : maxX;
-                    minX = array[i][0] < minX ? array[i][0] : minX;
+                maxX = array[i][0] > maxX ? array[i][0] : maxX;
+                minX = array[i][0] < minX ? array[i][0] : minX;
 
-                    maxY = array[i][1] > maxY ? array[i][1] : maxY;
-                    minY = array[i][1] < minY ? array[i][1] : minY;
+                maxY = array[i][1] > maxY ? array[i][1] : maxY;
+                minY = array[i][1] < minY ? array[i][1] : minY;
 
-                    maxZ = array[i][2] > maxZ ? array[i][2] : maxZ;
-                    minZ = array[i][2] < minZ ? array[i][2] : minZ;
-
-                    //max = array[i, j] > max ? array[i, j] : max;
-                    //min = array[i, j] < min ? array[i, j] : min;
-                }
+                maxZ = array[i][2] > maxZ ? array[i][2] : maxZ;
+                minZ = array[i][2] < minZ ? array[i][2] : minZ;
             }
         }
 

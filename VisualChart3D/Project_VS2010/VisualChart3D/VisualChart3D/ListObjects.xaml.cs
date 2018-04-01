@@ -130,7 +130,7 @@ namespace VisualChart3D
             _isPicturesByClassStartObject = false;
             ListBoxObjects.Items.Clear();
             //-------------------------------
-            _adressPictureDirectory = settFiles.Pic_Folder_Adress;
+            _adressPictureDirectory = settFiles.picFolderAdress;
 
             //-------------------------------
             if (idxArr == null)
@@ -146,7 +146,7 @@ namespace VisualChart3D
             _namesOfClasses = new List<string>();
             _isPicturesByName = settFiles.isPictureTakenByObjectName;
             _isPicturesByClassInterval = settFiles.isPictureTakenByClassInterval;
-            countOfClasses = settFiles.Class_Start_Position;
+            countOfClasses = settFiles.classStartPosition;
             _isPicturesByClassStartObject = settFiles.isPictureTakenByClassStartObjects;
             Title = "Список объектов. Количество:" + idxArr.Length;
             _numberOfObjects.AddRange(idxArr);

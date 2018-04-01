@@ -21,7 +21,6 @@ namespace VisualChart3D.Common.DataReader
         private List<string> _ignoredColumns;
         private string _sourceMatrixFile;
 
-        //Я это сделал потому, что все - тлен :(
         private string _classNameColumn;
         private string _objectNameColumn;
         private string[] _classNameColumnData;
@@ -85,7 +84,6 @@ namespace VisualChart3D.Common.DataReader
         {
             n = _fileData.Count - Compensation;
             m = _firstColumn.Count - _dataColumn.Count;
-            //m = _firstColumn.Count - Convert.ToInt32(IsNull(_classNameColumn)) - Convert.ToInt32(IsNull(_objectNameColumn));
         }
 
         private bool IsNull(object something)
@@ -135,12 +133,15 @@ namespace VisualChart3D.Common.DataReader
         public string[] ClassNameColumnData { get => _classNameColumnData; }
         public string[] ObjectNameColumnData { get => _objectNameColumnData; }
 
-        public string ClassNameColumn {
-            get {
+        public string ClassNameColumn
+        {
+            get
+            {
                 return _classNameColumn;
             }
 
-            set {
+            set
+            {
                 _classNameColumn = value;
                 string[] nameColumn = GetColumn(_classNameColumn);
                 _classNameColumnData = nameColumn;
@@ -148,22 +149,26 @@ namespace VisualChart3D.Common.DataReader
             }
         }
 
-        public string ObjectNameColumn {
-            get {
+        public string ObjectNameColumn
+        {
+            get
+            {
                 return _objectNameColumn;
             }
 
-            set {
+            set
+            {
                 _objectNameColumn = value;
                 string[] objectColumn = GetColumn(_objectNameColumn);
                 _objectNameColumnData = objectColumn;
                 _needRecalculate = true;
             }
-
         }
 
-        public double[,] ArraySource {
-            get {
+        public double[,] ArraySource
+        {
+            get
+            {
                 if (_needRecalculate)
                 {
                     RecalculateArraySource();
@@ -224,17 +229,19 @@ namespace VisualChart3D.Common.DataReader
             return true;
         }
 
-        public List<string> IgnoredColumns {
-            get {
+        public List<string> IgnoredColumns
+        {
+            get
+            {
                 if (_ignoredColumns != null)
                 {
                     return _ignoredColumns;
-                    //return FirstLine.Where(p => _dataColumn.Contains(FirstLine.IndexOf(p))).ToList();
                 }
 
                 return new List<string>();
             }
-            set {
+            set
+            {
                 if (value.Count > 0)
                 {
                     _needRecalculate = true;

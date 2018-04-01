@@ -17,7 +17,7 @@ namespace VisualChart3D.Common.Visualization
         private ITimer _timer;
 
         private const int OptimumSizeOfSpace = 3;
-        private int countOfProjection;
+        private int _countOfProjection;
 
         /// <summary>
         /// Функция, вычисляющая расстояние между элементами
@@ -66,11 +66,11 @@ namespace VisualChart3D.Common.Visualization
 
         private FastMapMetric _metric;
 
-        public int CountOfProjection {
-            get => countOfProjection == 0 ? OptimumSizeOfSpace : countOfProjection;
-            set => countOfProjection = value;
+        public int CountOfProjection
+        {
+            get => _countOfProjection == 0 ? OptimumSizeOfSpace : _countOfProjection;
+            set => _countOfProjection = value;
         }
-
 
         /// <summary>
         /// Конструктор
@@ -102,8 +102,7 @@ namespace VisualChart3D.Common.Visualization
 
             return _arrCoord;
         }
-
-
+        
         /// <summary>
         /// Реализация алгоритма FastMap
         /// </summary>

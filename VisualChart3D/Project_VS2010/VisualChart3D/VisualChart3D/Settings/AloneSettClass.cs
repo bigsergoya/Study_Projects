@@ -24,6 +24,6 @@ namespace VisualChart3D
         /// Имя класса
         /// </summary>
         public string NameClass { get; set; }
-        public bool isLiquid { get; set; }
+        public bool IsLiquid { get; set; }
     }
 }

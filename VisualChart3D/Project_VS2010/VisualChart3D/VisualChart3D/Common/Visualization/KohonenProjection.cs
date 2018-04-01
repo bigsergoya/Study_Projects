@@ -29,29 +29,17 @@ namespace VisualChart3D.Common.Visualization
         private double[][] _distanceMatrix;
         #endregion
 
-        #region Properties
-        /// <summary>
-        /// The input-data.
-        /// </summary>
-        //public double[][] InputData { get; protected set; }
 
+        #region Properties
         /// <summary>
         /// The number of input-vectors.
         /// </summary>
-        public int Count {
-            //get { return this.InputData.Length; }
-            get { return this._distanceMatrix.Length; }
-        }
+        public int Count => this._distanceMatrix.Length;
 
         /// <summary>
         /// The dimension in that the projection should be performed.
         /// </summary>
         public int OutputDimension { get; protected set; }
-
-        /// <summary>
-        /// Type of input matrix. True - distanceMarix, False - no.
-        /// </summary>
-        //private SourceFileMatrix _matrixType;
 
         /// <summary>
         /// The projected vectors.
@@ -70,17 +58,6 @@ namespace VisualChart3D.Common.Visualization
         #endregion
 
         #region Constructor
-        /*/// <summary>
-        /// Creates a new instance of Sammon's Mapping.
-        /// </summary>
-        /// <param name="inputData">The input-vectors.</param>
-        /// <param name="outputDimension">The dimension of the projection.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name=">inputVectors"/> is <c>null</c>.
-        /// </exception>
-        public SammonsProjection(double[][] inputData, int outputDimension)
-			: this(inputData, outputDimension, inputData.Length * (int)1e4) { }*/
-
         /// <summary>
         /// Creates a new instance of Sammon's Mapping.
         /// </summary>
@@ -136,7 +113,6 @@ namespace VisualChart3D.Common.Visualization
             _timer.Stop();
         }
 
-        //---------------------------------------------------------------------
         /// <summary>
         /// Performs one iteration of the (heuristic) algorithm.
         /// </summary>
@@ -177,7 +153,6 @@ namespace VisualChart3D.Common.Visualization
                     if (Dij == 0)
                     {
                         Dij = 1e-10;
-                        //Dij = Double.MinValue;
                     }
 
                     double delta = _lambda * (dij - Dij) / Dij;
@@ -228,8 +203,7 @@ namespace VisualChart3D.Common.Visualization
             _iteration++;
 
             double ratio = (double)_iteration / _maxIteration;
-
-            // Start := 1, End := 0.01
+                        
             _lambda = Math.Pow(0.1, ratio);
         }
         #endregion

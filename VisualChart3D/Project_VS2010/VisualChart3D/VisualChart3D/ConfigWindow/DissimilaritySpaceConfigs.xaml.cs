@@ -113,7 +113,7 @@ namespace VisualChart3D.ConfigWindow
             {
                 if ((settFile.isPictureTakenByObjectID) || (settFile.isPictureTakenByObjectName))
                 {
-                    List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(settFile.Pic_Folder_Adress));
+                    List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(settFile.picFolderAdress));
                     if (settFile.isPictureTakenByObjectID)
                     {  //эксперимент - проверка надобности отдельной функции типа инт для выборки картинки. Вместо инт посылаем стринг
                         Picture.Source = Add_Picture_On_Screen(Get_Picture_Adress(Pictures, settFile.NamesObjects[SelectedIndex], Picture));
@@ -131,7 +131,7 @@ namespace VisualChart3D.ConfigWindow
                     int k;
                     List<string> Pictures;
                     int cur_index;
-                    DirectoryInfo[] directories = new DirectoryInfo(settFile.Pic_Folder_Adress).GetDirectories();
+                    DirectoryInfo[] directories = new DirectoryInfo(settFile.picFolderAdress).GetDirectories();
 
                     foreach (var directory in directories)
                     {
@@ -140,16 +140,16 @@ namespace VisualChart3D.ConfigWindow
                             Pictures = Get_Pictures_Files_List(Directory.GetFiles(directory.FullName));
                             cur_index = Int32.Parse(settFile.NamesObjects[SelectedIndex]);
 
-                            for (k = 0; k < settFile.Class_Start_Position.Count - 1; k++)
+                            for (k = 0; k < settFile.classStartPosition.Count - 1; k++)
                             {
-                                if ((cur_index >= Int32.Parse(settFile.Class_Start_Position[k])) && (cur_index <= Int32.Parse(settFile.Class_Start_Position[k + 1])))
+                                if ((cur_index >= Int32.Parse(settFile.classStartPosition[k])) && (cur_index <= Int32.Parse(settFile.classStartPosition[k + 1])))
                                 {
-                                    cur_index -= Int32.Parse(settFile.Class_Start_Position[k]);
+                                    cur_index -= Int32.Parse(settFile.classStartPosition[k]);
                                     break;
                                 }
                             }
 
-                            if ((Pictures.Count == (Int32.Parse(settFile.Class_Start_Position[k + 1]) - Int32.Parse(settFile.Class_Start_Position[k]))))
+                            if ((Pictures.Count == (Int32.Parse(settFile.classStartPosition[k + 1]) - Int32.Parse(settFile.classStartPosition[k]))))
                             {
                                 substring = Pictures[cur_index - 1];
                                 Picture.Source = Add_Picture_On_Screen(substring);
@@ -338,8 +338,7 @@ namespace VisualChart3D.ConfigWindow
 
             if (referedObjectsSavedInfo == null)
             {
-                ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
-                referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
+                referedObjectsSavedInfo = (_dissimilaritySpace.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
                 lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
                 WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
                 btRefreshReferenceObjects.IsEnabled = true;
@@ -400,8 +399,7 @@ namespace VisualChart3D.ConfigWindow
 
         private void btRefreshReferenceObjects_Click(object sender, RoutedEventArgs e)
         {
-            ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
-            List<string>  referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
+            List<string> referedObjectsSavedInfo = (_dissimilaritySpace.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
             lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
             WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
         }

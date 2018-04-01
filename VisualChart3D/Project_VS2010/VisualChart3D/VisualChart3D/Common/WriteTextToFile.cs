@@ -10,7 +10,6 @@ namespace VisualChart3D.Common
     class WriteTextToFile : IDisposable
     {
         #region Fields
-
         /// <summary>
         /// strean writer
         /// </summary>
@@ -25,11 +24,9 @@ namespace VisualChart3D.Common
         /// files names
         /// </summary>
         private readonly List<StreamWriter> _streams;
-
         #endregion
 
         #region Constructor
-
         /// <summary>
         /// Create instance
         /// </summary>
@@ -47,12 +44,9 @@ namespace VisualChart3D.Common
                 }
             }
         }
-
         #endregion
 
         #region Methods
-
-
         /// <summary>
         /// Write line Format string
         /// </summary>
@@ -163,7 +157,6 @@ namespace VisualChart3D.Common
                 }
             }
         }
-
         #endregion
     }
 }

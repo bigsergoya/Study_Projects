@@ -28,9 +28,14 @@ namespace VisualChart3D
         /// <summary>
         /// Получить количество полигонов
         /// </summary>
-        public int CountPoligon {
-            get { return _countPoligon; }
-            set {
+        public int CountPoligon
+        {
+            get
+            {
+                return _countPoligon;
+            }
+            set
+            {
                 CountPoligonStr = value.ToString();
                 string error = ValidadionTextField("Количество полигонов", 3, 20, CountPoligonStr, out value);
                 if (!String.IsNullOrEmpty(error))
@@ -44,9 +49,14 @@ namespace VisualChart3D
         /// <summary>
         /// Получить размер объектов
         /// </summary>
-        public double SizeObject {
-            get { return _sizeObject; }
-            set {
+        public double SizeObject
+        {
+            get
+            {
+                return _sizeObject;
+            }
+            set
+            {
                 SizeObjectStr = value.ToString();
                 string error = ValidadionTextField("Размер объектов", 0, 1000, SizeObjectStr, out value);
 
@@ -84,12 +94,9 @@ namespace VisualChart3D
             return ArrayClass.FirstOrDefault(cls => cls.NameClass.Equals(name));
         }
 
-
-
         public ClassVisualisationSettings()
         {
         }
-
 
         /// <summary>
         /// Задать настройки по умолчанию
@@ -145,6 +152,7 @@ namespace VisualChart3D
                 else
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
             }
+
             return errorsStr.ToString();
         }
 
@@ -177,6 +185,7 @@ namespace VisualChart3D
                 else
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
             }
+
             return errorsStr.ToString();
         }
 
@@ -209,8 +218,8 @@ namespace VisualChart3D
                 else
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
             }
-            return errorsStr.ToString();
 
+            return errorsStr.ToString();
         }
 
         /// <summary>
@@ -224,6 +233,5 @@ namespace VisualChart3D
             errorsStr.Append(ValidadionTextField("Размер объектов", 0, 150, SizeObjectStr, out _sizeObject));
             return errorsStr.ToString();
         }
-
     }
 }
