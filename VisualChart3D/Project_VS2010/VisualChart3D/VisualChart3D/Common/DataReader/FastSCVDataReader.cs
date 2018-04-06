@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace VisualChart3D.Common.DataReader
 {
-    class FastSCVDataReader : VisualChart3D.Common.DataReader.ICSVReader
+    //class FastSCVDataReader : VisualChart3D.Common.DataReader.ICSVReader
+    class FastSCVDataReader : IUniversalReader
     {
         private const int Compensation = 1;
 
@@ -14,7 +15,7 @@ namespace VisualChart3D.Common.DataReader
         private InputFileType _windowFileType;
 
         //Косяк. Этого ридер не должен знать, если только он тут же и преобразует данные
-        private int _minkovskiDegree;
+        private int _minkovskiDegree = 2;
 
         //Аналогично, должно быть в классе выше по иерархии
         private SourceFileMatrixType _inputMatrixType;
@@ -35,20 +36,10 @@ namespace VisualChart3D.Common.DataReader
         {
             _windowFileType = windowFileType;
             _firstColumn = new List<string>();
+            _dataColumn = new List<string>();
+            _ignoredColumns = new List<string>();
+
         }
-
-        /*private List<string> DivideLine(string s, char separator)
-        {
-            List<string> subLine = new List<string>();
-            string[] parts;
-
-            s = s.Trim();
-            parts = s.Split(separator);
-
-            subLine.AddRange(parts);
-
-            return subLine;
-        }*/
 
         private string[] DivideLine(string s, char separator)
         {
@@ -77,7 +68,7 @@ namespace VisualChart3D.Common.DataReader
                 _firstColumn.Clear();
                 _firstColumn.AddRange(DivideLine(line, ','));
 
-                _numberOfLinesInFile = Compensation;
+                _numberOfLinesInFile = 0;
                 
                 while (line != null)
                 {
@@ -100,6 +91,11 @@ namespace VisualChart3D.Common.DataReader
             return true;
         }
 
+        private void SkipFirstLine(System.IO.StreamReader fs)
+        {
+            fs.ReadLine();
+        }
+
         /// <summary>
         /// возвращает столбец данных на основе его имени 
         /// </summary>
@@ -115,16 +111,12 @@ namespace VisualChart3D.Common.DataReader
 
             int column = _firstColumn.FindIndex(p => p == classColumn);
 
-            /*for (int i = 1; i < count; i++)
-            {
-                data[i - Compensation] = _fileData[i][column];
-            }
-
-            _dataColumn.Add(classColumn);*/
             try
             {
+                SkipFirstLine(fs);
+
                 string line = fs.ReadLine();
-                line = fs.ReadLine();
+
                 int counter = 1;
                 while (line != null)
                 {
@@ -165,6 +157,43 @@ namespace VisualChart3D.Common.DataReader
 
             CalculateCountOfDeletedColumns(out n, out m);
             _arraySource = new double[n, m];
+
+            try
+            {
+                System.IO.StreamReader fs = new System.IO.StreamReader(SourceMatrixFile);
+                string[] parts;
+                SkipFirstLine(fs);
+                int numericDataIndex = 0;
+                string line = fs.ReadLine();
+
+                int lineCounter = 1;
+                while (line != null)
+                {
+
+                    parts = DivideLine(line, ',');
+
+                    //data[counter - Compensation] = parts[column];
+                    for (int j = 0; j < _firstColumn.Count; j++)
+                    {
+                        if (_dataColumn.Contains(_firstColumn[j]) || _ignoredColumns.Contains(_firstColumn[j]))
+                        {
+                            continue;
+                        }
+
+                        _arraySource[lineCounter - Compensation, numericDataIndex] = double.Parse(parts[j], System.Globalization.CultureInfo.InvariantCulture);
+                        numericDataIndex++;
+                    }
+
+                    numericDataIndex = 0;
+                    lineCounter++;
+                    line = fs.ReadLine();
+                }
+            }
+            catch (FormatException)
+            {
+                _arraySource = null;
+                return;
+            }
 
             //Переписать так, чтобы читалось по столбцам, а не по строкам.
             /*try

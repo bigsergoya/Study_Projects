@@ -91,7 +91,7 @@ namespace VisualChart3D.Common.Visualization
         /// </summary>
         /// <param name="cntProjection">кол-во осей</param>
         /// <returns>Массив координат</returns>
-        public double[,] GetCoordinates(int cntProjection)
+        public double[,] ToProject(int cntProjection)
         {
             _arrCoord = new double[_countElements, cntProjection];
             _currentColumn = 0;

@@ -124,6 +124,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\CustomTimer.cs" />
+    <Compile Include="Common\DataBinding\BaseViewModel.cs" />
+    <Compile Include="Common\DataBinding\ColumnDataViewModel.cs" />
+    <Compile Include="Common\DataBinding\ReferencedObjectsViewModel.cs" />
     <Compile Include="Common\DataReader\FastSCVDataReader.cs" />
     <Compile Include="Common\DataReader\IDataReader.cs" />
     <Compile Include="Common\DataReader\SCVDataReader.cs" />

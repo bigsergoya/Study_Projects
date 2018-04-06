@@ -7,6 +7,9 @@ namespace VisualChart3D.Common.Visualization
 {
     public class DisSpace
     {
+        private const int ObjectsCount = 3;
+
+        private const double EmptyObjectCompensator = 0.1;
         private const int DefaultFirstObjectID = 1;
         private const int DefaultSecondObjectID = 2;
         private const int DefaultThirdObjectID = 3;
@@ -14,10 +17,7 @@ namespace VisualChart3D.Common.Visualization
         private const int FirstObjectArrayIndex = 0;
         private const int SecondObjectArrayIndex = 1;
         private const int ThirdObjectArrayIndex = 2;
-
-        private const int ObjectsCount = 3;
-
-        private const int Compensator = 1;
+        private const int ArrayPositionCompensator = 1;
 
         private int _firstBasisObject;
         private int _secondBasisObject;
@@ -29,17 +29,7 @@ namespace VisualChart3D.Common.Visualization
         private Space _space = Space.TwoDimensional;
         private double[,] _coords;
         private int[] _basicObjects;
-
-        //ОТСУТСТВУЕТ ИНИЦИАЛИЗАЦИЯ ИЗ КОНСТРУКТОРА КЛАССА REFERENCED OBJECT
         private int[] _referencedObjects;
-
-        public int FirstBasisObject { get => _firstBasisObject; set => _firstBasisObject = value; }
-        public int SecondBasisObject { get => _secondBasisObject; set => _secondBasisObject = value; }
-        public int ThirdBasisObject { get => _thirdBasisObject; set => _thirdBasisObject = value; }
-        public Space Space { get => _space; set => _space = value; }
-        public bool BasicObjectsColorMode { get => _basicObjectsColorMode; set => _basicObjectsColorMode = value; }
-        public double[,] ArraySource { get => _arraySource; }
-        public int BasicObjectsNumber { get => (int)_space; }
 
         public DisSpace(double[,] arraySource, int countOfObjects)
         {
@@ -53,24 +43,7 @@ namespace VisualChart3D.Common.Visualization
             _countOfObjects = countOfObjects;
         }
 
-        //ВСПОМНИТЬ ХИТРУЮ ЗАДУМКУ
-        private void CalculateReferencedObjects(double[,] SourceArray, int[] countOfClassObjects)
-        {
-
-        }
-
-        private double FindSumOfDistances(double[,] SourceArray, int classStartObject, int classEndObject, int currentObject)
-        {
-            double sumfOfDistances = 0;
-
-            for (int i = classStartObject; i <= classEndObject; i++)
-            {
-                sumfOfDistances += SourceArray[currentObject, i];
-            }
-
-            return sumfOfDistances;
-        }
-
+        #region STATIC
         private static int GetMaxColumnValueIndex(double[,] sourceArray, int column, int columnCount)
         {
             double value = Double.MinValue;
@@ -88,6 +61,14 @@ namespace VisualChart3D.Common.Visualization
             return index;
         }
 
+        /// <summary>
+        /// Поиск самого удаленного объекта относительно двух выбранных объектов.
+        /// </summary>
+        /// <param name="sourceArray">Матрица расстояний</param>
+        /// <param name="firstIndex">Позиция столбца первого выбранного объекта в матрице расстояний</param>
+        /// <param name="secondIndex">Позиция столбца второго выбранного объекта в матрице расстояний</param>
+        /// <param name="objectsCount">Количество объектов в столбце матрицы расстояний</param>
+        /// <returns>Позиция столбца объекта, самого удаленного от двух искомых объектов</returns>
         private static int GetTwoColumnsSumMaxIndex(double[,] sourceArray, int firstIndex, int secondIndex, int objectsCount)
         {
             double value = Double.MinValue;
@@ -119,6 +100,11 @@ namespace VisualChart3D.Common.Visualization
             return index;
         }
 
+        /// <summary>
+        /// Получить три самых удаленных друг от друга объекта в матрцие расстояний
+        /// </summary>
+        /// <param name="sourceArray">Матрица расстояний</param>
+        /// <returns>Массив с номерами трех самых удаленных друг от друга объектов</returns>
         public static int[] GetMostestThreeRemoteObjects(double[,] sourceArray)
         {
             const int countOfRemoteObjects = 3;
@@ -137,15 +123,16 @@ namespace VisualChart3D.Common.Visualization
             return returnedIndexes;
         }
 
+
         /// <summary>
-        /// ПЕРЕПИСАТЬ ВЫШЕЛЕЖАЩУЮ ФУНКЦИЮ ТАК, ЧТОБЫ БЫЛ ЗНАК БОЛЬШЕ В ЦИКЛЕ!!!1111
+        /// Расчет суммы расстояний объекта относительно всех остальных в матрице расстояний
         /// </summary>
-        /// <param name="SourceArray"></param>
-        /// <param name="classStartObject"></param>
-        /// <param name="classEndObject"></param>
-        /// <param name="currentObject"></param>
-        /// <returns></returns>
-        public static double FindSumOfDistancesWORKING(double[,] SourceArray, int classStartObject, int classEndObject, int currentObject)
+        /// <param name="SourceArray">Матрица расстояний</param>
+        /// <param name="classStartObject">Начальная позиция обхода столбца матрицы</param>
+        /// <param name="classEndObject">Конечная позиция обхода столбца матрицы</param>
+        /// <param name="currentObject">Столбец матрицы, соответствующий искомому объекту</param>
+        /// <returns>Сумма расстояний для искомого объкта</returns>
+        public static double FindSumOfDistances(double[,] SourceArray, int classStartObject, int classEndObject, int currentObject)
         {
             double sumfOfDistances = 0;
 
@@ -157,26 +144,6 @@ namespace VisualChart3D.Common.Visualization
             return sumfOfDistances;
         }
 
-        public int[] BasicObjectsArray
-        {
-            get
-            {
-                _basicObjects = new int[ObjectsCount];
-                _basicObjects[FirstObjectArrayIndex] = _firstBasisObject;
-                _basicObjects[SecondObjectArrayIndex] = _secondBasisObject;
-                _basicObjects[ThirdObjectArrayIndex] = _thirdBasisObject;
-
-                return _basicObjects;
-            }
-
-            set
-            {
-                _basicObjects = value;
-            }
-        }
-
-        public int[] ReferencedObjects { get => _referencedObjects; }
-
         public static int GetMostRemoteObject(double[,] sourceArray, int objectsCount)
         {
             double[] mostRemoteObjects = new double[objectsCount];
@@ -185,17 +152,65 @@ namespace VisualChart3D.Common.Visualization
             for (int i = 0; i < objectsCount; i++)
             {
                 mostRemoteObjectIndexes[i] = i;
-                mostRemoteObjects[i] = FindSumOfDistancesWORKING(sourceArray, 0, objectsCount, i);
+                mostRemoteObjects[i] = FindSumOfDistances(sourceArray, 0, objectsCount, i);
             }
 
             ReverseComparer reverseComparer = new ReverseComparer();
-            System.Array.Sort(mostRemoteObjects, mostRemoteObjectIndexes, reverseComparer);
+            Array.Sort(mostRemoteObjects, mostRemoteObjectIndexes, reverseComparer);
 
             return mostRemoteObjectIndexes[0];
         }
+        #endregion
 
-        public List<string> getReferencedObjectsWithClassNames(List<string> ClassesNames)
+        //private void CalculateReferencedObjects(double[,] SourceArray, int[] countOfClassObjects)
+        private void CalculateReferencedObjects(int[] countOfClassObjects)
         {
+           _referencedObjects = new int[countOfClassObjects.Length];
+            int currentClassLastElement = countOfClassObjects[0] - 1;
+            int currentClassFirstElement = 0;
+            int numberOfCurrentClass = 0;
+            int referencedObjectForCurrentClass = 0;
+            double referencedDistance = FindSumOfDistances(_arraySource, currentClassFirstElement,
+                   currentClassLastElement, 0);
+            double currentReferencedDistance = 0;
+
+            for (int i = 1; i < _arraySource.GetLength(0); i++)
+            {               
+                if ((currentReferencedDistance = FindSumOfDistances(_arraySource, currentClassFirstElement,
+                   currentClassLastElement, i)) < referencedDistance)
+                {
+                    referencedDistance = currentReferencedDistance;
+                    referencedObjectForCurrentClass = i;
+                }
+
+                referencedDistance = currentReferencedDistance < referencedDistance
+                    ? currentReferencedDistance : referencedDistance;
+
+                if (i == currentClassLastElement)
+                {
+                    _referencedObjects[numberOfCurrentClass] = referencedObjectForCurrentClass + 1;
+
+                    if (i < _arraySource.GetLength(0) - 1)
+                    {
+                        numberOfCurrentClass++;
+                        i++;
+                        currentClassFirstElement = i;
+                        currentClassLastElement += countOfClassObjects[numberOfCurrentClass];
+                        referencedDistance = FindSumOfDistances(_arraySource, currentClassFirstElement,
+                       currentClassLastElement, currentClassFirstElement);
+                        referencedObjectForCurrentClass = currentClassFirstElement;
+                    }
+                }
+            }
+        }
+
+        public List<string> GetReferencedObjectsWithClassNames(List<string> ClassesNames, int[] countOfClassObjects)
+        {
+            if(_referencedObjects == null)
+            {
+                CalculateReferencedObjects(countOfClassObjects);
+            }
+
             List<string> ReferencedObjectsWithClassNames = new List<string>();
 
             for (int i = 0; i < _referencedObjects.Length; i++)
@@ -218,28 +233,54 @@ namespace VisualChart3D.Common.Visualization
         {
             _timer.Start();
 
-            _coords = new double[_countOfObjects, BasicObjectsNumber];
+            _coords = new double[_countOfObjects, ObjectsCount];
 
             if (_space == Space.TwoDimensional)
             {
                 for (int j = 0; j < _countOfObjects; j++)
                 {
-                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - Compensator, j];
-                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - Compensator, j];
+                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, ThirdObjectArrayIndex] = EmptyObjectCompensator;
                 }
             }
             else
             {
                 for (int j = 0; j < _countOfObjects; j++)
                 {
-                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - Compensator, j];
-                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - Compensator, j];
-                    _coords[j, ThirdObjectArrayIndex] = _arraySource[_thirdBasisObject - Compensator, j];
+                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, ThirdObjectArrayIndex] = _arraySource[_thirdBasisObject - ArrayPositionCompensator, j];
                 }
             }
 
             _timer.Stop();
             return _coords;
         }
+
+        #region PROPERTY
+        public int[] BasicObjectsArray {
+            get {
+                _basicObjects = new int[ObjectsCount];
+                _basicObjects[FirstObjectArrayIndex] = _firstBasisObject;
+                _basicObjects[SecondObjectArrayIndex] = _secondBasisObject;
+                _basicObjects[ThirdObjectArrayIndex] = _thirdBasisObject;
+
+                return _basicObjects;
+            }
+
+            set {
+                _basicObjects = value;
+            }
+        }
+
+        public int FirstBasisObject { get => _firstBasisObject; set => _firstBasisObject = value; }
+        public int SecondBasisObject { get => _secondBasisObject; set => _secondBasisObject = value; }
+        public int ThirdBasisObject { get => _thirdBasisObject; set => _thirdBasisObject = value; }
+        public Space Space { get => _space; set => _space = value; }
+        public bool BasicObjectsColorMode { get => _basicObjectsColorMode; set => _basicObjectsColorMode = value; }
+        public double[,] ArraySource { get => _arraySource; }
+        public int BasicObjectsNumber { get => (int)_space; }
+    #endregion
     }
 }

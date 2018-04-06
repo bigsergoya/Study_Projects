@@ -26,12 +26,12 @@ namespace VisualChart3D.InputDataWindows
         private IUniversalReader _reader;
         private SourceFileMatrixType _inputMatrixType;
 
-        private ColumnDataViewModel _columnDataViewModel;
+        private Common.DataBinding.ColumnDataViewModel _columnDataViewModel;
 
         public SCVInputWindow(IUniversalReader reader = null)
         {
             InitializeComponent();
-            _columnDataViewModel = new ColumnDataViewModel();
+            _columnDataViewModel = new Common.DataBinding.ColumnDataViewModel();
 
             DataContext = _columnDataViewModel;
 
@@ -169,8 +169,9 @@ namespace VisualChart3D.InputDataWindows
         }
 
         private IUniversalReader InitializeReader()
-        {
-            IUniversalReader reader = new SCVDataReader(WindowFileType);
+        {            
+            IUniversalReader reader = new FastSCVDataReader(WindowFileType);
+            //IUniversalReader reader = new SCVDataReader(WindowFileType);
             return reader;
         }
 
@@ -426,51 +427,5 @@ namespace VisualChart3D.InputDataWindows
             RestoreItem(selectedItem);
             cmbObjectNameColumn.IsEnabled = false;
         }
-    }
-
-    public class ColumnDataViewModel : System.ComponentModel.INotifyPropertyChanged
-    {
-        private ObservableCollection<string> _activeItems;
-        private ObservableCollection<string> _ignoredItems;
-
-        public ObservableCollection<string> ActiveItems {
-            get {
-                if (_activeItems == null)
-                {
-                    _activeItems = new ObservableCollection<string>();
-                }
-
-                return _activeItems;
-            }
-
-            set {
-                _activeItems = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> IgnoredItems {
-            get {
-                if (_ignoredItems == null)
-                {
-                    _ignoredItems = new ObservableCollection<string>();
-                }
-
-                return _ignoredItems;
-            }
-
-            set {
-                _ignoredItems = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-
     }
 }

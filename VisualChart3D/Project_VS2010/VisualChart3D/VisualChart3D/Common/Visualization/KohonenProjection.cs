@@ -15,20 +15,26 @@ namespace VisualChart3D.Common.Visualization
     public class KohonenProjection
     {
         const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
+        const int IterationsLimit = 10000;
+        const int StartIterations = 100;
 
         #region Fields
-        private int _maxIteration;
+        private int _iterationsCount;
         private double _lambda = 1;     // 1 - Start value
         private int[] _indexesI;
         private int[] _indexesJ;
         private ITimer _timer;
 
         /// <summary>
+        /// Current iteration
+        /// </summary>
+        private int _iteration;
+
+        /// <summary>
         /// The precalculated distance-matrix.
         /// </summary>
         private double[][] _distanceMatrix;
         #endregion
-
 
         #region Properties
         /// <summary>
@@ -49,12 +55,10 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// The number of iterations.
         /// </summary>
-        public int MaxIterations { get => _maxIteration; set => _maxIteration = value; }
+        public int IterationsCount { get => _iterationsCount; set => _iterationsCount = value; }
 
-        /// <summary>
-        /// Current iteration
-        /// </summary>
-        private int _iteration;
+        public int MaxIterations { get => IterationsLimit; } 
+
         #endregion
 
         #region Constructor
@@ -63,7 +67,7 @@ namespace VisualChart3D.Common.Visualization
         /// </summary>
         /// <param name="inputData">The input-vectors.</param>
         /// <param name="outputDimension">The dimension of the projection.</param>
-        /// <param name="maxIteration">
+        /// <param name="iterationsCount">
         /// Maximum number of iterations. For a statistical acceptable accuracy
         /// this should be 10e4...1e5 times the number of points. It has shown
         /// that a few iterations (100) yield a good projection.
@@ -74,7 +78,7 @@ namespace VisualChart3D.Common.Visualization
         public KohonenProjection(
             double[][] inputData,
             int outputDimension,
-            int maxIteration)
+            int iterationsCount = StartIterations)
         {
             if (inputData == null || inputData.Length == 0)
             {
@@ -85,7 +89,7 @@ namespace VisualChart3D.Common.Visualization
 
             _distanceMatrix = inputData;
             this.OutputDimension = outputDimension;
-            _maxIteration = maxIteration;
+            _iterationsCount = iterationsCount;
 
             // Initialize the projection:
             Initialize();
@@ -105,7 +109,7 @@ namespace VisualChart3D.Common.Visualization
         {
             _timer.Start();
 
-            for (int i = _maxIteration; i >= 0; i--)
+            for (int i = _iterationsCount; i >= 0; i--)
             {
                 this.Iterate();
             }
@@ -202,7 +206,7 @@ namespace VisualChart3D.Common.Visualization
         {
             _iteration++;
 
-            double ratio = (double)_iteration / _maxIteration;
+            double ratio = (double)_iteration / _iterationsCount;
                         
             _lambda = Math.Pow(0.1, ratio);
         }

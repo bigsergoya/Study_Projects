@@ -22,6 +22,27 @@ namespace VisualChart3D.Common
             return distance;
         }
 
+        /// <summary>
+        /// Изменение значения TextBlock, лежащего в Label
+        /// </summary>
+        /// <param name="label">Label, включающий себя TextBlock прямым потомком. </param>
+        /// <param name="value">Новое значение поля Text объекта TextBlock</param>
+        /// <returns>В случае ошибки кастования - false, иначе true</returns>
+        internal static bool ChangeLabelTextBlockText(System.Windows.Controls.Label label, string value)
+        {
+            try
+            {
+                System.Windows.Controls.TextBlock textBlock = (System.Windows.Controls.TextBlock)label.Content;
+                textBlock.Text = value;
+                return true;
+            }
+            catch (System.InvalidCastException)
+            {
+                Common.Utils.ShowErrorMessage("Ошибка приведения TextBox-поля у объекта System.Windows.Controls.Label.");
+                return false;
+            }
+        }
+
         internal static void FisherYatesShuffle<T>(this T[] array)
         {
             Random rnd = new Random();
@@ -97,70 +118,6 @@ namespace VisualChart3D.Common
                 outputArray[i, 0] = (array[i, 0] - minX) / (maxX - minX);
                 outputArray[i, 1] = (array[i, 1] - minY) / (maxY - minY);
                 outputArray[i, 2] = (array[i, 2] - minZ) / (maxZ - minZ);
-            }
-
-            return outputArray;
-        }
-
-        internal static double[,] GetNormalizedDataForDIZZZSPASSSEEEEEEE(double[,] array)
-        {
-            int firstDim = array.GetLength(0);
-            int secondDim = array.GetLength(1);
-
-            double[,] outputArray = new double[firstDim, secondDim];
-
-
-            double maxX = array[0, 0];
-            double minX = array[0, 0];
-
-            double maxY = array[1, 0];
-            double minY = array[1, 0];
-
-            if (firstDim != 2)
-            {
-                double maxZ = array[2, 0];
-                double minZ = array[2, 0];
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    maxX = array[0, i] > maxX ? array[0, i] : maxX;
-                    minX = array[0, i] < minX ? array[0, i] : minX;
-
-                    maxY = array[1, i] > maxY ? array[1, i] : maxY;
-                    minY = array[1, i] < minY ? array[1, i] : minY;
-
-                    maxZ = array[2, i] > maxZ ? array[2, i] : maxZ;
-                    minZ = array[2, i] < minZ ? array[2, i] : minZ;
-                }
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    {
-                        outputArray[0, i] = (array[0, i] - minX) / (maxX - minX);
-                        outputArray[1, i] = (array[1, i] - minY) / (maxY - minY);
-                        outputArray[2, i] = (array[2, i] - minZ) / (maxZ - minZ);
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < secondDim; i++)
-                {
-                    maxX = array[0, i] > maxX ? array[0, i] : maxX;
-                    minX = array[0, i] < minX ? array[0, i] : minX;
-
-                    maxY = array[1, i] > maxY ? array[1, i] : maxY;
-                    minY = array[1, i] < minY ? array[1, i] : minY;
-
-                }
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    {
-                        outputArray[0, i] = (array[0, i] - minX) / (maxX - minX);
-                        outputArray[1, i] = (array[1, i] - minY) / (maxY - minY);
-                    }
-                }
             }
 
             return outputArray;
@@ -266,6 +223,21 @@ namespace VisualChart3D.Common
 
                 maxZ = array[i, 2] > maxZ ? array[i, 2] : maxZ;
                 minZ = array[i, 2] < minZ ? array[i, 2] : minZ;
+            }
+
+            if (maxX == minX)
+            {
+                minX = 0;
+            }
+
+            if (maxY == minY)
+            {
+                minY = 0;
+            }
+
+            if (maxZ == minZ)
+            {
+                minZ = 0;
             }
         }
 

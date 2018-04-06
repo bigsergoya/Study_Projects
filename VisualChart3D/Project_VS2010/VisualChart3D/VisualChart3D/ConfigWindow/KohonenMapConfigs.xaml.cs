@@ -7,23 +7,21 @@ namespace VisualChart3D.ConfigWindow
     /// </summary>
     public partial class KohonenMapConfigs : Window
     {
-        //private const int MaxIterationUpperLimit = 1000;
-        //private const int MaxIterationLowerLimit = 1;
-        //private string WarningMessageTitle = "Недопустимое значение";
-        //private readonly string WarningMessageDescrtiption = String.Format("Внимание, вы задали значение вне максимальных пределов. Допустимые пределы (от {0} до {1})", MaxIterationLowerLimit, MaxIterationUpperLimit);
+        private const string MaxIterationsFormat = "Количество итераций (max = {0})";
 
-        private int _maxIteration;
+        private int _countOfIteration;
 
-        public KohonenMapConfigs(int maxIteration)
+        public KohonenMapConfigs(int countOfIteration, int maxIterations)
         {
             InitializeComponent();
-            _maxIteration = maxIteration;
-            this.tbCountOfIterations.Value = _maxIteration;
+            _countOfIteration = countOfIteration;
+            this.tbCountOfIterations.Value = _countOfIteration;
+            MaxIterations = maxIterations;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            _maxIteration = this.tbCountOfIterations.Value.Value;
+            _countOfIteration = this.tbCountOfIterations.Value.Value;
             DialogResult = true;
         }
 
@@ -32,6 +30,16 @@ namespace VisualChart3D.ConfigWindow
             DialogResult = false;
         }
 
-        public int MaxIteration { get => _maxIteration; }
+        private int MaxIterations {
+            set {
+
+                this.tbCountOfIterations.Maximum = value;
+
+                string MaxIteratiosMessage = string.Format(MaxIterationsFormat, value);
+                Common.Utils.ChangeLabelTextBlockText(lbIterations, MaxIteratiosMessage);
+            }
+        }
+
+        public int CountOfIteration { get => _countOfIteration; }
     }
 }

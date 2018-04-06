@@ -249,7 +249,12 @@ namespace VisualChart3D
 
         public void displayObjectCoords(int selectedInted)
         {
-            if (!_isDisSpaceMode)
+            tbCurrentObjectCoords.Text =
+                    "x=" + _coords[(_numberOfObjects[selectedInted]), 0] + Environment.NewLine +
+                    "y=" + _coords[(_numberOfObjects[selectedInted]), 1] + Environment.NewLine +
+                    "z=" + _coords[(_numberOfObjects[selectedInted]), 2];
+
+            /*if (!_isDisSpaceMode)
             {
                 tbCurrentObjectCoords.Text =
                     "x=" + _coords[(_numberOfObjects[selectedInted]), 0] + Environment.NewLine +
@@ -272,7 +277,7 @@ namespace VisualChart3D
                         "y=" + _coords[1, (_numberOfObjects[selectedInted])] + Environment.NewLine +
                         "z=" + _coords[2, (_numberOfObjects[selectedInted])];
                 }
-            }
+            }*/
         }
 
         private void ListBoxObjects_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

@@ -136,6 +136,49 @@ namespace VisualChart3D.Common
             return result;
         }
 
+        /* /// <summary>
+         /// Преобразование матрицы признаков в матрицу расстояний
+         /// </summary>
+         /// <param name="matr">матрица признаков</param>
+         /// <param name="countRow">количество строк в матрице признаков</param>
+         /// <returns>матрица расстояний</returns>
+         public static double[,] ObjectAttributeToDistance(double[,] matr, int countRow, int minkovskiDegree)
+         {
+             if (minkovskiDegree == 0)
+             {
+                 throw new ArgumentException(ChangingMinkovskiDegreeErrorMessage);
+             }
+
+             int countColumn = matr.GetLength(0);
+             //int countColumn = matr.Length / countRow;
+             double[,] result = new double[countRow, countRow];
+
+             for (int i = 0; i < countRow; i++)
+             {
+                 for (int j = 0; j < countRow; j++)
+                 {
+                     if (i == j)
+                     {
+                         result[i, j] = 0;
+                     }
+                     else
+                     {
+                         double temp = 0;
+
+                         for (int k = 0; k < countColumn; k++)
+                         {
+                             temp += Math.Pow(Math.Abs(matr[i, k] - matr[j, k]), minkovskiDegree);
+                         }
+
+                         temp = Math.Pow(temp, 1d / minkovskiDegree);
+                         result[i, j] = result[j, i] = temp;
+                     }
+                 }
+             }
+
+             return result;
+         }*/
+
         /// <summary>
         /// Преобразование матрицы признаков в матрицу расстояний
         /// </summary>
@@ -144,17 +187,23 @@ namespace VisualChart3D.Common
         /// <returns>матрица расстояний</returns>
         public static double[,] ObjectAttributeToDistance(double[,] matr, int countRow, int minkovskiDegree)
         {
+            //ITimer timer = new CustomTimer();
+
             if (minkovskiDegree == 0)
             {
                 throw new ArgumentException(ChangingMinkovskiDegreeErrorMessage);
             }
 
-            int countColumn = matr.Length / countRow;
+            int countColumn = matr.GetLength(1);
+            //int countColumn = matr.Length / countRow;
             double[,] result = new double[countRow, countRow];
+
+            //timer.Start();
 
             for (int i = 0; i < countRow; i++)
             {
-                for (int j = 0; j < countRow; j++)
+                //for (int j = 0; j < countRow; j++)
+                System.Threading.Tasks.Parallel.For(0, countRow, j =>
                 {
                     if (i == j)
                     {
@@ -173,9 +222,17 @@ namespace VisualChart3D.Common
                         result[i, j] = result[j, i] = temp;
                     }
                 }
+            );
             }
 
+            //timer.Stop();
+
             return result;
+        }
+
+        static private void Iterate()
+        {
+
         }
     }
 }

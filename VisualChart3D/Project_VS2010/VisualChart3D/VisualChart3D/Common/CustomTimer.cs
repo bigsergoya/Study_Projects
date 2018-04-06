@@ -20,7 +20,7 @@ namespace VisualChart3D.Common
         System.Diagnostics.Stopwatch sw;
 
         private const string CalculatedTimeTitle = "Затраченное время";
-        private const int SymbolsAfterComma = 6;
+        private const int SymbolsAfterComma = 3;
         private const string BadTimerStart = "Ошибка. Повторный запуск уже ведущего отсчет таймера.";
         private const string BadTimerEnd = "Ошибка. Попытка остановить еще не запущенный отчет таймера.";
         private const string TimeElapsedFormat = "Подсчет длился {0} сек.";

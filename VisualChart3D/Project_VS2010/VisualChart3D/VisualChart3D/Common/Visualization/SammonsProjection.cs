@@ -6,7 +6,9 @@ namespace VisualChart3D.Common.Visualization
     public interface ISammon : IVisualizer
     {
         int IterationNumber { get; set; }
+        int IterationLimit { get; }
         double IterationStep { get; set; }
+        double IterationStepLimit { get; }
         List<double> CalculatedCriteria { get; }
     }
     public class SammonsProjection : ISammon
@@ -16,6 +18,8 @@ namespace VisualChart3D.Common.Visualization
         private const double StartStep = 1000.0;
         private const double MinStep = 1e-10;
         private const double E = 1e-10;
+        private const int IterationLimitValue = 10000;
+        private const double IterationStepLimitValue = 100000;
         private ITimer _timer;
 
         private int _iterationNumber = 10;
@@ -124,6 +128,10 @@ namespace VisualChart3D.Common.Visualization
         public List<double> CalculatedCriteria => _calculatedCriteria;
 
         public int IterationNumber { get => _iterationNumber; set => _iterationNumber = value; }
+
+        public int IterationLimit => IterationLimitValue;
+
+        public double IterationStepLimit => IterationStepLimitValue;
 
         public void ToProject()
         {

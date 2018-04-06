@@ -42,8 +42,6 @@ namespace VisualChart3D
         private KohonenProjection _kohonenProjection;
         private ISammon _sammonsProjection;
 
-        private bool _referencedObjectsMode = false;
-
         /// <summary>
         /// Тип визуализации
         /// </summary>
@@ -157,39 +155,30 @@ namespace VisualChart3D
 
         private void DissimilitarySpaceGeneration(DisSpace DissimiliaritySpace, bool firstGeneration = false)
         {
-            _projectionCoords = Utils.GetNormalizedDataForDIZZZSPASSSEEEEEEE(DissimiliaritySpace.ToProject());
+            double[,] rawCoors = DissimiliaritySpace.ToProject();
+            _projectionCoords = Utils.GetNormalizedData(rawCoors);
 
             //_projectionCoords = DissimiliaritySpace.ToProject();
-            int countCords = _projectionCoords.Length / DissimiliaritySpace.BasicObjectsNumber;
+            int countCords = _projectionCoords.GetLength(0);
             _coordCurrent = new Vertex3D[countCords];
 
-            if (firstGeneration)
-            {
-                _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
-            }
-
-            if (DissimiliaritySpace.Space.Equals(Space.TwoDimensional))
+            if (!firstGeneration)
             {
                 for (int i = 0; i < countCords; i++)
                 {
                     _coordCurrent[i] = new Vertex3D
                     {
-                        X = _projectionCoords[0, i],
-                        Y = _projectionCoords[1, i],
-                        Z = 0.1
+                        X = _projectionCoords[i, 0],
+                        Y = _projectionCoords[i, 1],
+                        Z = _projectionCoords[i, 2]
                     };
                 }
             }
             else
-                for (int i = 0; i < countCords; i++)
-                {
-                    _coordCurrent[i] = new Vertex3D
-                    {
-                        X = _projectionCoords[0, i],
-                        Y = _projectionCoords[1, i],
-                        Z = _projectionCoords[2, i]
-                    };
-                }
+            {
+                _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
+                SaveResultsAsFile(countCords);
+            }
         }
 
         private void KohonenMapGeneration(KohonenProjection projection, bool firstGeneration = false)
@@ -221,15 +210,6 @@ namespace VisualChart3D
                 _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
                 SaveResultsAsFile(countCords);
             }
-
-
-            /*_coordCurrent[0] = new Vertex3D
-            {
-                X = 0,
-                Y = 0,
-                Z = 0
-            };*/
-
         }
 
         private void SammonsMapGeneration(IVisualizer visualizer, bool firstGeneration = false)
@@ -317,7 +297,7 @@ namespace VisualChart3D
 
             //_projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
 
-            _projectionCoords = Utils.GetNormalizedData(fastMap.GetCoordinates(fastMap.CountOfProjection));
+            _projectionCoords = Utils.GetNormalizedData(fastMap.ToProject(fastMap.CountOfProjection));
 
             countCords = _projectionCoords.Length / fastMap.CountOfProjection;
 
@@ -513,12 +493,12 @@ namespace VisualChart3D
                 return;
             }
 
-            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.MaxIterations);
+            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.IterationsCount, _kohonenProjection.MaxIterations);
             bool? showDialog = kohonenMapConfigWindow.ShowDialog();
 
             if ((bool)showDialog)
             {
-                _kohonenProjection.MaxIterations = kohonenMapConfigWindow.MaxIteration;
+                _kohonenProjection.IterationsCount = kohonenMapConfigWindow.CountOfIteration;
                 KohonenMapGeneration(_kohonenProjection, true);
                 DrawScatterPlot();
             }
@@ -532,13 +512,10 @@ namespace VisualChart3D
                 return;
             }
 
-            DissimilaritySpaceConfigs DisSpcWin = new DissimilaritySpaceConfigs(_settFilesCurrent, _dissimiliaritySpace, _referencedObjectsMode);
+            DissimilaritySpaceConfigs DisSpcWin = new DissimilaritySpaceConfigs(_settFilesCurrent, _dissimiliaritySpace);
 
             bool? showDialog = DisSpcWin.ShowDialog();
-            //_dissimiliaritySpace.setBasicObjects(DisSpcWin.firstСhoosedОbject, DisSpcWin.secondChoosedObject, DisSpcWin.thirdChoosedObject);
-            //_dissimiliaritySpace.Space = DisSpcWin.sizeOfSpace;
-            //_dissimiliaritySpace.BasicObjectsColorMode = DisSpcWin.basisObjectColorMode;
-            _referencedObjectsMode = (bool)DisSpcWin.cbAutomaticlySettingUpOfReference.IsChecked;
+
             // создаем окошко и передаем туда сеттингфайлз, получаем -
             DissimilitarySpaceGeneration(_dissimiliaritySpace, true);
             DrawScatterPlot();
@@ -634,12 +611,10 @@ namespace VisualChart3D
                         break;
 
                     case AlgorithmType.KohonenMap:
-                        const int Iterations = 10;
-
                         _kohonenProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
-                            ? new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional, Iterations) 
+                            ? new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional) 
                             : new KohonenProjection(Utils.GetAnotherStyleOfData(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree)),
-                            LowerSpaceDimensional, Iterations);
+                            LowerSpaceDimensional);
 
                         KohonenMapGeneration(_kohonenProjection, true);
                         break;
