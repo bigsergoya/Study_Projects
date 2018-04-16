@@ -7,8 +7,23 @@ namespace VisualChart3D.Common
     {
         private const string WarningMessageStandartTitle = "Внимание!";
         private const string ErrorMessageStandartTitle = "Ошибка!";
+        private const string ExceptionMessageFormat = "{0} Стек вызовов: {1}";
 
         internal const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
+
+        internal static T[,] SafeAllocateMemory<T>(int rows, int columns)
+        {
+            try
+            {
+                T[,] value = new T[rows, columns];
+                return value;
+            }
+            catch(OutOfMemoryException e)
+            {
+                Utils.ShowExceptionMessage(e);
+                return null;
+            }
+        }
 
         internal static double ManhattenDistance(double[] vec1, double[] vec2)
         {
@@ -172,6 +187,11 @@ namespace VisualChart3D.Common
                 System.Windows.Forms.MessageBoxIcon.Error);
         }
 
+        internal static void ShowExceptionMessage(Exception e)
+        {
+            ShowErrorMessage(String.Format(ExceptionMessageFormat,e.Message, e.StackTrace));
+        }
+
         private static void GetMinAndMax(double[][] array, int firstDim, int secondDim, out double min, out double max)
         {
             max = array[0][0];
@@ -186,7 +206,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        public static void GetMinAndMax(double[,] array, int firstDim, int secondDim, out double min, out double max)
+        internal static void GetMinAndMax(double[,] array, int firstDim, int secondDim, out double min, out double max)
         {
             max = array[0, 0];
             min = array[0, 0];
@@ -200,7 +220,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        public static void GetMinAndMaxByDimensions(double[,] array, int firstDim, int secondDim,
+        internal static void GetMinAndMaxByDimensions(double[,] array, int firstDim, int secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
@@ -241,7 +261,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        public static void GetMinAndMaxByDimensions(double[][] array, int firstDim, int secondDim,
+        internal static void GetMinAndMaxByDimensions(double[][] array, int firstDim, int secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
@@ -328,7 +348,7 @@ namespace VisualChart3D.Common
     /// <summary>
     /// Compare y and x in reverse order
     /// </summary>
-    public class ReverseComparer : System.Collections.Generic.IComparer<double>
+    internal class ReverseComparer : System.Collections.Generic.IComparer<double>
     {
         public int Compare(double x, double y)
         {

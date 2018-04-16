@@ -48,7 +48,7 @@ namespace VisualChart3D.Common.PictureMaster
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 return false;
             }

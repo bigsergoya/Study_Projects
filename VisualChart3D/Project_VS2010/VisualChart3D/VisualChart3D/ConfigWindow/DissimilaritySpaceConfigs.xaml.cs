@@ -226,7 +226,7 @@ namespace VisualChart3D.ConfigWindow
                     return false;
                 }
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 return false;
             }
@@ -263,7 +263,7 @@ namespace VisualChart3D.ConfigWindow
                     return false;
                 }
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(ObjectNameErrorMessage);
                 return false;

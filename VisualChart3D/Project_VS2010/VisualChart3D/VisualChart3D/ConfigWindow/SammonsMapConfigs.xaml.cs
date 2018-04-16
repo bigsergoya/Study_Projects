@@ -19,7 +19,7 @@ namespace VisualChart3D.ConfigWindow
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ISammon _sammonProjection;
-        private double _maxHeight;
+        //private double _maxHeight;
 
         /*public double PlotHeight {
             get {

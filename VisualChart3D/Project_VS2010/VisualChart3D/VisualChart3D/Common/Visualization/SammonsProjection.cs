@@ -15,6 +15,7 @@ namespace VisualChart3D.Common.Visualization
     {
         private const int MaxAvaibleDimension = 3;
         private const string VisualizationErrorFormat = "Ошибка при работе алгоритма визуализации методом Сэммона: {0}";
+        private const string StringDescriptionFormat = "Sammons Map, размер данных({0}x{1}, число итераций - {2}, )";
         private const double StartStep = 1000.0;
         private const double MinStep = 1e-10;
         private const double E = 1e-10;
@@ -22,7 +23,7 @@ namespace VisualChart3D.Common.Visualization
         private const double IterationStepLimitValue = 100000;
         private ITimer _timer;
 
-        private int _iterationNumber = 10;
+        private int _iterationsCount = 10;
 
         private double _iterationStep = 2.0;
 
@@ -30,7 +31,7 @@ namespace VisualChart3D.Common.Visualization
         private int _countOfObjects;
 
         private double[,] _projection;
-        private double[,] _distMatrix;
+        private double[,] _distanceMatrix;
 
         private List<Double> _calculatedCriteria;
 
@@ -42,7 +43,7 @@ namespace VisualChart3D.Common.Visualization
             }
 
             _calculatedCriteria = new List<Double>();
-            _distMatrix = distMatrix;
+            _distanceMatrix = distMatrix;
             _dimensions = dimensions;
             _timer = new CustomTimer();
         }
@@ -123,11 +124,11 @@ namespace VisualChart3D.Common.Visualization
 
         public double[,] Projection { get => _projection; }
         public double IterationStep { get => _iterationStep; set => _iterationStep = value; }
-        public double[,] DistMatrix { get => _distMatrix; set => _distMatrix = value; }
+        public double[,] DistMatrix { get => _distanceMatrix; set => _distanceMatrix = value; }
 
         public List<double> CalculatedCriteria => _calculatedCriteria;
 
-        public int IterationNumber { get => _iterationNumber; set => _iterationNumber = value; }
+        public int IterationNumber { get => _iterationsCount; set => _iterationsCount = value; }
 
         public int IterationLimit => IterationLimitValue;
 
@@ -135,11 +136,11 @@ namespace VisualChart3D.Common.Visualization
 
         public void ToProject()
         {
-            _timer.Start();
-            _countOfObjects = _distMatrix.GetLength(0);
+            _timer.Start(this.ToString());
+            _countOfObjects = _distanceMatrix.GetLength(0);
             _calculatedCriteria.Clear();
 
-            int[] indexesOfMostRemoteObjects = DisSpace.GetMostestThreeRemoteObjects(_distMatrix);
+            int[] indexesOfMostRemoteObjects = DisSpace.GetMostestThreeRemoteObjects(_distanceMatrix);
 
             try
             {
@@ -150,7 +151,7 @@ namespace VisualChart3D.Common.Visualization
                 {
                     for (int j = 0; j < _countOfObjects; j++)
                     {
-                        dm[j, i] = _distMatrix[j, indexesOfMostRemoteObjects[i]];
+                        dm[j, i] = _distanceMatrix[j, indexesOfMostRemoteObjects[i]];
                     }
                 }
 
@@ -158,11 +159,11 @@ namespace VisualChart3D.Common.Visualization
                 {
                     for (int j = i + 1; j < _countOfObjects; j++)
                     {                
-                        sum2dist += Math.Pow(_distMatrix[i, j], 2);
+                        sum2dist += Math.Pow(_distanceMatrix[i, j], 2);
                     }
                 }
 
-                double criteria = EvaluateCriteria(dm, _distMatrix, sum2dist);
+                double criteria = EvaluateCriteria(dm, _distanceMatrix, sum2dist);
 
                 int counter = 0;
                 int iteration = 1;
@@ -170,13 +171,13 @@ namespace VisualChart3D.Common.Visualization
 
                 while ((counter < _countOfObjects) && (criteria > E) && (IterationNumber > iteration))
                 {
-                    double[] gradient = EvaluateGradient(counter, dm, _distMatrix, sum2dist);
+                    double[] gradient = EvaluateGradient(counter, dm, _distanceMatrix, sum2dist);
 
                     while (IterationNumber > iteration)
                     {
                         CorrectProjection(dm, counter, _dimensions, -step, gradient);
 
-                        double newcriteria = EvaluateCriteria(dm, _distMatrix, sum2dist);
+                        double newcriteria = EvaluateCriteria(dm, _distanceMatrix, sum2dist);
 
                         iteration++;
 
@@ -200,8 +201,14 @@ namespace VisualChart3D.Common.Visualization
 
             catch (Exception ex)
             {
+                //На будущее - сделать систему отмены отрисовки в случае эксепшена в любом из методов отрисовки.
                 throw new ApplicationException(String.Format(VisualizationErrorFormat, ex.StackTrace));
             }
+        }
+
+        public override string ToString()
+        {
+            return String.Format(StringDescriptionFormat, _distanceMatrix.GetLength(0), _distanceMatrix.GetLength(1), _iterationsCount, IterationStepLimit);
         }
     }
 }

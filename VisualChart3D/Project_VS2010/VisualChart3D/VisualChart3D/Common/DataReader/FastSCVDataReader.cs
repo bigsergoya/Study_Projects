@@ -81,6 +81,7 @@ namespace VisualChart3D.Common.DataReader
             }
             catch (System.IO.IOException e)
             {
+                Utils.ShowExceptionMessage(e);
                 return false;
             }
 
@@ -129,9 +130,11 @@ namespace VisualChart3D.Common.DataReader
                     line = fs.ReadLine();
                 }
             }
-            catch (System.IO.IOException)
+            catch (System.IO.IOException e)
             {
-                throw new NotImplementedException();
+                Utils.ShowExceptionMessage(e);
+                return null;
+                //throw new NotImplementedException();
             }
 
             _dataColumn.Add(classColumn);
@@ -155,11 +158,11 @@ namespace VisualChart3D.Common.DataReader
             int n;
             int m;
 
-            CalculateCountOfDeletedColumns(out n, out m);
-            _arraySource = new double[n, m];
-
             try
             {
+                CalculateCountOfDeletedColumns(out n, out m);
+                _arraySource = new double[n, m];
+
                 System.IO.StreamReader fs = new System.IO.StreamReader(SourceMatrixFile);
                 string[] parts;
                 SkipFirstLine(fs);
@@ -189,41 +192,18 @@ namespace VisualChart3D.Common.DataReader
                     line = fs.ReadLine();
                 }
             }
-            catch (FormatException)
+            catch (Exception e)
             {
+                Utils.ShowExceptionMessage(e);
                 _arraySource = null;
                 return;
             }
 
-            //Переписать так, чтобы читалось по столбцам, а не по строкам.
-            /*try
+            if (this.SourceMatrixType == SourceFileMatrixType.ObjectAttribute)
             {
-                int numericDataIndex = 0;
-                for (int i = Compensation; i < n + Compensation; i++)
-                {
-                    for (int j = 0; j < _firstColumn.Count; j++)
-                    {
-                        if (_dataColumn.Contains(_fileData[ColumnLine][j]) || _ignoredColumns.Contains(_fileData[ColumnLine][j]))
-                        {
-                            continue;
-                        }
-
-                        _arraySource[i - Compensation, numericDataIndex] = double.Parse(_fileData[i][j], CultureInfo.InvariantCulture);
-                        numericDataIndex++;
-                    }
-
-                    numericDataIndex = 0;
-                }
+                _arraySource = CommonMatrix.ObjectAttributeToDistance(_arraySource, _minkovskiDegree);
             }
-            catch(FormatException)
-            {
-                _arraySource = null;
-                return;
-            }
-            catch ()
-            {
 
-            }*/
         }
 
 

@@ -11,8 +11,8 @@ namespace VisualChart3D.InputDataWindows
     public partial class StandartInputWindow : Window
     {
         private const string NotImplementedSourceMatrixType = "Ошибка типа входной матрицы. ";
-        private const string InputFileChooseMessage = "Не указан файл \"Матрица расстояний\" или \"Матрица объект-признак\"";
-        private const string IncorrectFileStructureMessage = "Некорректная структура файла \"Матрица расстояний\" или \"Матрица объект-признак\"";
+        private const string InputFileChooseMessage = "Не указан файл \"Матрица расстояний\" или \"Матрица объект-признак\". ";
+        private const string IncorrectFileStructureMessage = "Некорректная структура файла \"Матрица расстояний\" или \"Матрица объект-признак\". ";
         private const InputFileType WindowFileType = InputFileType.Text;
 
         private IUniversalReader _reader;
@@ -105,7 +105,7 @@ namespace VisualChart3D.InputDataWindows
         private void btSave_Click(object sender, RoutedEventArgs e)
         {
             string errors = String.Empty;
-            //double[,] dataMatrix = null;
+            _reader.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
 
             if (string.IsNullOrEmpty(tbDataMatrixPath.Text))
             {
@@ -116,13 +116,14 @@ namespace VisualChart3D.InputDataWindows
                 errors+=IncorrectFileStructureMessage;
             }
 
+            
+            
             if (!String.IsNullOrEmpty(errors))
             {
                 Utils.ShowErrorMessage(errors);
                 return;
             }
 
-            _reader.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
             //_reader.SourceMatrixType = _inputMatrixType;
             //_reader.SourceMatrixFile = tbDataMatrixPath.Text;
             DialogResult = true;

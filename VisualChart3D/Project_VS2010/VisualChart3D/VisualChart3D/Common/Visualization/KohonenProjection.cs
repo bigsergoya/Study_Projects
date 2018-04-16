@@ -14,9 +14,11 @@ namespace VisualChart3D.Common.Visualization
     [Serializable]
     public class KohonenProjection
     {
-        const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
-        const int IterationsLimit = 10000;
-        const int StartIterations = 100;
+        private const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
+        private const string StringDescriptionFormat = "Kohonen Map, размер данных({0}x{1}, число итераций - {2}, шаг дробления - {3})";
+
+        private const int IterationsLimit = 10000;
+        private const int StartIterations = 100;
 
         #region Fields
         private int _iterationsCount;
@@ -101,13 +103,49 @@ namespace VisualChart3D.Common.Visualization
         }
         #endregion
 
-        #region Methods
+        #region Private Methods
+        /// <summary>
+        /// Initializes the algorithm.
+        /// </summary>
+        private void Initialize()
+        {
+            // Initialize random points for the projection:
+            Random rnd = new Random();
+            double[][] projection = new double[this.Count][];
+            this.Projection = projection;
+
+            for (int i = 0; i < projection.Length; i++)
+            {
+                double[] projectionI = new double[this.OutputDimension];
+                projection[i] = projectionI;
+
+                for (int j = 0; j < projectionI.Length; j++)
+                {
+                    projectionI[j] = rnd.Next(0, this.Count);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reducing lambda depending on iterations.
+        /// </summary>
+        private void ReduceLambda()
+        {
+            _iteration++;
+
+            double ratio = (double)_iteration / _iterationsCount;
+
+            _lambda = Math.Pow(0.1, ratio);
+        }
+        #endregion
+
+        #region Public Methods
         /// <summary>
         /// Runs all the iterations and thus create the mapping.
         /// </summary>
         public void CreateMapping()
         {
-            _timer.Start();
+            _timer.Start(this.ToString());
 
             for (int i = _iterationsCount; i >= 0; i--)
             {
@@ -174,42 +212,11 @@ namespace VisualChart3D.Common.Visualization
             // Reduce lambda monotonically:
             ReduceLambda();
         }
-        #endregion
 
-        #region Private Methods
-        /// <summary>
-        /// Initializes the algorithm.
-        /// </summary>
-        private void Initialize()
+        public override string ToString()
         {
-            // Initialize random points for the projection:
-            Random rnd = new Random();
-            double[][] projection = new double[this.Count][];
-            this.Projection = projection;
-
-            for (int i = 0; i < projection.Length; i++)
-            {
-                double[] projectionI = new double[this.OutputDimension];
-                projection[i] = projectionI;
-
-                for (int j = 0; j < projectionI.Length; j++)
-                {
-                    projectionI[j] = rnd.Next(0, this.Count);
-                }
-            }
+            return String.Format(StringDescriptionFormat, _distanceMatrix.GetLength(0), _distanceMatrix.GetLength(1), _iterationsCount);
         }
-
-        /// <summary>
-        /// Reducing lambda depending on iterations.
-        /// </summary>
-        private void ReduceLambda()
-        {
-            _iteration++;
-
-            double ratio = (double)_iteration / _iterationsCount;
-                        
-            _lambda = Math.Pow(0.1, ratio);
-        }
-        #endregion
+        #endregion        
     }
 }

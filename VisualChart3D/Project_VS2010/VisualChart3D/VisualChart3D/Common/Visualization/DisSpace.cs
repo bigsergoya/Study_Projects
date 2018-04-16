@@ -7,6 +7,7 @@ namespace VisualChart3D.Common.Visualization
 {
     public class DisSpace
     {
+        private const string StringDescriptionFormat = "Dissimilarity Space, размер данных({0}x{1})";
         private const int ObjectsCount = 3;
 
         private const double EmptyObjectCompensator = 0.1;
@@ -231,7 +232,7 @@ namespace VisualChart3D.Common.Visualization
 
         public double[,] ToProject()
         {
-            _timer.Start();
+            _timer.Start(String.Format(StringDescriptionFormat,this.ArraySource.GetLength(0), this.ArraySource.GetLength(1)));
 
             _coords = new double[_countOfObjects, ObjectsCount];
 

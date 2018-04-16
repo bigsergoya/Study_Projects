@@ -33,17 +33,17 @@ namespace VisualChart3D
         /// </summary>
         private List<string> _namesObjects;
 
-        /// <summary>
+        /*/// <summary>
         /// Исходная матрица
         /// </summary>
-        private double[,] _arraySource;
+        private double[,] _arraySource;*/
 
         /// <summary>
         /// Индексы выделенных объектов
         /// </summary>
         private readonly int[] _selectedIdx;
 
-        /// <summary>
+        /*/// <summary>
         /// Вычислить иходную матрицу
         /// </summary>
         /// <returns>Исходная матрицы</returns>
@@ -133,7 +133,7 @@ namespace VisualChart3D
                 Utils.ShowErrorMessage(String.Format(FileCreatingErrorMessage, fileName));
             }
             return result;
-        }
+        }*/
 
         /// <summary>
         /// Получить количество объектов
@@ -151,7 +151,7 @@ namespace VisualChart3D
             }
         }
 
-        /// <summary>
+        /*/// <summary>
         ///  Получить массив с исходной матрицей
         /// </summary>
         public double[,] ArraySource
@@ -163,11 +163,12 @@ namespace VisualChart3D
                 {
                     return _arraySource;
                 }
+
                 _arraySource = GetSourceMatrix();
 
                 return _arraySource;
             }
-        }
+        }*/
 
         /// <summary>
         /// Получить список названий классов

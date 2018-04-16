@@ -245,6 +245,7 @@ namespace VisualChart3D
         private void SaveResultsAsFile(int countCords)
         {
             string fileName = _settFilesCurrent.UniversalReader.SourceMatrixFile + ".3D";
+
             try
             {
                 using (WriteTextToFile file = new WriteTextToFile(fileName))
@@ -267,6 +268,7 @@ namespace VisualChart3D
             catch
             {
                 Utils.ShowWarningMessage(String.Format(CreatingFileErrorMessage, fileName));
+
                 for (int i = 0; i < countCords; i++)
                 {
                     _coordCurrent[i] = new Vertex3D
@@ -291,10 +293,11 @@ namespace VisualChart3D
         private void FastMapGeneration(bool firstGeneration = false)
         {
             int countCords = 0;
-            FastMap fastMap = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance
+            /*FastMap fastMap = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance
                 ? new FastMap(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.Metrics)
                 : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree), _settFilesCurrent.Metrics);
-
+            */
+            FastMap fastMap = new FastMap(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.Metrics);
             //_projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
 
             _projectionCoords = Utils.GetNormalizedData(fastMap.ToProject(fastMap.CountOfProjection));
@@ -548,6 +551,7 @@ namespace VisualChart3D
                     System.Xml.Serialization.XmlSerializer writer =
                         new System.Xml.Serialization.XmlSerializer(typeof(ClassVisualisationSettings));
                     var path = _settFilesCurrent.ClassObjectFile + ExtColorSchema;
+
                     try
                     {
                         FileStream file = File.Create(path);
@@ -601,31 +605,37 @@ namespace VisualChart3D
                         break;
 
                     case AlgorithmType.DisSpace:
-                        _dissimiliaritySpace = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                        /*_dissimiliaritySpace = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
                             ? new DisSpace(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects) 
                             : new DisSpace(
                                 CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree),
-                                _settFilesCurrent.CountObjects);
+                                _settFilesCurrent.CountObjects);*/
+
+                        _dissimiliaritySpace = new DisSpace(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects);
 
                         DissimilitarySpaceGeneration(_dissimiliaritySpace, true);
                         break;
 
                     case AlgorithmType.KohonenMap:
-                        _kohonenProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                        /*_kohonenProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
                             ? new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional) 
                             : new KohonenProjection(Utils.GetAnotherStyleOfData(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree)),
-                            LowerSpaceDimensional);
+                            LowerSpaceDimensional);*/
+
+                        _kohonenProjection = new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional);
 
                         KohonenMapGeneration(_kohonenProjection, true);
                         break;
 
                     case AlgorithmType.SammonsMap:
 
-                        _sammonsProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
+                        /*_sammonsProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
                             ? new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.UniversalReader.ArraySource) 
                             : new SammonsProjection(LowerSpaceDimensional,
                             CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree));
+                        */
 
+                        _sammonsProjection = new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.UniversalReader.ArraySource);
 
                         _sammonsProjection.ToProject();
                         SammonsMapGeneration(_sammonsProjection, true);
@@ -670,6 +680,7 @@ namespace VisualChart3D
                     _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
                     SizeDetection();
                 }
+
                 Title = "Visual Chart 3D " + System.IO.Path.GetFileName(_settFilesCurrent.UniversalReader.SourceMatrixFile);
                 DrawScatterPlot();
             }
@@ -851,11 +862,6 @@ namespace VisualChart3D
                     };
 
                     _3DChartCurrent.SetVertex(i, plotItem);
-                }
-                catch (ArgumentException ex)
-                {
-                    Utils.ShowErrorMessage(String.Format(CreatingGraphicErrorMessage, ex.Message, ex, ex.StackTrace));
-                    return;
                 }
                 catch (Exception ex)
                 {

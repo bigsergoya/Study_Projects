@@ -79,7 +79,7 @@ namespace VisualChart3D
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(GettingFileByNameErrorMessage);
                 //возможно стоит просто не информировать а просто по буллу выводить пустую картинку при ошибке
@@ -112,7 +112,7 @@ namespace VisualChart3D
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(GettingFileByNameErrorMessage);
                 //возможно стоит просто не информировать а просто по буллу выводить пустую картинку при ошибке

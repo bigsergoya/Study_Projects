@@ -6,6 +6,8 @@ namespace VisualChart3D.Common.Visualization
 {
     internal class FastMap
     {
+        private const string StringDescriptionFormat = "Fast Map, размер данных({0}x{1})";
+
         /// <summary>
         /// Делегат функции, вычисляющая расстояние между элементами
         /// </summary>
@@ -27,7 +29,7 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// Матрица расстояний
         /// </summary>
-        private readonly double[,] _distanceArr;
+        private readonly double[,] _distanceMatrix;
 
         /// <summary>
         /// Количество элементов
@@ -80,9 +82,9 @@ namespace VisualChart3D.Common.Visualization
         public FastMap(double[,] distanceArr, FastMapMetric metric)
         {
             _timer = new CustomTimer();
-            _distanceArr = distanceArr;
+            _distanceMatrix = distanceArr;
             _countElements = (int)Math.Sqrt(distanceArr.Length);
-            _distanceFunc = (idx1, idx2) => (float)_distanceArr[idx1, idx2];
+            _distanceFunc = (idx1, idx2) => (float)_distanceMatrix[idx1, idx2];
             _metric = metric;
         }
 
@@ -96,7 +98,7 @@ namespace VisualChart3D.Common.Visualization
             _arrCoord = new double[_countElements, cntProjection];
             _currentColumn = 0;
 
-            _timer.Start();
+            _timer.Start(this.ToString());
             FastMapAlghoritm(cntProjection, _distanceFunc);
             _timer.Stop();
 
@@ -177,6 +179,11 @@ namespace VisualChart3D.Common.Visualization
                     }
                 }
             return new TwoElement(a, b);
+        }
+
+        public override string ToString()
+        {            
+            return String.Format(StringDescriptionFormat, _distanceMatrix.GetLength(0), _distanceMatrix.GetLength(1));
         }
     }
 }

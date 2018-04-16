@@ -17,7 +17,7 @@ namespace VisualChart3D.InputDataWindows
     {
         private const string NotImplementedSourceMatrixType = "Ошибка типа входной матрицы. ";
         private const string BadColumnChoiseMessage = "Ошибка выбора стобцов в качестве имен классов и объектов.";
-        private const string BadParsingMessage = "Ошибка преобразования в числовой формат. Среди читаемых столбцов имеется символьный. Чтение невозможно.";
+        private const string BadParsingMessage = "Ошибка преобразования в числовой формат. Чтение невозможно.";
         private const string CannotIgnoreColumn = "Нельзя игнорировать уже выбранный в качестве имен объектов или имен классов столбец";
 
         private const int SelectedElementIndex = 0;
@@ -191,6 +191,9 @@ namespace VisualChart3D.InputDataWindows
         private void btSave_Click(object sender, RoutedEventArgs e)
         {
             //bool isBadChoise = CheckSelectedIndexes();
+        
+            Reader.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
+
             bool isIndexNotInitialize = CheckIInitialzedIndexes();
 
             if (isIndexNotInitialize)
@@ -223,7 +226,6 @@ namespace VisualChart3D.InputDataWindows
                 return;
             }
 
-            Reader.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
             DialogResult = true;
         }
 

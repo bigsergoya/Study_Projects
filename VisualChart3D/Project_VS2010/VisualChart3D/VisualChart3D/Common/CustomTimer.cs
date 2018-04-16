@@ -8,7 +8,7 @@ namespace VisualChart3D.Common
 {
     interface ITimer
     {
-        void Start();
+        void Start(string operationDescription);
 
         void Stop();
 
@@ -23,8 +23,9 @@ namespace VisualChart3D.Common
         private const int SymbolsAfterComma = 3;
         private const string BadTimerStart = "Ошибка. Повторный запуск уже ведущего отсчет таймера.";
         private const string BadTimerEnd = "Ошибка. Попытка остановить еще не запущенный отчет таймера.";
-        private const string TimeElapsedFormat = "Подсчет длился {0} сек.";
+        private const string TimeElapsedFormat = "Выполнение операции \"{0}\" заняло {1} сек.";
         private bool _isCountDown;
+        private string _description;
 
         public CustomTimer()
         {
@@ -42,15 +43,17 @@ namespace VisualChart3D.Common
                 time = Math.Pow(10, -SymbolsAfterComma);
             }
 
-            Utils.ShowWarningMessage(String.Format(TimeElapsedFormat, time.ToString()), CalculatedTimeTitle);
+            Utils.ShowWarningMessage(String.Format(TimeElapsedFormat, _description, time.ToString()), CalculatedTimeTitle);
         }
 
-        public void Start()
+        public void Start(string operationDescription)
         {
             if (_isCountDown)
             {
                 throw new InvalidOperationException(BadTimerStart);
             }
+
+            _description = operationDescription;
 
             sw.Reset();
             sw.Start();
