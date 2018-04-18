@@ -77,6 +77,8 @@ namespace VisualChart3D.Common.DataReader
                     {
                         return false;
                     }
+
+                    this.SourceMatrixType = SourceFileMatrixType.MatrixDistance;
                 }
                 else
                 {

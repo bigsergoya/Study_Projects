@@ -11,11 +11,31 @@ namespace VisualChart3D.Common.Visualization
         double IterationStepLimit { get; }
         List<double> CalculatedCriteria { get; }
     }
-    public class SammonsProjection : ISammon
+    
+    public abstract class BaseVisualizer
     {
-        private const int MaxAvaibleDimension = 3;
+        private const string MinimalOjectsCountFormat = "Выбраное число объектов, равное {0}, менее минимального значения, равного {1}";
+
+        protected const int MaxAvaibleDimension = 3;
+        protected const int minimalCalculatingObjects = 3;
+
+        protected bool IsObjectsCountLessThenMinimal(int objectsCount)
+        {
+            if (objectsCount < minimalCalculatingObjects)
+            {
+                Utils.ShowWarningMessage(string.Format(MinimalOjectsCountFormat, objectsCount, minimalCalculatingObjects));
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public class SammonsProjection : BaseVisualizer, ISammon
+    {
+
         private const string VisualizationErrorFormat = "Ошибка при работе алгоритма визуализации методом Сэммона: {0}";
-        private const string StringDescriptionFormat = "Sammons Map, размер данных({0}x{1}, число итераций - {2}, )";
+        private const string StringDescriptionFormat = "Sammons Map, размер данных({0}x{1}, число итераций - {2} )";
         private const double StartStep = 1000.0;
         private const double MinStep = 1e-10;
         private const double E = 1e-10;
@@ -134,12 +154,18 @@ namespace VisualChart3D.Common.Visualization
 
         public double IterationStepLimit => IterationStepLimitValue;
 
-        public void ToProject()
+        public bool ToProject()
         {
-            _timer.Start(this.ToString());
-            _countOfObjects = _distanceMatrix.GetLength(0);
             _calculatedCriteria.Clear();
+            _countOfObjects = _distanceMatrix.GetLength(0);
 
+            if (IsObjectsCountLessThenMinimal(_countOfObjects))
+            { 
+                return false;
+            }
+
+            _timer.Start(this.ToString());
+            
             int[] indexesOfMostRemoteObjects = DisSpace.GetMostestThreeRemoteObjects(_distanceMatrix);
 
             try
@@ -197,6 +223,7 @@ namespace VisualChart3D.Common.Visualization
 
                 _timer.Stop();
                 _projection = dm;
+                return true;
             }
 
             catch (Exception ex)

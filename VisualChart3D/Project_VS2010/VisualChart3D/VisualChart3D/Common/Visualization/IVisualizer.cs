@@ -11,7 +11,7 @@ namespace VisualChart3D.Common.Visualization
         double[,] DistMatrix { get; set; }
         double[,] Projection { get; }
 
-        void ToProject();
+        bool ToProject();
         int MaximumDimensionsNumber { get; }
     }
 }

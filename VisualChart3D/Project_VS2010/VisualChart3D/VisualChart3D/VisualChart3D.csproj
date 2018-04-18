@@ -129,7 +129,6 @@
     <Compile Include="Common\DataBinding\ReferencedObjectsViewModel.cs" />
     <Compile Include="Common\DataReader\FastSCVDataReader.cs" />
     <Compile Include="Common\DataReader\IDataReader.cs" />
-    <Compile Include="Common\DataReader\SCVDataReader.cs" />
     <Compile Include="Common\DataReader\StandartDataReader.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Visualization\IVisualizer.cs" />
@@ -160,7 +159,6 @@
     <Compile Include="Settings\ClassVisualisationSettings.cs" />
     <Compile Include="Common\Visualization\FastMap.cs" />
     <Compile Include="Settings\Engine.cs" />
-    <Compile Include="Settings\SettingsFilesSubsidiary.cs" />
     <Compile Include="ConfigWindow\StartSettings.xaml.cs">
       <DependentUpon>StartSettings.xaml</DependentUpon>
     </Compile>
@@ -188,6 +186,7 @@
     <Compile Include="ConfigWindow\DissimilaritySpaceConfigs.xaml.cs">
       <DependentUpon>DissimilaritySpaceConfigs.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\EngineSubsidiary.cs" />
     <Page Include="ConfigWindow\SammonsMapConfigs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

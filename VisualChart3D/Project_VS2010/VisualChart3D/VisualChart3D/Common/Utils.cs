@@ -3,15 +3,15 @@ using System;
 
 namespace VisualChart3D.Common
 {
-    internal static class Utils
+    public static class Utils
     {
         private const string WarningMessageStandartTitle = "Внимание!";
         private const string ErrorMessageStandartTitle = "Ошибка!";
         private const string ExceptionMessageFormat = "{0} Стек вызовов: {1}";
 
-        internal const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
+        public const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
 
-        internal static T[,] SafeAllocateMemory<T>(int rows, int columns)
+        public static T[,] SafeAllocateMemory<T>(int rows, int columns)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static double ManhattenDistance(double[] vec1, double[] vec2)
+        public static double ManhattenDistance(double[] vec1, double[] vec2)
         {
             double distance = 0;
 
@@ -43,7 +43,7 @@ namespace VisualChart3D.Common
         /// <param name="label">Label, включающий себя TextBlock прямым потомком. </param>
         /// <param name="value">Новое значение поля Text объекта TextBlock</param>
         /// <returns>В случае ошибки кастования - false, иначе true</returns>
-        internal static bool ChangeLabelTextBlockText(System.Windows.Controls.Label label, string value)
+        public static bool ChangeLabelTextBlockText(System.Windows.Controls.Label label, string value)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static void FisherYatesShuffle<T>(this T[] array)
+        public static void FisherYatesShuffle<T>(this T[] array)
         {
             Random rnd = new Random();
             for (int i = array.Length - 1; i > 0; i--)
@@ -73,14 +73,14 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static T[] SubArray<T>(this T[] data, int index, int length)
+        public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             T[] result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
         }
 
-        internal static double[][] GetAnotherStyleOfData(double[,] array)
+        public static double[][] GetAnotherStyleOfData(double[,] array)
         {
             int firstDim = array.GetLength(0);
             int secondDim = array.GetLength(1);
@@ -102,7 +102,7 @@ namespace VisualChart3D.Common
             return returnedArray;
         }
 
-        internal static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
+        /*public static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
         {
             double[,] outputArray = new double[firstDim, secondDim];
 
@@ -115,9 +115,9 @@ namespace VisualChart3D.Common
             }
 
             return outputArray;
-        }
+        }*/
 
-        internal static double[,] GetNormalizedData(double[,] array)
+        public static double[,] GetNormalizedData(double[,] array)
         {
             int firstDim = array.GetLength(0);
             int secondDim = array.GetLength(1);
@@ -138,7 +138,7 @@ namespace VisualChart3D.Common
             return outputArray;
         }
 
-        internal static double[,] ExchangeDataByDim(double[][] oldArray, int firstDim, int secondDim)
+        public static double[,] ExchangeDataByDim(double[][] oldArray, int firstDim, int secondDim)
         {
             double[,] outputArray = new double[firstDim, secondDim];
 
@@ -157,7 +157,7 @@ namespace VisualChart3D.Common
             return outputArray;
         }
 
-        internal static double[] GetLineOfMatrix(double[,] array, int lineIndex)
+        public static double[] GetLineOfMatrix(double[,] array, int lineIndex)
         {
             int lineLength = array.GetLength(1);
             double[] line = new double[lineLength];
@@ -170,7 +170,7 @@ namespace VisualChart3D.Common
             return line;
         }
 
-        internal static void ShowWarningMessage(string message, string title = WarningMessageStandartTitle)
+        public static void ShowWarningMessage(string message, string title = WarningMessageStandartTitle)
         {
             System.Windows.Forms.MessageBox.Show(message,
                 title,
@@ -179,7 +179,7 @@ namespace VisualChart3D.Common
         }
 
 
-        internal static void ShowErrorMessage(string message, string title = ErrorMessageStandartTitle)
+        public static void ShowErrorMessage(string message, string title = ErrorMessageStandartTitle)
         {
             System.Windows.Forms.MessageBox.Show(message,
                 title,
@@ -187,7 +187,7 @@ namespace VisualChart3D.Common
                 System.Windows.Forms.MessageBoxIcon.Error);
         }
 
-        internal static void ShowExceptionMessage(Exception e)
+        public static void ShowExceptionMessage(Exception e)
         {
             ShowErrorMessage(String.Format(ExceptionMessageFormat,e.Message, e.StackTrace));
         }
@@ -206,7 +206,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static void GetMinAndMax(double[,] array, int firstDim, int secondDim, out double min, out double max)
+        public static void GetMinAndMax(double[,] array, int firstDim, int secondDim, out double min, out double max)
         {
             max = array[0, 0];
             min = array[0, 0];
@@ -220,7 +220,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static void GetMinAndMaxByDimensions(double[,] array, int firstDim, int secondDim,
+        public static void GetMinAndMaxByDimensions(double[,] array, int firstDim, int secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
@@ -261,7 +261,7 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static void GetMinAndMaxByDimensions(double[][] array, int firstDim, int secondDim,
+        public static void GetMinAndMaxByDimensions(double[][] array, int firstDim, int secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
@@ -291,7 +291,7 @@ namespace VisualChart3D.Common
         /// Открыть файл
         /// </summary>
         /// <param name="lb">отображение расположения</param>
-        internal static bool OpenFile(System.Windows.Controls.TextBox lb)
+        public static bool OpenFile(System.Windows.Controls.TextBox lb)
         {
             OpenFileDialog ofDlg = new OpenFileDialog
             {
@@ -321,7 +321,7 @@ namespace VisualChart3D.Common
         /// <param name="array"></param>
         /// <param name="sourceMatrixType"></param>
         /// <returns></returns>
-        internal static bool CheckSourceMatrix(double[,] array, SourceFileMatrixType sourceMatrixType)
+        public static bool CheckSourceMatrix(double[,] array, SourceFileMatrixType sourceMatrixType)
         {
             if (sourceMatrixType != SourceFileMatrixType.MatrixDistance)
             {
@@ -348,7 +348,7 @@ namespace VisualChart3D.Common
     /// <summary>
     /// Compare y and x in reverse order
     /// </summary>
-    internal class ReverseComparer : System.Collections.Generic.IComparer<double>
+    public class ReverseComparer : System.Collections.Generic.IComparer<double>
     {
         public int Compare(double x, double y)
         {

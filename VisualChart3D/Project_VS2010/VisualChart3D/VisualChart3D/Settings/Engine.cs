@@ -39,8 +39,16 @@ namespace VisualChart3D
                 {
                     return 0;
                 }
+
                 const int dimensionOfObjects = 0;
-                return UniversalReader.ArraySource.GetLength(dimensionOfObjects);
+
+                return ArraySource.GetLength(dimensionOfObjects);
+            }
+        }
+
+        public virtual double[,] ArraySource {
+            get {
+                return this.UniversalReader.ArraySource;
             }
         }
 
@@ -118,7 +126,6 @@ namespace VisualChart3D
 
             return count;
         }
-
 
         /// <summary>
         /// Получить или задать сущестовование названий классов. Если есть файл с настройкой классов - true, в противном случае false

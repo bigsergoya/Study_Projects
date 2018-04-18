@@ -3,6 +3,15 @@ using System.Linq;
 
 namespace VisualChart3D.Common.Visualization
 {
+    public interface IKohonen: IVisualizer
+    {
+        int IterationNumber { get; set; }
+        int IterationLimit { get; }
+    }
+
+
+
+
     /// <summary>
     /// Represents a nonlinear projection implemented as Sammon's Mapping.
     /// </summary>
@@ -12,10 +21,10 @@ namespace VisualChart3D.Common.Visualization
     /// </para>
     /// </remarks>
     [Serializable]
-    public class KohonenProjection
+    public class KohonenProjection: BaseVisualizer, IKohonen
     {
         private const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
-        private const string StringDescriptionFormat = "Kohonen Map, размер данных({0}x{1}, число итераций - {2}, шаг дробления - {3})";
+        private const string StringDescriptionFormat = "Kohonen Map, размер данных({0}x{1}, число итераций - {2})";
 
         private const int IterationsLimit = 10000;
         private const int StartIterations = 100;
@@ -47,20 +56,31 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// The dimension in that the projection should be performed.
         /// </summary>
-        public int OutputDimension { get; protected set; }
+        public int Dimensions { get; protected set; }
 
         /// <summary>
         /// The projected vectors.
         /// </summary>
-        public double[][] Projection { get; protected set; }
+        private double[][] _projection;
 
         /// <summary>
         /// The number of iterations.
         /// </summary>
         public int IterationsCount { get => _iterationsCount; set => _iterationsCount = value; }
 
-        public int MaxIterations { get => IterationsLimit; } 
+        public int MaxIterations { get => IterationsLimit; }
 
+        //public int Dimensions => throw new NotImplementedException();
+
+        public double[,] DistMatrix { get => Utils.ExchangeDataByDim(_distanceMatrix, Count, Count); set => _distanceMatrix = Utils.GetAnotherStyleOfData(value); }
+
+        double[,] IVisualizer.Projection => Utils.ExchangeDataByDim(this._projection, Count, Dimensions);
+
+        public int MaximumDimensionsNumber => MaxAvaibleDimension;
+
+        public int IterationNumber { get => _iteration; set => _iteration = value; }
+
+        public int IterationLimit => IterationsLimit;
         #endregion
 
         #region Constructor
@@ -78,7 +98,7 @@ namespace VisualChart3D.Common.Visualization
         /// <paramref name=">inputVectors"/> is <c>null</c>.
         /// </exception>
         public KohonenProjection(
-            double[][] inputData,
+            double[,] inputData,
             int outputDimension,
             int iterationsCount = StartIterations)
         {
@@ -89,8 +109,8 @@ namespace VisualChart3D.Common.Visualization
 
             _timer = new CustomTimer();
 
-            _distanceMatrix = inputData;
-            this.OutputDimension = outputDimension;
+            DistMatrix = inputData;
+            this.Dimensions = outputDimension;
             _iterationsCount = iterationsCount;
 
             // Initialize the projection:
@@ -112,11 +132,11 @@ namespace VisualChart3D.Common.Visualization
             // Initialize random points for the projection:
             Random rnd = new Random();
             double[][] projection = new double[this.Count][];
-            this.Projection = projection;
+            this._projection = projection;
 
             for (int i = 0; i < projection.Length; i++)
             {
-                double[] projectionI = new double[this.OutputDimension];
+                double[] projectionI = new double[this.Dimensions];
                 projection[i] = projectionI;
 
                 for (int j = 0; j < projectionI.Length; j++)
@@ -137,33 +157,16 @@ namespace VisualChart3D.Common.Visualization
 
             _lambda = Math.Pow(0.1, ratio);
         }
-        #endregion
-
-        #region Public Methods
-        /// <summary>
-        /// Runs all the iterations and thus create the mapping.
-        /// </summary>
-        public void CreateMapping()
-        {
-            _timer.Start(this.ToString());
-
-            for (int i = _iterationsCount; i >= 0; i--)
-            {
-                this.Iterate();
-            }
-
-            _timer.Stop();
-        }
 
         /// <summary>
         /// Performs one iteration of the (heuristic) algorithm.
         /// </summary>
-        public void Iterate()
+        private void Iterate()
         {
             int[] indexI = _indexesI;
             int[] indexJ = _indexesJ;
             double[][] distanceMatrix = _distanceMatrix;
-            double[][] projection = this.Projection;
+            double[][] projection = this._projection;
 
             // Shuffle the indices-array for random pick of the points:
             indexI.FisherYatesShuffle();
@@ -212,10 +215,34 @@ namespace VisualChart3D.Common.Visualization
             // Reduce lambda monotonically:
             ReduceLambda();
         }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Runs all the iterations and thus create the mapping.
+        /// </summary>
+        public bool ToProject()
+        {
+            if (IsObjectsCountLessThenMinimal(Count))
+            {
+                return false;
+            }
+
+            _timer.Start(this.ToString());
+
+            for (int i = _iterationsCount; i > 0; i--)
+            {
+                this.Iterate();
+            }
+
+            _timer.Stop();
+
+            return true;
+        }
 
         public override string ToString()
         {
-            return String.Format(StringDescriptionFormat, _distanceMatrix.GetLength(0), _distanceMatrix.GetLength(1), _iterationsCount);
+            return String.Format(StringDescriptionFormat, Count, Count, _iterationsCount);
         }
         #endregion        
     }

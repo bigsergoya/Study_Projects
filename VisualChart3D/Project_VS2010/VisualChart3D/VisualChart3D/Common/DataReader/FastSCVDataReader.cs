@@ -202,6 +202,7 @@ namespace VisualChart3D.Common.DataReader
             if (this.SourceMatrixType == SourceFileMatrixType.ObjectAttribute)
             {
                 _arraySource = CommonMatrix.ObjectAttributeToDistance(_arraySource, _minkovskiDegree);
+                _inputMatrixType = SourceFileMatrixType.MatrixDistance;
             }
 
         }
@@ -222,6 +223,11 @@ namespace VisualChart3D.Common.DataReader
 
             set {
                 _classNameColumn = value;
+                if(_classNameColumn == null)
+                {
+                    return;
+                }
+
                 string[] nameColumn = GetColumn(_classNameColumn);
                 _classNameColumnData = nameColumn;
                 _needRecalculate = true;
@@ -235,6 +241,12 @@ namespace VisualChart3D.Common.DataReader
 
             set {
                 _objectNameColumn = value;
+
+                if(_objectNameColumn == null)
+                {
+                    return;
+                }
+
                 string[] objectColumn = GetColumn(_objectNameColumn);
                 _objectNameColumnData = objectColumn;
                 _needRecalculate = true;

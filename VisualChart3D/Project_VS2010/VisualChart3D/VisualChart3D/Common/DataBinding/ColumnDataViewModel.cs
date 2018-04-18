@@ -11,6 +11,7 @@ namespace VisualChart3D.Common.DataBinding
     {
         private ObservableCollection<string> _activeItems;
         private ObservableCollection<string> _ignoredItems;
+        private ObservableCollection<string> _firstLineItems;
 
         public ObservableCollection<string> ActiveItems {
             get {
@@ -40,6 +41,22 @@ namespace VisualChart3D.Common.DataBinding
 
             set {
                 _ignoredItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> FirstLineItems {
+            get {
+                if (_firstLineItems == null)
+                {
+                    _firstLineItems = new ObservableCollection<string>();
+                }
+
+                return _firstLineItems;
+            }
+
+            set {
+                _firstLineItems = value;
                 NotifyPropertyChanged();
             }
         }

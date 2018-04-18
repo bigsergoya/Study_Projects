@@ -17,20 +17,26 @@ namespace VisualChart3D.InputDataWindows
     {
         private const string NotImplementedSourceMatrixType = "Ошибка типа входной матрицы. ";
         private const string BadColumnChoiseMessage = "Ошибка выбора стобцов в качестве имен классов и объектов.";
-        private const string BadParsingMessage = "Ошибка преобразования в числовой формат. Чтение невозможно.";
+        private const string BadParsingMessage = "Ошибка при чтении файла. Дальнейшее чтение невозможно.";
         private const string CannotIgnoreColumn = "Нельзя игнорировать уже выбранный в качестве имен объектов или имен классов столбец";
 
-        private const int SelectedElementIndex = 0;
+        private const int SingleSelectedElementIndex = 0;
         private const InputFileType WindowFileType = InputFileType.CSV;
 
         private IUniversalReader _reader;
         private SourceFileMatrixType _inputMatrixType;
+
+        /// <summary>
+        /// Блокирование повторного вызова обработчика смены индекса комбобокса при возврате к старому индексу.
+        /// </summary>
+        private bool _loopBlocking;
 
         private Common.DataBinding.ColumnDataViewModel _columnDataViewModel;
 
         public SCVInputWindow(IUniversalReader reader = null)
         {
             InitializeComponent();
+            _loopBlocking = false;
             _columnDataViewModel = new Common.DataBinding.ColumnDataViewModel();
 
             DataContext = _columnDataViewModel;
@@ -107,6 +113,7 @@ namespace VisualChart3D.InputDataWindows
         {
             const int StartElement = 0;
             const int SecondElement = 1;
+
             if (universalReader.FirstLine == null)
             {
                 return;
@@ -117,9 +124,13 @@ namespace VisualChart3D.InputDataWindows
                 return;
             }
 
+            //_columnDataViewModel.ActiveItems?.Clear();
+            _columnDataViewModel.IgnoredItems?.Clear();
+
             _columnDataViewModel.ActiveItems = new ObservableCollection<string>(universalReader.FirstLine);
 
-            cmbCLassNumberColumn.ItemsSource = cmbObjectNameColumn.ItemsSource = universalReader.FirstLine;
+            //ДАТА БИНДИНГ!!!!!!
+            _columnDataViewModel.FirstLineItems = new ObservableCollection<string>(universalReader.FirstLine);
 
             cbClassNumberColumn.IsEnabled = true;
             //cmbCLassNumberColumn.IsEnabled = true;
@@ -135,6 +146,7 @@ namespace VisualChart3D.InputDataWindows
             else
             {
                 cmbCLassNumberColumn.SelectedIndex = StartElement;
+                cmbCLassNumberColumn.SelectedValue = universalReader.FirstLine[StartElement];
             }
 
             //Если есть ферст лайн при инициализации и имена столбцов равны нулю, то нот чекед поставить.
@@ -146,6 +158,7 @@ namespace VisualChart3D.InputDataWindows
             else
             {
                 cmbObjectNameColumn.SelectedIndex = SecondElement;
+                cmbObjectNameColumn.SelectedValue = universalReader.FirstLine[SecondElement];
             }
         }
 
@@ -217,6 +230,10 @@ namespace VisualChart3D.InputDataWindows
             if (Reader.ArraySource == null)
             {
                 Utils.ShowErrorMessage(BadParsingMessage);
+
+                _reader.ClassNameColumn = null;
+                _reader.ObjectNameColumn = null;
+
                 return;
             }
 
@@ -261,7 +278,7 @@ namespace VisualChart3D.InputDataWindows
                 return false;
             }
 
-            return (cmbCLassNumberColumn.SelectedIndex == cmbObjectNameColumn.SelectedIndex);
+            return (cmbCLassNumberColumn.SelectedValue == cmbObjectNameColumn.SelectedValue);
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
@@ -325,39 +342,54 @@ namespace VisualChart3D.InputDataWindows
 
         private void Column_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.RemovedItems.Count == SelectedElementIndex)
+            string removedItem;
+            string addedItem;
+
+            if (_loopBlocking)
             {
+                _loopBlocking = false;
                 return;
             }
 
-            if (e.AddedItems.Count == SelectedElementIndex)
+            if ((e.RemovedItems.Count != SingleSelectedElementIndex) && (e.AddedItems.Count != SingleSelectedElementIndex))
             {
+                removedItem = e.RemovedItems[SingleSelectedElementIndex].ToString();
+                bool isIdenticalColumns = CheckIdenticalSelection();
+
+                if (isIdenticalColumns)
+                {
+                    Utils.ShowErrorMessage(BadColumnChoiseMessage);
+                    _loopBlocking = true;
+
+                    RestoreLastValue(sender as ComboBox, removedItem);
+
+                    return;
+                }
+
+                addedItem = e.AddedItems[SingleSelectedElementIndex].ToString();
+
+                RestoreItem(removedItem);
+                DeleteItemFromItems(addedItem);
+                SetToolTip(sender, addedItem);
+
                 return;
             }
 
-            string removedItem = e.RemovedItems[SelectedElementIndex].ToString();
-            bool isIdenticalColumns = CheckIdenticalSelection();
-
-            if (isIdenticalColumns)
+            if (e.AddedItems.Count != SingleSelectedElementIndex)
             {
-                Utils.ShowErrorMessage(BadColumnChoiseMessage);
-                RestoreLastValue(sender as ComboBox, removedItem);
+                addedItem = e.AddedItems[SingleSelectedElementIndex].ToString();
 
-                return;
+                //_loopBlocking = true;
+
+                DeleteItemFromItems(addedItem);
+                SetToolTip(sender, addedItem);
             }
-
-            string addedItem = e.AddedItems[SelectedElementIndex].ToString();
-
-            RestoreItem(removedItem);
-            DeleteItemFromItems(addedItem);
-            SetToolTip(sender, addedItem);
-
-            return;
         }
 
         private void RestoreLastValue(ComboBox comboBox, string lastItem)
         {            
             comboBox.SelectedItem = lastItem;
+            DeleteItemFromItems(lastItem);
         }
 
         private void AddItem(ObservableCollection<string> observableCollection, string item)

@@ -4,7 +4,7 @@ using System;
 
 namespace VisualChart3D.Common.Visualization
 {
-    internal class FastMap
+    public class FastMap
     {
         private const string StringDescriptionFormat = "Fast Map, размер данных({0}x{1})";
 

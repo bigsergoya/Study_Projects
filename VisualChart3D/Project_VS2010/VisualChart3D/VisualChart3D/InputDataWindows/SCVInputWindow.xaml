@@ -61,11 +61,11 @@
 
             <CheckBox Name="cbClassNumberColumn" Grid.Row="2" Margin="5,0,0,0" VerticalAlignment="Center" FontSize="20" Checked="cbClassNumberColumn_Checked" Unchecked="cbClassNumberColumn_Unchecked" TabIndex="4" IsEnabled="false" HorizontalAlignment="Left" Width="13"/>
             <Label Content="Имена классов: " Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="144" Height="70" VerticalAlignment="Bottom" Margin="50,0,0,0"/>
-            <ComboBox x:Name="cmbCLassNumberColumn" Grid.Row="2" HorizontalAlignment="Right" Margin="0,26,5,22" VerticalAlignment="Center" Width="167" SelectedIndex="-1" TabIndex="5" IsEnabled="false" Grid.Column="1" SelectionChanged="Column_SelectionChanged" ToolTip="Стоблец с именами классов"/>
+            <ComboBox x:Name="cmbCLassNumberColumn" Grid.Row="2" HorizontalAlignment="Right" Margin="0,26,5,22" VerticalAlignment="Center" Width="167" SelectedIndex="-1" TabIndex="5" IsEnabled="false" Grid.Column="1" SelectionChanged="Column_SelectionChanged" ItemsSource="{Binding FirstLineItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Стоблец с именами классов"/>
 
             <CheckBox Name="cbObjectNameColumn" Grid.Row="3" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="20" Checked="cbObjectNameColumn_Checked"  Unchecked="cbObjectNameColumn_Unchecked"  TabIndex="6" IsEnabled="false"/>
             <Label Content="Имена объектов: " Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="144" Height="70" VerticalAlignment="Bottom" Margin="50,0,0,0"/>
-            <ComboBox x:Name="cmbObjectNameColumn" Grid.Row="3" HorizontalAlignment="Right" Margin="0,26,5,22" VerticalAlignment="Center" Width="167" SelectedIndex="-1" TabIndex="7" IsEnabled="false" Grid.Column="1" SelectionChanged="Column_SelectionChanged" ToolTip="Стоблец с именами объектов"/>
+            <ComboBox x:Name="cmbObjectNameColumn" Grid.Row="3" HorizontalAlignment="Right" Margin="0,26,5,22" VerticalAlignment="Center" Width="167" SelectedIndex="-1" TabIndex="7" IsEnabled="false" Grid.Column="1" SelectionChanged="Column_SelectionChanged" ItemsSource="{Binding FirstLineItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Стоблец с именами объектов"/>
 
             <Label Content="Читаемые столбцы" Margin="5,0,0,0" Width="160" Height="30" Grid.Row="4" Grid.Column="0" VerticalAlignment="Bottom" VerticalContentAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center"/>
             <Label Content="Доп. игнорируемые столбцы" Margin="0,0,5,0" ToolTip="Дополнительно игнорируемые столбцы"  Grid.Row="4" Grid.Column="1" VerticalAlignment="Bottom" VerticalContentAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Center"/>
@@ -79,6 +79,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            
             <Button Name="btIgnoreSelectedColumn" Content="-&gt;" Background="LightGray"  FontSize="18" Grid.Row="5" Margin="0,0,192,105" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="IgnoreSelectedItem" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="30" Height="87" VerticalAlignment="Bottom"/>
             <Button Name="btActivateSelectedColumn" Content="&lt;-" Background="LightGray"  FontSize="18" Grid.Row="5" Margin="0,0,192,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="ActivateSelectedItem" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="30" Height="92" VerticalAlignment="Bottom"/>
             <ListBox Name="lbIgnoredColumns" Margin="0,0,5,10" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" Width="160" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" Height="180" VerticalAlignment="Bottom" SelectionChanged="ToolTip_SelectionChanged" ToolTip="Игнорируемые столбцы" ItemsSource="{Binding IgnoredItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
