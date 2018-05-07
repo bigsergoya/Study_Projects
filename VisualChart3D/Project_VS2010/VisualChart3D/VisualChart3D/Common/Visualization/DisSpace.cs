@@ -9,6 +9,8 @@ namespace VisualChart3D.Common.Visualization
     {
         private const string StringDescriptionFormat = "Dissimilarity Space, размер данных({0}x{1})";
         private const int ObjectsCount = 3;
+        private const int ArrayIndexCompensator = 1;
+
 
         private const double EmptyObjectCompensator = 0.1;
         private const int DefaultFirstObjectID = 1;
@@ -18,7 +20,6 @@ namespace VisualChart3D.Common.Visualization
         private const int FirstObjectArrayIndex = 0;
         private const int SecondObjectArrayIndex = 1;
         private const int ThirdObjectArrayIndex = 2;
-        private const int ArrayPositionCompensator = 1;
 
         private int _firstBasisObject;
         private int _secondBasisObject;
@@ -164,10 +165,26 @@ namespace VisualChart3D.Common.Visualization
         #endregion
 
         //private void CalculateReferencedObjects(double[,] SourceArray, int[] countOfClassObjects)
+
+        //Такая проблема. Если у нас объекты лежат не в полосах классов (1 1 1 2 2 2 2 а 1 2 1 2 1 2, то неверно сработает алгоритм. Важно пофиксить в мае)
         private void CalculateReferencedObjects(int[] countOfClassObjects)
         {
-           _referencedObjects = new int[countOfClassObjects.Length];
-            int currentClassLastElement = countOfClassObjects[0] - 1;
+            int countOfClass;
+            int currentClassLastElement;
+
+            if (countOfClassObjects == null)
+            {
+                countOfClass = 1;
+                currentClassLastElement = _arraySource.GetLength(0)-ArrayIndexCompensator;
+            }
+            else
+            {
+                countOfClass = countOfClassObjects.Length;
+                currentClassLastElement = countOfClassObjects[0] - ArrayIndexCompensator;
+            }
+
+           _referencedObjects = new int[countOfClass];
+            
             int currentClassFirstElement = 0;
             int numberOfCurrentClass = 0;
             int referencedObjectForCurrentClass = 0;
@@ -175,7 +192,7 @@ namespace VisualChart3D.Common.Visualization
                    currentClassLastElement, 0);
             double currentReferencedDistance = 0;
 
-            for (int i = 1; i < _arraySource.GetLength(0); i++)
+            for (int i = 0; i < _arraySource.GetLength(0); i++)
             {               
                 if ((currentReferencedDistance = FindSumOfDistances(_arraySource, currentClassFirstElement,
                    currentClassLastElement, i)) < referencedDistance)
@@ -184,19 +201,21 @@ namespace VisualChart3D.Common.Visualization
                     referencedObjectForCurrentClass = i;
                 }
 
-                referencedDistance = currentReferencedDistance < referencedDistance
-                    ? currentReferencedDistance : referencedDistance;
+                /*referencedDistance = currentReferencedDistance < referencedDistance
+                    ? currentReferencedDistance : referencedDistance;*/
 
                 if (i == currentClassLastElement)
                 {
-                    _referencedObjects[numberOfCurrentClass] = referencedObjectForCurrentClass + 1;
-
-                    if (i < _arraySource.GetLength(0) - 1)
+                    _referencedObjects[numberOfCurrentClass] = referencedObjectForCurrentClass + ArrayIndexCompensator;
+                    
+                    if (i < _arraySource.GetLength(0) - ArrayIndexCompensator)
                     {
                         numberOfCurrentClass++;
                         i++;
+
                         currentClassFirstElement = i;
                         currentClassLastElement += countOfClassObjects[numberOfCurrentClass];
+
                         referencedDistance = FindSumOfDistances(_arraySource, currentClassFirstElement,
                        currentClassLastElement, currentClassFirstElement);
                         referencedObjectForCurrentClass = currentClassFirstElement;
@@ -205,19 +224,33 @@ namespace VisualChart3D.Common.Visualization
             }
         }
 
-        public List<string> GetReferencedObjectsWithClassNames(List<string> ClassesNames, int[] countOfClassObjects)
+        public List<string> GetReferencedObjectsWithClassNames(Engine engine)
         {
-            if(_referencedObjects == null)
+            /*settFile.UniqClassesName, settFile.numberOfObjectsOfClass*/
+
+            const string ReferencedObjectsWithClassNamesFormat = "Класс - {0}, № Эталона - {1}, Объект - {2}.";
+
+            if (_referencedObjects == null)
             {
-                CalculateReferencedObjects(countOfClassObjects);
+                CalculateReferencedObjects(engine.numberOfObjectsOfClass);
             }
 
             List<string> ReferencedObjectsWithClassNames = new List<string>();
 
             for (int i = 0; i < _referencedObjects.Length; i++)
             {
-                ReferencedObjectsWithClassNames.Add("Класс - " + ClassesNames[i] + ", № Эталона - " + _referencedObjects[i] + ".");
+                //ReferencedObjectsWithClassNames.Add("Класс - " + engine.UniqClassesName[i] + ", № Эталона - " + _referencedObjects[i] + ".");
+                ReferencedObjectsWithClassNames.Add(String.Format(ReferencedObjectsWithClassNamesFormat, engine.UniqClassesName[i], _referencedObjects[i] + ArrayIndexCompensator, engine.NamesObjects[this._referencedObjects[i]]));
             }
+
+            /*if (engine.NamesObjects != null)
+            {
+                ReferencedObjectsWithClassNames.Add("азазаза");
+            }
+            else
+            {
+                
+            }*/
 
             return ReferencedObjectsWithClassNames;
         }
@@ -240,8 +273,8 @@ namespace VisualChart3D.Common.Visualization
             {
                 for (int j = 0; j < _countOfObjects; j++)
                 {
-                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayPositionCompensator, j];
-                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayIndexCompensator, j];
+                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayIndexCompensator, j];
                     _coords[j, ThirdObjectArrayIndex] = EmptyObjectCompensator;
                 }
             }
@@ -249,9 +282,9 @@ namespace VisualChart3D.Common.Visualization
             {
                 for (int j = 0; j < _countOfObjects; j++)
                 {
-                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayPositionCompensator, j];
-                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayPositionCompensator, j];
-                    _coords[j, ThirdObjectArrayIndex] = _arraySource[_thirdBasisObject - ArrayPositionCompensator, j];
+                    _coords[j, FirstObjectArrayIndex] = _arraySource[_firstBasisObject - ArrayIndexCompensator, j];
+                    _coords[j, SecondObjectArrayIndex] = _arraySource[_secondBasisObject - ArrayIndexCompensator, j];
+                    _coords[j, ThirdObjectArrayIndex] = _arraySource[_thirdBasisObject - ArrayIndexCompensator, j];
                 }
             }
 

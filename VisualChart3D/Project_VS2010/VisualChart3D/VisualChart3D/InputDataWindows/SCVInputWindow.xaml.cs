@@ -129,7 +129,7 @@ namespace VisualChart3D.InputDataWindows
 
             _columnDataViewModel.ActiveItems = new ObservableCollection<string>(universalReader.FirstLine);
 
-            //ДАТА БИНДИНГ!!!!!!
+            
             _columnDataViewModel.FirstLineItems = new ObservableCollection<string>(universalReader.FirstLine);
 
             cbClassNumberColumn.IsEnabled = true;

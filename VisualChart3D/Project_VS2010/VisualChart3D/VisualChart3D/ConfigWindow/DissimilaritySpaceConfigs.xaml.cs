@@ -343,7 +343,7 @@ namespace VisualChart3D.ConfigWindow
 
             if (referedObjectsSavedInfo == null)
             {
-                referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile.UniqClassesName, settFile.numberOfObjectsOfClass);
+                referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile);
 
                 WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
                 btRefreshReferenceObjects.IsEnabled = true;
@@ -402,7 +402,7 @@ namespace VisualChart3D.ConfigWindow
 
         private void btRefreshReferenceObjects_Click(object sender, RoutedEventArgs e)
         {
-            List<string> referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile.UniqClassesName, settFile.numberOfObjectsOfClass);
+            List<string> referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile);
 
             _referencedObjectsViewModel.ReferedObjectsInfo = new ObservableCollection<string>(referedObjectsSavedInfo);
 
