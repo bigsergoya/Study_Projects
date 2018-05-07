@@ -48,7 +48,7 @@ namespace VisualChart3D.Common.PictureMaster
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 return false;
             }
@@ -96,7 +96,7 @@ namespace VisualChart3D.Common.PictureMaster
                 if ((SettFile.isPictureTakenByObjectID) || (SettFile.isPictureTakenByObjectName))
                 {
 
-                    Pictures = Get_Pictures_Files_List(Directory.GetFiles(SettFile.Pic_Folder_Adress));
+                    Pictures = Get_Pictures_Files_List(Directory.GetFiles(SettFile.picFolderAdress));
                     if (SettFile.isPictureTakenByObjectName)
                     {
                         Picture.Source = Add_Picture_On_Screen(Get_Picture_Adress(Pictures, SettFile.NamesObjects[SelectedIndex], Picture));
@@ -109,20 +109,20 @@ namespace VisualChart3D.Common.PictureMaster
                     //List<String> SubFolders = new List<String>();
                     String substring;
                     int k;
-                    DirectoryInfo[] dirs = new DirectoryInfo(SettFile.Pic_Folder_Adress).GetDirectories();
+                    DirectoryInfo[] dirs = new DirectoryInfo(SettFile.picFolderAdress).GetDirectories();
                     foreach (var item in dirs)
                         if (item.Name.Equals(SettFile.ClassesName[SelectedIndex]))
                         {
 
                             Pictures = Get_Pictures_Files_List(Directory.GetFiles(item.FullName));
                             cur_index = Int32.Parse(SettFile.NamesObjects[SelectedIndex]);
-                            for (k = 0; k < SettFile.Class_Start_Position.Count - 1; k++)
-                                if ((cur_index >= Int32.Parse(SettFile.Class_Start_Position[k])) && (cur_index <= Int32.Parse(SettFile.Class_Start_Position[k + 1])))
+                            for (k = 0; k < SettFile.classStartPosition.Count - 1; k++)
+                                if ((cur_index >= Int32.Parse(SettFile.classStartPosition[k])) && (cur_index <= Int32.Parse(SettFile.classStartPosition[k + 1])))
                                 {
-                                    cur_index -= Int32.Parse(SettFile.Class_Start_Position[k]);
+                                    cur_index -= Int32.Parse(SettFile.classStartPosition[k]);
                                     break;
                                 }
-                            if ((Pictures.Count == (Int32.Parse(SettFile.Class_Start_Position[k + 1]) - Int32.Parse(SettFile.Class_Start_Position[k]))))
+                            if ((Pictures.Count == (Int32.Parse(SettFile.classStartPosition[k + 1]) - Int32.Parse(SettFile.classStartPosition[k]))))
                             {
                                 substring = Pictures[cur_index - 1];
                                 Picture.Source = Add_Picture_On_Screen(substring);

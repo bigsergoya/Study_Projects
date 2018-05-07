@@ -124,9 +124,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\CustomTimer.cs" />
+    <Compile Include="Common\DataBinding\BaseViewModel.cs" />
+    <Compile Include="Common\DataBinding\ColumnDataViewModel.cs" />
+    <Compile Include="Common\DataBinding\ReferencedObjectsViewModel.cs" />
     <Compile Include="Common\DataReader\FastSCVDataReader.cs" />
     <Compile Include="Common\DataReader\IDataReader.cs" />
-    <Compile Include="Common\DataReader\SCVDataReader.cs" />
     <Compile Include="Common\DataReader\StandartDataReader.cs" />
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\Visualization\IVisualizer.cs" />
@@ -157,7 +159,6 @@
     <Compile Include="Settings\ClassVisualisationSettings.cs" />
     <Compile Include="Common\Visualization\FastMap.cs" />
     <Compile Include="Settings\Engine.cs" />
-    <Compile Include="Settings\SettingsFilesSubsidiary.cs" />
     <Compile Include="ConfigWindow\StartSettings.xaml.cs">
       <DependentUpon>StartSettings.xaml</DependentUpon>
     </Compile>
@@ -167,13 +168,13 @@
     <Compile Include="Figure3D\Ellipse3D.cs" />
     <Compile Include="Figure3D\Mesh3D.cs" />
     <Compile Include="Figure3D\Pyramid3D.cs" />
-    <Compile Include="Chart3D\Model3D.cs" />
-    <Compile Include="Chart3D\ScatterChart3D.cs" />
-    <Compile Include="Chart3D\ScatterPlotItem.cs" />
-    <Compile Include="Chart3D\TextureMapping.cs" />
+    <Compile Include="Common\Chart3D\Model3D.cs" />
+    <Compile Include="Common\Chart3D\ScatterChart3D.cs" />
+    <Compile Include="Common\Chart3D\ScatterPlotItem.cs" />
+    <Compile Include="Common\Chart3D\TextureMapping.cs" />
     <Compile Include="Common\TransformMatrix.cs" />
     <Compile Include="Figure3D\Triangle3D.cs" />
-    <Compile Include="Chart3D\Vertex3D.cs" />
+    <Compile Include="Common\Chart3D\Vertex3D.cs" />
     <Compile Include="Figure3D\ViewportRect.cs" />
     <Compile Include="Common\CommonMatrix.cs" />
     <Compile Include="ListObjects.xaml.cs">
@@ -185,6 +186,7 @@
     <Compile Include="ConfigWindow\DissimilaritySpaceConfigs.xaml.cs">
       <DependentUpon>DissimilaritySpaceConfigs.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\EngineSubsidiary.cs" />
     <Page Include="ConfigWindow\SammonsMapConfigs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -221,7 +223,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Chart3D\Chart3D.cs" />
+    <Compile Include="Common\Chart3D\Chart3D.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -5,7 +5,7 @@ using System.IO;
 namespace VisualChart3D.Common.DataReader
 {
     class StandartDataReader : IUniversalReader
-    {       
+    {
 
         private SourceFileMatrixType _sourceMatrixType;
         private string _sourceMatrixFile;
@@ -61,14 +61,29 @@ namespace VisualChart3D.Common.DataReader
                 }
 
                 if (Utils.CheckSourceMatrix(dataMatrix, SourceType))
-                {                    
+                {
                     Utils.ShowErrorMessage(Utils.BadMatrixType);
                     return false;
                 }
 
                 SourceMatrixType = SourceType;
                 SourceMatrixFile = SourceFile;
-                _arraySource = dataMatrix;
+
+                if (this.SourceMatrixType == SourceFileMatrixType.ObjectAttribute)
+                {
+                    _arraySource = CommonMatrix.ObjectAttributeToDistance(dataMatrix, this.MinkovskiDegree);
+
+                    if (_arraySource == null)
+                    {
+                        return false;
+                    }
+
+                    this.SourceMatrixType = SourceFileMatrixType.MatrixDistance;
+                }
+                else
+                {
+                    _arraySource = dataMatrix;
+                }
 
                 return true;
             }

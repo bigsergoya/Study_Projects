@@ -12,15 +12,15 @@
         </ComboBox>
         <ComboBox x:Name="cbThirdClassChoose" Margin="316,83,13,0" VerticalAlignment="Top" SelectedIndex="-1" ItemsSource="{Binding}" SelectionChanged="cbThirdClassChoose_SelectionChanged" IsEnabled="True">
         </ComboBox>
-        <Button Content="Назад" Height="23" HorizontalAlignment="Left" Margin="36,262,0,0" Name="btBackWithoutSaving" VerticalAlignment="Top" Width="75" Click="btBackWithoutSaving_Click" />
-        <Button Content="Сохранить выбор" Height="23" HorizontalAlignment="Right" Margin="0,262,33,0" Name="btBackAndSave" VerticalAlignment="Top" Width="118" Click="btBackAndSave_Click" />
+        <Button Content="Назад" Height="23" HorizontalAlignment="Left" Margin="30,346,0,0" Name="btBackWithoutSaving" VerticalAlignment="Top" Width="81" Click="btBackWithoutSaving_Click" />
+        <Button Content="Сохранить выбор" Height="23" HorizontalAlignment="Right" Margin="0,346,27,0" Name="btBackAndSave" VerticalAlignment="Top" Width="124" Click="btBackAndSave_Click" />
         <Image Height="98" HorizontalAlignment="Left" Margin="12,145,0,0" Name="pcFirstSelectedObject" Stretch="Uniform" VerticalAlignment="Top" Width="123" Source="/VisualChart3D;component/Resources/empty_picture.jpg" />
         <Image Height="98" HorizontalAlignment="Left" Margin="164,145,0,0" Name="pcSecondSelectedObject" Stretch="Uniform" VerticalAlignment="Top" Width="123" Source="/VisualChart3D;component/Resources/empty_picture.jpg" />
         <Image Height="98" HorizontalAlignment="Left" Margin="316,145,0,0" Name="pcThirdSelectedObject" Stretch="Uniform" VerticalAlignment="Top" Width="123" Source="/VisualChart3D;component/Resources/empty_picture.jpg" Visibility="Visible" />
         <CheckBox Content="Объект 3" Height="28" Margin="316,57,12,0" Name="Is3DSpace" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FlowDirection="LeftToRight" Background="White" BorderBrush="#FF061200" HorizontalAlignment="Stretch" DataContext="{Binding}" ClickMode="Release" OverridesDefaultStyle="False" Checked="Is3DSpace_Checked" Unchecked="Is3DSpace_Unchecked" />
         <CheckBox Content="Инвертировать цвет базисных объектов" Height="18" Margin="12,120,0,0" Name="cbBasisObjectColorMode" VerticalAlignment="Top" HorizontalAlignment="Left" Width="275" />
-        <CheckBox Content="Автоматический подбор эталона" Height="18" HorizontalAlignment="Left" Margin="116,304,0,0" Name="cbAutomaticlySettingUpOfReference" VerticalAlignment="Top" Width="203" Checked="cbAutomaticlySettingUpOfReference_Checked" Unchecked="cbAutomaticlySettingUpOfReference_Unchecked" />
-        <ListBox Height="57" HorizontalAlignment="Left" Margin="30,320,0,0" Name="lbReferencedObjects" VerticalAlignment="Top" Width="394" />
-        <Button Content="Обновить" Height="23" HorizontalAlignment="Left" Margin="349,296,0,0" Name="btRefreshReferenceObjects" VerticalAlignment="Top" Width="75" Click="btRefreshReferenceObjects_Click" IsEnabled="False" />
+        <Label Content="Подобранные эталонные объекты:" Height="26" HorizontalAlignment="Left" Margin="78,253,0,0" Name="cbAutomaticlySettingUpOfReference" VerticalAlignment="Top" Width="203" />
+        <ListBox Height="57" HorizontalAlignment="Left" Margin="30,283,0,0" Name="lbReferencedObjects" VerticalAlignment="Top" Width="394" ItemsSource="{Binding ReferedObjectsInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Content="Обновить" Height="23" HorizontalAlignment="Left" Margin="311,256,0,0" Name="btRefreshReferenceObjects" VerticalAlignment="Top" Width="75" Click="btRefreshReferenceObjects_Click" />
     </Grid>
 </Window>

@@ -139,7 +139,7 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesPictures.IsChecked = true;
                 rbPicturesById.IsChecked = true;
                 tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.Pic_Folder_Adress;
+                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
             }
 
             if (SettFiles.isPictureTakenByObjectName)
@@ -147,7 +147,7 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesPictures.IsChecked = true;
                 rbPicturesByObjectsName.IsChecked = true;
                 tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.Pic_Folder_Adress;
+                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
             }
 
             if (SettFiles.isPictureTakenByClassInterval || SettFiles.isPictureTakenByClassStartObjects)
@@ -155,7 +155,7 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesPictures.IsChecked = true;
                 rbPicturesByClassName.IsChecked = true;
                 tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.Pic_Folder_Adress;
+                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
             }
 
             if (SettFiles.ClassObjectSelected)
@@ -355,7 +355,7 @@ namespace VisualChart3D.ConfigWindow
                     || (rbPicturesByClassName.IsChecked == true))
                         && (!String.IsNullOrEmpty(tbPictureDirectoryPath.Text)))
                 {
-                    result.Pic_Folder_Adress = tbPictureDirectoryPath.Text.ToString();
+                    result.picFolderAdress = tbPictureDirectoryPath.Text.ToString();
                     result.isPictureTakenByObjectID = (bool)rbPicturesById.IsChecked;
                     result.isPictureTakenByObjectName = (bool)rbPicturesByObjectsName.IsChecked;
 
@@ -515,7 +515,7 @@ namespace VisualChart3D.ConfigWindow
                     //uniqueClassesNames
                     for (int i = 1; i < countOfClasses + 1; i++)
                     {
-                        _numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.Class_Start_Position[i]) - Int32.Parse(temp.Class_Start_Position[i - 1]);
+                        _numberOfObjectsOfClass[i - 1] = Int32.Parse(temp.classStartPosition[i]) - Int32.Parse(temp.classStartPosition[i - 1]);
                     }
 
                     break;

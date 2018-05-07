@@ -16,9 +16,7 @@ namespace VisualChart3D.Common
         private Matrix3D _projMatrix = new Matrix3D();
         private Matrix3D _totalMatrix;
 
-        public Matrix3D TotalMatrix {
-            get { return _totalMatrix; }
-        }
+        public Matrix3D GetTotalMatrix() => _totalMatrix;
 
         /// <summary>
         /// чувствительность для увеличения
@@ -52,9 +50,7 @@ namespace VisualChart3D.Common
 
             double width = viewPort.ActualWidth;
             double height = viewPort.ActualHeight;
-
-
-
+            
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 double shiftX = 2 * (pt.X - _movePoint.X) / (width);
@@ -62,6 +58,7 @@ namespace VisualChart3D.Common
                 _viewMatrix.Translate(new Vector3D(shiftX, shiftY, 0));
                 _movePoint = pt;
             }
+
             else
             {
                 double aY = 180 * (pt.X - _movePoint.X) / width;
@@ -198,8 +195,8 @@ namespace VisualChart3D.Common
             double width = viewPort.ActualWidth;
             double height = viewPort.ActualHeight;
 
-            double x3 = (double)point.X;
-            double y3 = (double)point.Y;
+            double x3 = point.X;
+            double y3 = point.Y;
             double x2 = (x3 - width / 2) * 2 / width;
             double y2 = (height / 2 - y3) * 2 / width;
 
@@ -209,6 +206,7 @@ namespace VisualChart3D.Common
         public Point VertexToViewportPt(Point3D point, System.Windows.Controls.Viewport3D viewPort)
         {
             Point3D pt2 = _totalMatrix.Transform(point);
+
             return new Point(pt2.X, pt2.Y);
         }
     }

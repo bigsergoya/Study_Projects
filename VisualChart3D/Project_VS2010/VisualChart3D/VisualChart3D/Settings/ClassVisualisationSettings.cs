@@ -20,6 +20,8 @@ namespace VisualChart3D
         /// </summary>
         public string CountPoligonStr { get; set; }
 
+        public const double OptimalSize = 0.05;
+
         /// <summary>
         /// Получить или задать размер объектов
         /// </summary>
@@ -28,15 +30,21 @@ namespace VisualChart3D
         /// <summary>
         /// Получить количество полигонов
         /// </summary>
-        public int CountPoligon {
-            get { return _countPoligon; }
-            set {
+        public int CountPoligon
+        {
+            get
+            {
+                return _countPoligon;
+            }
+            set
+            {
                 CountPoligonStr = value.ToString();
                 string error = ValidadionTextField("Количество полигонов", 3, 20, CountPoligonStr, out value);
                 if (!String.IsNullOrEmpty(error))
                 {
                     throw new ArgumentOutOfRangeException("value", error);
                 }
+
                 _countPoligon = value;
             }
         }
@@ -44,9 +52,14 @@ namespace VisualChart3D
         /// <summary>
         /// Получить размер объектов
         /// </summary>
-        public double SizeObject {
-            get { return _sizeObject; }
-            set {
+        public double SizeObject
+        {
+            get
+            {
+                return _sizeObject;
+            }
+            set
+            {
                 SizeObjectStr = value.ToString();
                 string error = ValidadionTextField("Размер объектов", 0, 1000, SizeObjectStr, out value);
 
@@ -54,6 +67,7 @@ namespace VisualChart3D
                 {
                     throw new ArgumentOutOfRangeException("value", error);
                 }
+
                 _sizeObject = value;
             }
         }
@@ -84,12 +98,9 @@ namespace VisualChart3D
             return ArrayClass.FirstOrDefault(cls => cls.NameClass.Equals(name));
         }
 
-
-
         public ClassVisualisationSettings()
         {
         }
-
 
         /// <summary>
         /// Задать настройки по умолчанию
@@ -102,8 +113,9 @@ namespace VisualChart3D
             CountPoligonStr = "13";
             CountPoligon = 13;
             SizeObjectStr = "20";
-            SizeObject = 20;
+            SizeObject = OptimalSize;
             ArrayClass = new AloneSettClass[namesClass.Count];
+
             for (int i = 0; i < ArrayClass.Length; i++)
             {
                 ArrayClass[i] = new AloneSettClass
@@ -130,8 +142,11 @@ namespace VisualChart3D
         {
             result = -1;
             StringBuilder errorsStr = new StringBuilder();
+
             if (string.IsNullOrEmpty(fieldStr))
+            {
                 errorsStr.AppendFormat("Отсутвует значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+            }
             else
             {
                 if (int.TryParse(fieldStr, out result))
@@ -143,8 +158,11 @@ namespace VisualChart3D
                     }
                 }
                 else
+                {
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+                }
             }
+
             return errorsStr.ToString();
         }
 
@@ -162,8 +180,11 @@ namespace VisualChart3D
         {
             result = -1;
             StringBuilder errorsStr = new StringBuilder();
+
             if (string.IsNullOrEmpty(fieldStr))
+            {
                 errorsStr.AppendFormat("Отсутвует значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+            }
             else
             {
                 if (float.TryParse(fieldStr, out result))
@@ -175,8 +196,11 @@ namespace VisualChart3D
                     }
                 }
                 else
+                {
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+                }
             }
+
             return errorsStr.ToString();
         }
 
@@ -194,8 +218,11 @@ namespace VisualChart3D
         {
             result = -1;
             StringBuilder errorsStr = new StringBuilder();
+
             if (string.IsNullOrEmpty(fieldStr))
+            {
                 errorsStr.AppendFormat("Отсутвует значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+            }
             else
             {
                 if (double.TryParse(fieldStr, out result))
@@ -207,10 +234,12 @@ namespace VisualChart3D
                     }
                 }
                 else
+                {
                     errorsStr.AppendFormat("Некорректное значение поля \"{0}\"{1}", nameField, Environment.NewLine);
+                }
             }
-            return errorsStr.ToString();
 
+            return errorsStr.ToString();
         }
 
         /// <summary>
@@ -224,6 +253,5 @@ namespace VisualChart3D
             errorsStr.Append(ValidadionTextField("Размер объектов", 0, 150, SizeObjectStr, out _sizeObject));
             return errorsStr.ToString();
         }
-
     }
 }

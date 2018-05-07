@@ -79,7 +79,7 @@ namespace VisualChart3D
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(GettingFileByNameErrorMessage);
                 //возможно стоит просто не информировать а просто по буллу выводить пустую картинку при ошибке
@@ -112,7 +112,7 @@ namespace VisualChart3D
                 else
                     return false;
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(GettingFileByNameErrorMessage);
                 //возможно стоит просто не информировать а просто по буллу выводить пустую картинку при ошибке
@@ -130,7 +130,7 @@ namespace VisualChart3D
             _isPicturesByClassStartObject = false;
             ListBoxObjects.Items.Clear();
             //-------------------------------
-            _adressPictureDirectory = settFiles.Pic_Folder_Adress;
+            _adressPictureDirectory = settFiles.picFolderAdress;
 
             //-------------------------------
             if (idxArr == null)
@@ -146,7 +146,7 @@ namespace VisualChart3D
             _namesOfClasses = new List<string>();
             _isPicturesByName = settFiles.isPictureTakenByObjectName;
             _isPicturesByClassInterval = settFiles.isPictureTakenByClassInterval;
-            countOfClasses = settFiles.Class_Start_Position;
+            countOfClasses = settFiles.classStartPosition;
             _isPicturesByClassStartObject = settFiles.isPictureTakenByClassStartObjects;
             Title = "Список объектов. Количество:" + idxArr.Length;
             _numberOfObjects.AddRange(idxArr);
@@ -249,7 +249,12 @@ namespace VisualChart3D
 
         public void displayObjectCoords(int selectedInted)
         {
-            if (!_isDisSpaceMode)
+            tbCurrentObjectCoords.Text =
+                    "x=" + _coords[(_numberOfObjects[selectedInted]), 0] + Environment.NewLine +
+                    "y=" + _coords[(_numberOfObjects[selectedInted]), 1] + Environment.NewLine +
+                    "z=" + _coords[(_numberOfObjects[selectedInted]), 2];
+
+            /*if (!_isDisSpaceMode)
             {
                 tbCurrentObjectCoords.Text =
                     "x=" + _coords[(_numberOfObjects[selectedInted]), 0] + Environment.NewLine +
@@ -272,7 +277,7 @@ namespace VisualChart3D
                         "y=" + _coords[1, (_numberOfObjects[selectedInted])] + Environment.NewLine +
                         "z=" + _coords[2, (_numberOfObjects[selectedInted])];
                 }
-            }
+            }*/
         }
 
         private void ListBoxObjects_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

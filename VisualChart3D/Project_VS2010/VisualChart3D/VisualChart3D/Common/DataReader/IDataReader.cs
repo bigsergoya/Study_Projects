@@ -55,6 +55,6 @@ namespace VisualChart3D.Common.DataReader
     /// </summary>
     public interface IUniversalReader: IDataReader, ICSVReader
     {
-        //InputFileType InputFileType { get; set; } 
+ 
     }
 }

@@ -14,15 +14,16 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*" />
                 <RowDefinition MaxHeight="40"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Количество итераций" Grid.Row="0" Grid.Column="0" />
-            <toolkit:IntegerUpDown x:Name="tbCountOfIterations" Grid.Column="1" HorizontalAlignment="Left" Margin="14,7,0,0" Grid.Row="0" Text="1" Width="90" Height="21" VerticalAlignment="Top" Minimum="1" Maximum="10000"/>
+            <Label Name="lbIterations" Grid.Row="0" Grid.Column="0" >
+                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Количество итераций</TextBlock>
+            </Label>
+            <toolkit:IntegerUpDown x:Name="tbCountOfIterations" Grid.Column="1" HorizontalAlignment="Left" Margin="14,7,0,0" Grid.Row="0" Text="" Width="90" Height="21" VerticalAlignment="Top" Increment="100" Minimum="100" Maximum="10000"/>
             <Button x:Name="BtnCancel" Content="Отмена" Margin="30,0,54,0" VerticalAlignment="Bottom" Click="BtnCancel_Click" Grid.Column="1" Grid.Row="6"/>
             <Button x:Name="BtnSave" Content="Пересчитать" Margin="0,0,22.5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="82" Click="BtnSave_Click" Grid.Row="6"/>
         </Grid>

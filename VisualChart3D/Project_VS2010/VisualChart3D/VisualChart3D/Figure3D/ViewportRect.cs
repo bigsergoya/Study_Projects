@@ -68,13 +68,12 @@ namespace VisualChart3D
         /// <summary>
         /// Координаты одного из углов прямоугольника
         /// </summary>
-        private Point _firstPoint = new Point(0,0);
+        private Point _firstPoint = new Point(0, 0);
 
         /// <summary>
         /// Координаты противоположенной <see cref="_firstPoint"/> точки
         /// </summary>
-        private Point _secondPoint = new Point(0,0);
-      
+        private Point _secondPoint = new Point(0, 0);
 
         public ViewportRect()
         {
@@ -109,13 +108,14 @@ namespace VisualChart3D
         /// <remarks>для отображения в Viewport3D</remarks>
         public List<Mesh3D> GetMeshes()
         {
-            List<Mesh3D> meshs = new List<Mesh3D> {this};
+            List<Mesh3D> meshs = new List<Mesh3D> { this };
 
             int nVertNo = VertexNo;
             for (int i = 0; i < nVertNo; i++)
             {
                 VertIndices[i] = i;
             }
+
             return meshs;
         }
 
@@ -171,7 +171,6 @@ namespace VisualChart3D
             UpdatePositions(meshGeometry);
         }
 
-
         /// <summary>
         /// Задать прямоугольник
         /// </summary>
@@ -197,14 +196,12 @@ namespace VisualChart3D
         {
             Point centerPoint = new Point
             {
-                X = (_firstPoint.X + _secondPoint.X)/2,
-                Y = (_firstPoint.Y + _secondPoint.Y)/2
+                X = (_firstPoint.X + _secondPoint.X) / 2,
+                Y = (_firstPoint.Y + _secondPoint.Y) / 2
             };
             double w = System.Math.Abs(_firstPoint.X - _secondPoint.X);
             double h = System.Math.Abs(_firstPoint.Y - _secondPoint.Y);
             SetRect(centerPoint, w, h);
         }
-
     }
 }
-

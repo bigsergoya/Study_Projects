@@ -13,10 +13,13 @@ namespace VisualChart3D.ConfigWindow
     /// </summary>
     public partial class SammonsMapConfigs : Window
     {
+        const string IterationStepLimitFormat = "Шаг дробления (max = {0})";
+        const string IterationLimitFormat = "Число итераций (max = {0})";
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private ISammon _sammonProjection;
-        private double _maxHeight;
+        //private double _maxHeight;
 
         /*public double PlotHeight {
             get {
@@ -28,26 +31,15 @@ namespace VisualChart3D.ConfigWindow
             }
         }*/
 
-        public ISammon SamProjection {
-            get {
-                return _sammonProjection;
-            }
-
-            private set {
-                _sammonProjection = value;
-                SetValues();
-            }
-        }
-
         public SammonsMapConfigs(ISammon sammonProjection)
         {
             InitializeComponent();
 
             idIterationNumber.ValueChanged += ddAll_ValueChanged;
             ddUpperBound.ValueChanged += ddAll_ValueChanged;
-            //ddStep.ValueChanged += ddAll_ValueChanged;
-
             SamProjection = sammonProjection;
+            SetMaxUpperBound();
+            SetMaxIteration();
             RepaintChart();
         }
 
@@ -85,9 +77,9 @@ namespace VisualChart3D.ConfigWindow
 
             for (int i = 0; i < SamProjection.CalculatedCriteria.Count; i++)
             {
-                labels[i] = i+1;
+                labels[i] = i + 1;
             }
-            
+
             circles.PlotColorSize(labels, SamProjection.CalculatedCriteria.ToArray(), 10d, 10d);
         }
 
@@ -120,6 +112,43 @@ namespace VisualChart3D.ConfigWindow
         {
             BtnSave.IsEnabled = false;
             BtnRecalculate.IsEnabled = true;
+        }
+
+        private void SetMaxUpperBound()
+        {            
+            this.ddUpperBound.Maximum = this._sammonProjection.IterationStepLimit;
+            string iterationStepLimitMessage = string.Format(IterationStepLimitFormat, this._sammonProjection.IterationStepLimit);
+            Common.Utils.ChangeLabelTextBlockText(this.lbIterationStepLimit, iterationStepLimitMessage);
+
+            /*this.tbCountOfIterations.Maximum = value;
+
+            string MaxIteratiosMessage = string.Format(MaxIterationsFormat, value);
+            Common.Utils.ChangeLabelTextBlockText(lbIterations, MaxIteratiosMessage);*/
+        }
+
+
+        private void SetMaxIteration()
+        {
+            this.idIterationNumber.Maximum = this._sammonProjection.IterationLimit;
+            string iterationLimitMessage = string.Format(IterationLimitFormat, this._sammonProjection.IterationLimit);
+            Common.Utils.ChangeLabelTextBlockText(this.lbIterationLimit, iterationLimitMessage);
+
+            /*this.tbCountOfIterations.Maximum = value;
+
+            string MaxIteratiosMessage = string.Format(MaxIterationsFormat, value);
+            Common.Utils.ChangeLabelTextBlockText(lbIterations, MaxIteratiosMessage);*/
+        }
+
+
+        public ISammon SamProjection {
+            get {
+                return _sammonProjection;
+            }
+
+            private set {
+                _sammonProjection = value;
+                SetValues();
+            }
         }
     }
 }

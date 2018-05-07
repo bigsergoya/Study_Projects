@@ -72,6 +72,5 @@ namespace VisualChart3D
             MinPoint = new Point3D(-a, -b, -h / 2);
             MaxPoint = new Point3D(a, b, h / 2);
         }
-
     }
 }

@@ -31,15 +31,24 @@ namespace VisualChart3D
         /// <summary>
         /// Получить количество объектов
         /// </summary>
-        public virtual int CountObjects 
+        public virtual int CountObjects
         {
-            get {
+            get
+            {
                 if (UniversalReader == null)
                 {
                     return 0;
                 }
+
                 const int dimensionOfObjects = 0;
-                return UniversalReader.ArraySource.GetLength(dimensionOfObjects);
+
+                return ArraySource.GetLength(dimensionOfObjects);
+            }
+        }
+
+        public virtual double[,] ArraySource {
+            get {
+                return this.UniversalReader.ArraySource;
             }
         }
 
@@ -50,12 +59,15 @@ namespace VisualChart3D
 
         private IUniversalReader _reader;
 
-        public IUniversalReader UniversalReader {
-            get {
+        public IUniversalReader UniversalReader
+        {
+            get
+            {
                 return _reader;
             }
 
-            set {
+            set
+            {
                 _reader = value;
 
                 if (value.InputFileType != InputFileType.CSV)
@@ -78,32 +90,21 @@ namespace VisualChart3D
         }
 
         /// <summary>
-        /// Получить тип файла с исходной матрицей
-        /// </summary>
-        //public InputFileType InputFileType { get; set; }
-
-        /// <summary>
         /// Тип алгоритма, используемого для визуализации данных
         /// </summary>
         private AlgorithmType _algorithmType;
-
-        /*/// <summary>
-        /// Получить или задать путь к файлу с исходной матрицей
-        /// </summary>
-        public string SourceMatrixFile { get; set; }*/
 
         /// <summary>
         /// Получить массив с количеством объектов каждого класса
         /// </summary>
         public int[] numberOfObjectsOfClass;
 
-
-        public string Pic_Folder_Adress = null;
+        public string picFolderAdress = null;
         public bool isPictureTakenByObjectID = false;  //добавить обнуление
         public bool isPictureTakenByObjectName = false;  //добавить обнуление
         public bool isPictureTakenByClassInterval = false;  //добавить обнуление
         public bool isPictureTakenByClassStartObjects = false;  //добавить обнуление
-        public List<String> Class_Start_Position;
+        public List<String> classStartPosition;
 
         public int[] GetClassPositionsOnOneToOneMode(List<String> uniqueClassesNames)
         {
@@ -125,7 +126,6 @@ namespace VisualChart3D
 
             return count;
         }
-
 
         /// <summary>
         /// Получить или задать сущестовование названий классов. Если есть файл с настройкой классов - true, в противном случае false
@@ -175,8 +175,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить список названий классов
         /// </summary>
-        public virtual List<String> ClassesName {
-            get {
+        public virtual List<String> ClassesName
+        {
+            get
+            {
                 if (_classesName == null)
                 {
                     _classesName = GetListNamesClass();
@@ -186,7 +188,8 @@ namespace VisualChart3D
                 return _classesName;
             }
 
-            set {
+            set
+            {
                 _classesName = value;
             }
         }
@@ -194,8 +197,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить список неповторяющихся названий классов
         /// </summary>
-        public List<String> UniqClassesName {
-            get {
+        public List<String> UniqClassesName
+        {
+            get
+            {
                 if (_uniqClassesName == null)
                 {
                     _uniqClassesName = GetUniqClass();
@@ -205,7 +210,8 @@ namespace VisualChart3D
                 return _uniqClassesName;
             }
 
-            set {
+            set
+            {
                 _uniqClassesName = value;
             }
         }
@@ -213,8 +219,10 @@ namespace VisualChart3D
         /// <summary>
         /// Получить список имён объектов
         /// </summary>
-        public virtual List<String> NamesObjects {
-            get {
+        public virtual List<String> NamesObjects
+        {
+            get
+            {
                 if (_namesObjects == null)
                 {
                     _namesObjects = GetNamesObject();
@@ -224,9 +232,7 @@ namespace VisualChart3D
                 return _namesObjects;
             }
 
-            set {
-
-            }
+            set { }
         }
 
         /// <summary>
@@ -237,17 +243,18 @@ namespace VisualChart3D
         /// <summary>
         /// Тип используемого алгоритма для визуализации данных
         /// </summary>
-        public AlgorithmType AlgorithmType {
-            get {
+        public AlgorithmType AlgorithmType
+        {
+            get
+            {
                 return _algorithmType;
             }
 
-            set {
+            set
+            {
                 _algorithmType = value;
             }
         }
-
-        //public int MinkovskiDegree { get; set; } = 2;
 
         /// <summary>
         /// число объектов в классе
@@ -276,7 +283,6 @@ namespace VisualChart3D
 
         public Engine()
         {
-            //SourceMatrixType = SourceFileMatrixType.MatrixDistance;
             ClassObjectSelected = false;
             NamesObjectSelected = false;
         }
@@ -289,12 +295,8 @@ namespace VisualChart3D
             isPictureTakenByObjectName = engine.isPictureTakenByObjectName;
             isPictureTakenByClassInterval = engine.isPictureTakenByClassInterval;
             isPictureTakenByClassStartObjects = engine.isPictureTakenByClassStartObjects;
-            Class_Start_Position = engine.Class_Start_Position;
-            //CountObjects = engine.CountObjects;
-            //SourceMatrixType = engine.SourceMatrixType;
-            Pic_Folder_Adress = engine.Pic_Folder_Adress;
-            //SourceMatrixFile = engine.SourceMatrixFile;
-            //ArraySource = engine.ArraySource;
+            classStartPosition = engine.classStartPosition;
+            picFolderAdress = engine.picFolderAdress;
             ClassObjectSelected = engine.ClassObjectSelected;
             ArrayClassesOneToOne = engine.ArrayClassesOneToOne;
             ArrayClassesCountObj = engine.ArrayClassesCountObj;
@@ -308,42 +310,7 @@ namespace VisualChart3D
             _arrayNames = engine._arrayNames;
             _classesName = engine._classesName;
             numberOfObjectsOfClass = engine.numberOfObjectsOfClass;
-            //MinkovskiDegree = engine.MinkovskiDegree;
-            //InputFileType = engine.InputFileType;
         }
-
-        /// <summary>
-        /// Проверка на корректность исходной матрицы
-        /// </summary>
-        /// <returns></returns>
-        /*public bool CheckSourceMatrix()
-        {
-            if (string.IsNullOrEmpty(SourceMatrixFile) || !File.Exists(SourceMatrixFile))
-            {
-                return false;
-            }
-
-            try
-            {
-                if (SourceMatrixType == SourceFileMatrixType.MatrixDistance)
-                {
-                    ArraySource = CommonMatrix.ReadMatrixDistance(SourceMatrixFile);
-                    CountObjects = ArraySource.GetLength(0);
-                }
-
-                if (SourceMatrixType == SourceFileMatrixType.ObjectAttribute)
-                {
-                    ArraySource = CommonMatrix.ReadMatrixAttribute(SourceMatrixFile);
-                    CountObjects = ArraySource.GetLength(0);
-                }
-
-                return true;
-            }
-            catch (FormatException)
-            {
-                return false;
-            }
-        }*/
 
         /// <summary>
         /// Проверка на корректоности файла с классами
@@ -433,15 +400,6 @@ namespace VisualChart3D
         {
             StringBuilder errors = new StringBuilder();
 
-            /*if (string.IsNullOrEmpty(SourceMatrixFile))
-            {
-                errors.AppendLine(InputFileChooseMessage);
-            }
-            else if (!CheckSourceMatrix())
-            {
-                errors.AppendLine(IncorrectFileStructureMessage);
-            }*/
-
             if (ClassObjectSelected)
             {
                 if (string.IsNullOrEmpty(ClassObjectFile))
@@ -500,17 +458,15 @@ namespace VisualChart3D
         /// <returns>список имён классов</returns>
         private List<string> GetListNamesClass()
         {
-            Class_Start_Position = new List<String>();
+            classStartPosition = new List<String>();
             int class_border = 0;
-            Class_Start_Position.Add("0");
+            classStartPosition.Add("0");
             List<string> result = new List<string>();
 
             if (!ClassObjectSelected)
             {
                 if (ClassEqualSelected)
                 {
-
-                    //for (int i = 0; i < CountObjects / _classEqualCount; i++)
                     for (int i = 0; i < CountObjects; i++)
                     {
                         for (int j = 0; j < _classEqualCount; j++)
@@ -528,7 +484,7 @@ namespace VisualChart3D
                 }
             }
             else
-            { 
+            {
                 try
                 {
                     switch (ClassObjectType)
@@ -542,7 +498,7 @@ namespace VisualChart3D
                             {
                                 int count = int.Parse(ArrayClassesCountObj[i, 0]);
                                 class_border += count;
-                                Class_Start_Position.Add(class_border.ToString());
+                                classStartPosition.Add(class_border.ToString());
                                 string name = string.IsNullOrEmpty(ArrayClassesCountObj[i, 1])
                                     ? (i + 1).ToString()
                                     : ArrayClassesCountObj[i, 1];
@@ -561,7 +517,7 @@ namespace VisualChart3D
                             for (int i = 1; i < ArrayClassesCountObj.Length / 2; i++)
                             {
                                 int count = int.Parse(ArrayClassesCountObj[i, 0]);
-                                Class_Start_Position.Add(count.ToString());
+                                classStartPosition.Add(count.ToString());
                                 string name = string.IsNullOrEmpty(ArrayClassesCountObj[i - 1, 1])
                                     ? (i).ToString()
                                     : ArrayClassesCountObj[i - 1, 1];
@@ -583,7 +539,7 @@ namespace VisualChart3D
                                 result.Add(nme);
                             }
 
-                            Class_Start_Position.Add((CountObjects).ToString()); //конец не важен, главное - границы
+                            classStartPosition.Add((CountObjects).ToString()); //конец не важен, главное - границы
                             break;
 
                         default:

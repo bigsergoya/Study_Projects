@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,21 +26,19 @@ namespace VisualChart3D.ConfigWindow
         private const string BadSecondIndexWarningMessage = "Неккоректный выбор второго объекта. Пожалуйста, повторите.";
         private const string BadThirdIndexWarningMessage = "Неккоректный выбор третьего объекта. Пожалуйста, повторите.";
 
-
-        //public int firstСhoosedОbject;
-        //public int secondChoosedObject;
-        // public int thirdChoosedObject;
-        //public bool basisObjectColorMode;
-        //public bool ReferencedObjectsMode;
-        //public string sizeOfSpace;
         private DisSpace _dissimilaritySpace;
-        Engine settFile;
+        private Engine settFile;
+        private Common.DataBinding.ReferencedObjectsViewModel _referencedObjectsViewModel;
 
         public DisSpace DissimilaritySpace { get => _dissimilaritySpace; }
 
-        public DissimilaritySpaceConfigs(Engine CurrentSetFile, DisSpace disSpace, bool referencedObjectsMode)
+        public DissimilaritySpaceConfigs(Engine CurrentSetFile, DisSpace disSpace)
         {
             InitializeComponent();
+
+            _referencedObjectsViewModel = new Common.DataBinding.ReferencedObjectsViewModel();
+            DataContext = _referencedObjectsViewModel;
+
             settFile = CurrentSetFile;
             _dissimilaritySpace = disSpace;
             cbThirdClassChoose.IsEnabled = false;
@@ -60,15 +59,15 @@ namespace VisualChart3D.ConfigWindow
 
             //sizeOfSpace = spaceSize;
 
-            //if (sizeOfSpace.Equals("3D"))
             if (disSpace.Space == Space.ThreeDimensional)
             {
                 Is3DSpace.IsChecked = true;
             }
 
             cbBasisObjectColorMode.IsChecked = disSpace.BasicObjectsColorMode;
-            cbAutomaticlySettingUpOfReference.IsChecked = referencedObjectsMode;
-            btRefreshReferenceObjects.IsEnabled = referencedObjectsMode;
+            //cbAutomaticlySettingUpOfReference.IsChecked = referencedObjectsMode;
+
+            InitializeReferencedObjects();
         }
 
         private void btBackAndSave_Click(object sender, RoutedEventArgs e)
@@ -113,7 +112,7 @@ namespace VisualChart3D.ConfigWindow
             {
                 if ((settFile.isPictureTakenByObjectID) || (settFile.isPictureTakenByObjectName))
                 {
-                    List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(settFile.Pic_Folder_Adress));
+                    List<string> Pictures = Get_Pictures_Files_List(Directory.GetFiles(settFile.picFolderAdress));
                     if (settFile.isPictureTakenByObjectID)
                     {  //эксперимент - проверка надобности отдельной функции типа инт для выборки картинки. Вместо инт посылаем стринг
                         Picture.Source = Add_Picture_On_Screen(Get_Picture_Adress(Pictures, settFile.NamesObjects[SelectedIndex], Picture));
@@ -131,7 +130,7 @@ namespace VisualChart3D.ConfigWindow
                     int k;
                     List<string> Pictures;
                     int cur_index;
-                    DirectoryInfo[] directories = new DirectoryInfo(settFile.Pic_Folder_Adress).GetDirectories();
+                    DirectoryInfo[] directories = new DirectoryInfo(settFile.picFolderAdress).GetDirectories();
 
                     foreach (var directory in directories)
                     {
@@ -140,16 +139,16 @@ namespace VisualChart3D.ConfigWindow
                             Pictures = Get_Pictures_Files_List(Directory.GetFiles(directory.FullName));
                             cur_index = Int32.Parse(settFile.NamesObjects[SelectedIndex]);
 
-                            for (k = 0; k < settFile.Class_Start_Position.Count - 1; k++)
+                            for (k = 0; k < settFile.classStartPosition.Count - 1; k++)
                             {
-                                if ((cur_index >= Int32.Parse(settFile.Class_Start_Position[k])) && (cur_index <= Int32.Parse(settFile.Class_Start_Position[k + 1])))
+                                if ((cur_index >= Int32.Parse(settFile.classStartPosition[k])) && (cur_index <= Int32.Parse(settFile.classStartPosition[k + 1])))
                                 {
-                                    cur_index -= Int32.Parse(settFile.Class_Start_Position[k]);
+                                    cur_index -= Int32.Parse(settFile.classStartPosition[k]);
                                     break;
                                 }
                             }
 
-                            if ((Pictures.Count == (Int32.Parse(settFile.Class_Start_Position[k + 1]) - Int32.Parse(settFile.Class_Start_Position[k]))))
+                            if ((Pictures.Count == (Int32.Parse(settFile.classStartPosition[k + 1]) - Int32.Parse(settFile.classStartPosition[k]))))
                             {
                                 substring = Pictures[cur_index - 1];
                                 Picture.Source = Add_Picture_On_Screen(substring);
@@ -227,7 +226,7 @@ namespace VisualChart3D.ConfigWindow
                     return false;
                 }
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 return false;
             }
@@ -264,7 +263,7 @@ namespace VisualChart3D.ConfigWindow
                     return false;
                 }
             }
-            catch (Exception Exp)
+            catch (Exception)
             {
                 Utils.ShowErrorMessage(ObjectNameErrorMessage);
                 return false;
@@ -330,24 +329,27 @@ namespace VisualChart3D.ConfigWindow
             pcThirdSelectedObject.Visibility = Visibility.Hidden;
         }
 
-        private void cbAutomaticlySettingUpOfReference_Checked(object sender, RoutedEventArgs e)
+       /* private void cbAutomaticlySettingUpOfReference_Checked(object sender, RoutedEventArgs e)
         {
             //обратно отправлять флажок с режимом центровки и с списком описания центровых объектов
+            InitializeReferencedObjects();
+            
+        }*/
+
+        private void InitializeReferencedObjects()
+        {
             List<string> referedObjectsSavedInfo; //SettFile.SourceMatrixFile
             referedObjectsSavedInfo = GetDataFromReferenceLogFile(settFile.UniversalReader.SourceMatrixFile);
 
             if (referedObjectsSavedInfo == null)
             {
-                ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
-                referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
-                lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
+                referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile);
+
                 WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
                 btRefreshReferenceObjects.IsEnabled = true;
             }
-            else
-            {
-                lbReferencedObjects.ItemsSource = (referedObjectsSavedInfo);
-            }
+
+            _referencedObjectsViewModel.ReferedObjectsInfo = new ObservableCollection<string>(referedObjectsSavedInfo);
         }
 
         private List<string> GetDataFromReferenceLogFile(string pathToAnyMatrix)
@@ -391,19 +393,25 @@ namespace VisualChart3D.ConfigWindow
 
         }
 
-        private void cbAutomaticlySettingUpOfReference_Unchecked(object sender, RoutedEventArgs e)
+        /*private void cbAutomaticlySettingUpOfReference_Unchecked(object sender, RoutedEventArgs e)
         {
             btRefreshReferenceObjects.IsEnabled = false;
             cbAutomaticlySettingUpOfReference.IsChecked = false;
             lbReferencedObjects.Items.Clear();
-        }
+        }*/
 
         private void btRefreshReferenceObjects_Click(object sender, RoutedEventArgs e)
         {
-            ReferencedObjects refObjects = new ReferencedObjects(_dissimilaritySpace.ArraySource, settFile.numberOfObjectsOfClass);
-            List<string>  referedObjectsSavedInfo = (refObjects.getReferencedObjectsWithClassNames(settFile.UniqClassesName));
-            lbReferencedObjects.ItemsSource = referedObjectsSavedInfo;
+            List<string> referedObjectsSavedInfo = _dissimilaritySpace.GetReferencedObjectsWithClassNames(settFile);
+
+            _referencedObjectsViewModel.ReferedObjectsInfo = new ObservableCollection<string>(referedObjectsSavedInfo);
+
             WriteDataToReferenceLog(settFile.UniversalReader.SourceMatrixFile, referedObjectsSavedInfo);
+        }
+
+        private void lbReferencedObjects_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+        {
+
         }
     }
 }

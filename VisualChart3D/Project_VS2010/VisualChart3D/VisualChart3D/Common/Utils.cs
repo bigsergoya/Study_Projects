@@ -3,15 +3,29 @@ using System;
 
 namespace VisualChart3D.Common
 {
-    internal static class Utils
+    public static class Utils
     {
         private const string WarningMessageStandartTitle = "Внимание!";
         private const string ErrorMessageStandartTitle = "Ошибка!";
+        private const string ExceptionMessageFormat = "{0} Стек вызовов: {1}";
 
-        internal const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
+        public const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
 
-        //---------------------------------------------------------------------
-        internal static double ManhattenDistance(double[] vec1, double[] vec2)
+        public static T[,] SafeAllocateMemory<T>(int rows, int columns)
+        {
+            try
+            {
+                T[,] value = new T[rows, columns];
+                return value;
+            }
+            catch(OutOfMemoryException e)
+            {
+                Utils.ShowExceptionMessage(e);
+                return null;
+            }
+        }
+
+        public static double ManhattenDistance(double[] vec1, double[] vec2)
         {
             double distance = 0;
 
@@ -23,8 +37,28 @@ namespace VisualChart3D.Common
             return distance;
         }
 
-        //---------------------------------------------------------------------
-        internal static void FisherYatesShuffle<T>(this T[] array)
+        /// <summary>
+        /// Изменение значения TextBlock, лежащего в Label
+        /// </summary>
+        /// <param name="label">Label, включающий себя TextBlock прямым потомком. </param>
+        /// <param name="value">Новое значение поля Text объекта TextBlock</param>
+        /// <returns>В случае ошибки кастования - false, иначе true</returns>
+        public static bool ChangeLabelTextBlockText(System.Windows.Controls.Label label, string value)
+        {
+            try
+            {
+                System.Windows.Controls.TextBlock textBlock = (System.Windows.Controls.TextBlock)label.Content;
+                textBlock.Text = value;
+                return true;
+            }
+            catch (System.InvalidCastException)
+            {
+                Common.Utils.ShowErrorMessage("Ошибка приведения TextBox-поля у объекта System.Windows.Controls.Label.");
+                return false;
+            }
+        }
+
+        public static void FisherYatesShuffle<T>(this T[] array)
         {
             Random rnd = new Random();
             for (int i = array.Length - 1; i > 0; i--)
@@ -39,14 +73,14 @@ namespace VisualChart3D.Common
             }
         }
 
-        internal static T[] SubArray<T>(this T[] data, int index, int length)
+        public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             T[] result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
         }
 
-        internal static double[][] GetAnotherStyleOfData(double[,] array)
+        public static double[][] GetAnotherStyleOfData(double[,] array)
         {
             int firstDim = array.GetLength(0);
             int secondDim = array.GetLength(1);
@@ -68,18 +102,9 @@ namespace VisualChart3D.Common
             return returnedArray;
         }
 
-        internal static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
+        /*public static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
         {
             double[,] outputArray = new double[firstDim, secondDim];
-            //double maxValue = 0;
-
-            /*for (int i = 0; i < firstDim; i++)
-            {
-                for (int j = 0; j < secondDim; j++)
-                {
-                    maxValue = oldArray[i][j]>maxValue? oldArray[i][j] :maxValue;
-                }
-            }*/
 
             for (int i = 0; i < firstDim; i++)
             {
@@ -90,9 +115,9 @@ namespace VisualChart3D.Common
             }
 
             return outputArray;
-        }
+        }*/
 
-        internal static double[,] GetNormalizedData(double[,] array)
+        public static double[,] GetNormalizedData(double[,] array)
         {
             int firstDim = array.GetLength(0);
             int secondDim = array.GetLength(1);
@@ -105,89 +130,17 @@ namespace VisualChart3D.Common
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    outputArray[i, 0] = (array[i, 0] - minX) / (maxX - minX);
-                    outputArray[i, 1] = (array[i, 1] - minY) / (maxY - minY);
-                    outputArray[i, 2] = (array[i, 2] - minZ) / (maxZ - minZ);
-                }
+                outputArray[i, 0] = (array[i, 0] - minX) / (maxX - minX);
+                outputArray[i, 1] = (array[i, 1] - minY) / (maxY - minY);
+                outputArray[i, 2] = (array[i, 2] - minZ) / (maxZ - minZ);
             }
 
             return outputArray;
         }
 
-        internal static double[,] GetNormalizedDataForDIZZZSPASSSEEEEEEE(double[,] array)
-        {
-            int firstDim = array.GetLength(0);
-            int secondDim = array.GetLength(1);
-
-            double[,] outputArray = new double[firstDim, secondDim];
-
-
-            double maxX = array[0, 0];
-            double minX = array[0, 0];
-
-            double maxY = array[1, 0];
-            double minY = array[1, 0];
-
-            if (firstDim != 2)
-            {
-                double maxZ = array[2, 0];
-                double minZ = array[2, 0];
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    maxX = array[0, i] > maxX ? array[0, i] : maxX;
-                    minX = array[0, i] < minX ? array[0, i] : minX;
-
-                    maxY = array[1, i] > maxY ? array[1, i] : maxY;
-                    minY = array[1, i] < minY ? array[1, i] : minY;
-
-                    maxZ = array[2, i] > maxZ ? array[2, i] : maxZ;
-                    minZ = array[2, i] < minZ ? array[2, i] : minZ;
-                }
-
-
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    {
-                        outputArray[0, i] = (array[0, i] - minX) / (maxX - minX);
-                        outputArray[1, i] = (array[1, i] - minY) / (maxY - minY);
-                        outputArray[2, i] = (array[2, i] - minZ) / (maxZ - minZ);
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < secondDim; i++)
-                {
-                    maxX = array[0, i] > maxX ? array[0, i] : maxX;
-                    minX = array[0, i] < minX ? array[0, i] : minX;
-
-                    maxY = array[1, i] > maxY ? array[1, i] : maxY;
-                    minY = array[1, i] < minY ? array[1, i] : minY;
-
-                }
-
-                for (int i = 0; i < secondDim; i++)
-                {
-                    {
-                        outputArray[0, i] = (array[0, i] - minX) / (maxX - minX);
-                        outputArray[1, i] = (array[1, i] - minY) / (maxY - minY);
-                    }
-                }
-            }
-
-
-            return outputArray;
-        }
-
-        internal static double[,] ExchangeDataByDim(double[][] oldArray, int firstDim, int secondDim)
+        public static double[,] ExchangeDataByDim(double[][] oldArray, int firstDim, int secondDim)
         {
             double[,] outputArray = new double[firstDim, secondDim];
-
-            //GetMinAndMax(oldArray, firstDim, secondDim, out double minValue, out double maxValue);
 
             GetMinAndMaxByDimensions(oldArray, firstDim, secondDim,
             out double maxX, out double maxY, out double maxZ,
@@ -195,20 +148,16 @@ namespace VisualChart3D.Common
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    outputArray[i, 0] = (oldArray[i][0] - minX) / (maxX - minX);
-                    outputArray[i, 1] = (oldArray[i][1] - minY) / (maxY - minY);
-                    outputArray[i, 2] = (oldArray[i][2] - minZ) / (maxZ - minZ);
-                    //outputArray[i, j] = oldArray[i][j] / maxValue;
-                    //outputArray[i, j] = (oldArray[i][j] - minValue) / (maxValue - minValue);
-                }
+                outputArray[i, 0] = (oldArray[i][0] - minX) / (maxX - minX);
+                outputArray[i, 1] = (oldArray[i][1] - minY) / (maxY - minY);
+                outputArray[i, 2] = (oldArray[i][2] - minZ) / (maxZ - minZ);
+
             }
 
             return outputArray;
         }
 
-        internal static double[] GetLineOfMatrix(double[,] array, int lineIndex)
+        public static double[] GetLineOfMatrix(double[,] array, int lineIndex)
         {
             int lineLength = array.GetLength(1);
             double[] line = new double[lineLength];
@@ -221,7 +170,7 @@ namespace VisualChart3D.Common
             return line;
         }
 
-        internal static void ShowWarningMessage(string message, string title = WarningMessageStandartTitle)
+        public static void ShowWarningMessage(string message, string title = WarningMessageStandartTitle)
         {
             System.Windows.Forms.MessageBox.Show(message,
                 title,
@@ -230,12 +179,17 @@ namespace VisualChart3D.Common
         }
 
 
-        internal static void ShowErrorMessage(string message, string title = ErrorMessageStandartTitle)
+        public static void ShowErrorMessage(string message, string title = ErrorMessageStandartTitle)
         {
             System.Windows.Forms.MessageBox.Show(message,
                 title,
                 System.Windows.Forms.MessageBoxButtons.OK,
                 System.Windows.Forms.MessageBoxIcon.Error);
+        }
+
+        public static void ShowExceptionMessage(Exception e)
+        {
+            ShowErrorMessage(String.Format(ExceptionMessageFormat,e.Message, e.StackTrace));
         }
 
         private static void GetMinAndMax(double[][] array, int firstDim, int secondDim, out double min, out double max)
@@ -290,14 +244,27 @@ namespace VisualChart3D.Common
                 maxZ = array[i, 2] > maxZ ? array[i, 2] : maxZ;
                 minZ = array[i, 2] < minZ ? array[i, 2] : minZ;
             }
+
+            if (maxX == minX)
+            {
+                minX = 0;
+            }
+
+            if (maxY == minY)
+            {
+                minY = 0;
+            }
+
+            if (maxZ == minZ)
+            {
+                minZ = 0;
+            }
         }
 
         public static void GetMinAndMaxByDimensions(double[][] array, int firstDim, int secondDim,
             out double maxX, out double maxY, out double maxZ,
             out double minX, out double minY, out double minZ)
         {
-            //max = array[0, 0];
-            //min = array[0, 0];
             maxX = array[0][0];
             minX = array[0][0];
 
@@ -309,20 +276,14 @@ namespace VisualChart3D.Common
 
             for (int i = 0; i < firstDim; i++)
             {
-                //for (int j = 0; j < secondDim; j++)
-                {
-                    maxX = array[i][0] > maxX ? array[i][0] : maxX;
-                    minX = array[i][0] < minX ? array[i][0] : minX;
+                maxX = array[i][0] > maxX ? array[i][0] : maxX;
+                minX = array[i][0] < minX ? array[i][0] : minX;
 
-                    maxY = array[i][1] > maxY ? array[i][1] : maxY;
-                    minY = array[i][1] < minY ? array[i][1] : minY;
+                maxY = array[i][1] > maxY ? array[i][1] : maxY;
+                minY = array[i][1] < minY ? array[i][1] : minY;
 
-                    maxZ = array[i][2] > maxZ ? array[i][2] : maxZ;
-                    minZ = array[i][2] < minZ ? array[i][2] : minZ;
-
-                    //max = array[i, j] > max ? array[i, j] : max;
-                    //min = array[i, j] < min ? array[i, j] : min;
-                }
+                maxZ = array[i][2] > maxZ ? array[i][2] : maxZ;
+                minZ = array[i][2] < minZ ? array[i][2] : minZ;
             }
         }
 
@@ -330,7 +291,7 @@ namespace VisualChart3D.Common
         /// Открыть файл
         /// </summary>
         /// <param name="lb">отображение расположения</param>
-        internal static bool OpenFile(System.Windows.Controls.TextBox lb)
+        public static bool OpenFile(System.Windows.Controls.TextBox lb)
         {
             OpenFileDialog ofDlg = new OpenFileDialog
             {
@@ -360,7 +321,7 @@ namespace VisualChart3D.Common
         /// <param name="array"></param>
         /// <param name="sourceMatrixType"></param>
         /// <returns></returns>
-        internal static bool CheckSourceMatrix(double[,] array, SourceFileMatrixType sourceMatrixType)
+        public static bool CheckSourceMatrix(double[,] array, SourceFileMatrixType sourceMatrixType)
         {
             if (sourceMatrixType != SourceFileMatrixType.MatrixDistance)
             {
