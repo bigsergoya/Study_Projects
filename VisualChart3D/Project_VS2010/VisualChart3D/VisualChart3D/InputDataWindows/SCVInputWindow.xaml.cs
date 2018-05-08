@@ -77,6 +77,10 @@ namespace VisualChart3D.InputDataWindows
                 CheckFileVisibility(_reader);
                 InitializeColumnsData(_reader);
             }
+            else
+            {
+                tbDataMatrixPath.Text = String.Empty;
+            }
 
         }
 
@@ -89,6 +93,10 @@ namespace VisualChart3D.InputDataWindows
             else if (rbObjectAttributeMatrix.IsChecked == true)
             {
                 return SourceFileMatrixType.ObjectAttribute;
+            }
+            else if (rbObjectAttributeMatrix3D.IsChecked == true)
+            {
+                return SourceFileMatrixType.ObjectAttribute3D;
             }
 
             throw new NotImplementedException(NotImplementedSourceMatrixType);

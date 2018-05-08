@@ -8,10 +8,30 @@ namespace VisualChart3D.Common.Visualization
     public interface IVisualizer
     {
         int Dimensions { get; }
-        double[,] DistMatrix { get; set; }
+        //double[,] DataMatrix { get; set; }
         double[,] Projection { get; }
-
-        bool ToProject();
         int MaximumDimensionsNumber { get; }
+
+        bool ToProject();  
+        string ToString();
+    }
+
+    public abstract class BaseVisualizer
+    {
+        private const string MinimalOjectsCountFormat = "Выбраное число объектов, равное {0}, менее минимального значения, равного {1}";
+
+        protected const int MaxAvaibleDimension = 3;
+        protected const int MinimalCalculatingObjects = 3;
+
+        protected bool IsObjectsCountLessThenMinimal(int objectsCount)
+        {
+            if (objectsCount < MinimalCalculatingObjects)
+            {
+                Utils.ShowWarningMessage(string.Format(MinimalOjectsCountFormat, objectsCount, MinimalCalculatingObjects));
+                return true;
+            }
+
+            return false;
+        }
     }
 }

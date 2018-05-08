@@ -68,12 +68,20 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Margin="0,0,2,0">
             
             <MenuItem Header="Файл">
-                <MenuItem x:Name="MnOpen" Header="Исходные данные" Click="MnOpen_Click"></MenuItem>
+                <MenuItem x:Name="MnOpen" Header="Исходные данные" Click="MnOpen_Click"/>
                 <MenuItem x:Name="MnExit" Header="Выход" Click="MnExit_Click" />
 
             </MenuItem>
 
+            <MenuItem Header="Алгоритм">
+                <MenuItem x:Name="MnFastMap" Header="Fast Map" Click="MnFastMap_Click"/>
+                <MenuItem x:Name="MnDisSpace" Header="Dissimilarity Space" Click="MnDisSpace_Click" />
+                <MenuItem x:Name="MnSammonMap" Header="Sammon Map" Click="MnSammonMap_Click" />
+                <MenuItem x:Name="MnKohonenMap" Header="Kohonen Map" Click="MnKohonenMap_Click" />
+            </MenuItem>
+
             <MenuItem Header="Настройки">
+                <MenuItem x:Name="MnFastMapSett" Header="Настройка Fast Map" Click="MnFastMapSett_Click" />
                 <MenuItem x:Name="MnDisSpaceSett" Header="Настройка Dissimilarity Space" Click="MnDisSpaceSett_Click" />
                 <MenuItem x:Name="MnSamMapSett" Header="Настройка Sammon Mapping" Click="MnSamMapSett_Click" />
                 <MenuItem x:Name="MnKohonenMapSett" Header="Настройка Kohonen Mapping" Click="MnKohonenMapSett_Click" />

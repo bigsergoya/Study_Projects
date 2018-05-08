@@ -22,7 +22,8 @@
     public enum SourceFileMatrixType
     {
         MatrixDistance,
-        ObjectAttribute
+        ObjectAttribute,
+        ObjectAttribute3D
     };
 
     /// <summary>
@@ -42,7 +43,8 @@
         FastMap,
         DisSpace,
         KohonenMap,
-        SammonsMap
+        SammonsMap,
+        NoAlgorithm
     };
 
     public enum Shapes
@@ -101,4 +103,5 @@
         /// </summary>
         NonEuclidean
     }
+
 }

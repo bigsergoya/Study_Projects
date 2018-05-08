@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Настройка входных данных" Height="300" Width="350" ResizeMode="NoResize">
     <Grid>
-        <Grid Margin="10,10,10,193">
+        <Grid Margin="10,10,10,176">
             <Grid.RowDefinitions>
                 <RowDefinition MaxHeight="100"/>
             </Grid.RowDefinitions>
@@ -18,10 +18,11 @@
 
             </Grid.ColumnDefinitions>
 
-            <GroupBox x:Name="gbMatrixType" Header="Тип матрицы" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="172" Height="59" Grid.ColumnSpan="2">
+            <GroupBox x:Name="gbMatrixType" Header="Тип матрицы" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="172" Grid.ColumnSpan="2">
                 <StackPanel>
                     <RadioButton Content="Матрица расстояний" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbDistanceMatrix" VerticalAlignment="Top" TabIndex="0" IsChecked="true" Checked="rbDistanceMatrix_Checked" />
                     <RadioButton Content="Матрица объект-признак" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix" VerticalAlignment="Top" TabIndex="1" />
+                    <RadioButton Content="Матрица 3D-координат" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix3D" VerticalAlignment="Top" TabIndex="2"/>
                 </StackPanel>
             </GroupBox>
 
@@ -30,11 +31,11 @@
             </Button>
         </Grid>
 
-        <Grid Margin="10,77,10,23">
+        <Grid Margin="10,101,10,23">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition MaxHeight="100"/>
-                <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
+                <RowDefinition MaxHeight="80"/>
+
                 <RowDefinition Height="40" />
             </Grid.RowDefinitions>
 
@@ -43,9 +44,9 @@
 
             </Grid.ColumnDefinitions>
             
-            <TextBox x:Name="tbDataMatrixPath" Grid.Row="0" Grid.Column="0" Text=""  HorizontalAlignment="Left"  Margin="5,0,0,0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
-            <Label Content="Порядок расстояния Минковского: " Margin="5,0,71,0" Grid.Row="1" />
-            <toolkit:IntegerUpDown x:Name="tbMinkovskiDegree" HorizontalAlignment="Left" Margin="226,5,0,0" Grid.Row="1" Text="1" Width="56" Height="21" VerticalAlignment="Top" Minimum="1" Maximum="100" Value="2" TabIndex="3" IsEnabled="false"/>
+            <TextBox x:Name="tbDataMatrixPath" Grid.Row="0" Grid.Column="0" Text=""  HorizontalAlignment="Left"  Margin="5,10,0,0" VerticalAlignment="Top" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
+            <Label Content="Порядок расстояния Минковского: " Margin="5,0,71,0" VerticalAlignment="Center" Grid.Row="1" />
+            <toolkit:IntegerUpDown x:Name="tbMinkovskiDegree" HorizontalAlignment="Left" Margin="226,5,0,0" Grid.Row="1" Text="1" Width="56" Height="21" VerticalAlignment="Center" Minimum="1" Maximum="100" Value="2" TabIndex="3" IsEnabled="false"/>
 
             <Button Content="Загрузить" Grid.Row="3" HorizontalAlignment="Left" Width="98" Name="btSave" Click="btSave_Click" Margin="5,5,5,5"/>
             <Button Content="Отмена" Grid.Row="3" HorizontalAlignment="Right" Width="98" Name="btCancel" Click="btCancel_Click" Margin="5,5,5,5"/>

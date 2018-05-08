@@ -98,6 +98,10 @@ namespace VisualChart3D.InputDataWindows
             {
                 return SourceFileMatrixType.ObjectAttribute;
             }
+            else if (rbObjectAttributeMatrix3D.IsChecked == true)
+            {
+                return SourceFileMatrixType.ObjectAttribute3D;
+            }
 
             throw new NotImplementedException(NotImplementedSourceMatrixType);
         }

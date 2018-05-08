@@ -7,6 +7,7 @@ namespace VisualChart3D.Common.Visualization
 {
     public class DisSpace
     {
+        private const SourceFileMatrixType RequiredDataType = SourceFileMatrixType.MatrixDistance;
         private const string StringDescriptionFormat = "Dissimilarity Space, размер данных({0}x{1})";
         private const int ObjectsCount = 3;
         private const int ArrayIndexCompensator = 1;

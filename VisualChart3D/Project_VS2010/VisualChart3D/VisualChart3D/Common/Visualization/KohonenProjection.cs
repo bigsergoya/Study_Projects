@@ -9,9 +9,6 @@ namespace VisualChart3D.Common.Visualization
         int IterationLimit { get; }
     }
 
-
-
-
     /// <summary>
     /// Represents a nonlinear projection implemented as Sammon's Mapping.
     /// </summary>
@@ -72,7 +69,7 @@ namespace VisualChart3D.Common.Visualization
 
         //public int Dimensions => throw new NotImplementedException();
 
-        public double[,] DistMatrix { get => Utils.ExchangeDataByDim(_distanceMatrix, Count, Count); set => _distanceMatrix = Utils.GetAnotherStyleOfData(value); }
+        private double[,] DataMatrix { set => _distanceMatrix = Utils.GetAnotherStyleOfData(value); }
 
         double[,] IVisualizer.Projection => Utils.ExchangeDataByDim(this._projection, Count, Dimensions);
 
@@ -109,7 +106,7 @@ namespace VisualChart3D.Common.Visualization
 
             _timer = new CustomTimer();
 
-            DistMatrix = inputData;
+            DataMatrix = inputData;
             this.Dimensions = outputDimension;
             _iterationsCount = iterationsCount;
 

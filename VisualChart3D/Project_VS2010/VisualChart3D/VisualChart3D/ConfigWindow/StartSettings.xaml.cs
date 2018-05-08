@@ -111,7 +111,7 @@ namespace VisualChart3D.ConfigWindow
                 default:
                     throw new ArgumentOutOfRangeException();
             }*/
-
+            /*
             switch (SettFiles.AlgorithmType)
             {
                 case AlgorithmType.FastMap:
@@ -133,7 +133,7 @@ namespace VisualChart3D.ConfigWindow
                 default:
                     throw new ArgumentOutOfRangeException(NotImplementedMessage);
             }
-
+            */
             if (SettFiles.isPictureTakenByObjectID)
             {
                 cbNamesPictures.IsChecked = true;
@@ -196,7 +196,7 @@ namespace VisualChart3D.ConfigWindow
                 tbNamesObjectPath.Text = SettFiles.NamesObjectFile;
             }
 
-            switch (SettFiles.Metrics)
+            /*switch (SettFiles.Metrics)
             {
                 case FastMapMetric.Euclidean:
                     rbMetricEuclidean.IsChecked = true;
@@ -208,7 +208,7 @@ namespace VisualChart3D.ConfigWindow
 
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
+            }*/
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesObject_Unchecked(cbClassObject, new RoutedEventArgs());
             }
 
-            switch (SettFiles.AlgorithmType)
+            /*switch (SettFiles.AlgorithmType)
             {
                 case AlgorithmType.FastMap:
                     cbFastMapAlg.IsChecked = true;
@@ -291,11 +291,11 @@ namespace VisualChart3D.ConfigWindow
                 case AlgorithmType.KohonenMap:
                     cbFastMapAlg.IsChecked = true;
                     break;
-            }
+            }*/
 
             //tbMinkovskiDegree.Value = SettFiles.MinkovskiDegree;
 
-            switch (SettFiles.Metrics)
+            /*switch (SettFiles.Metrics)
             {
                 case FastMapMetric.Euclidean:
                     rbMetricEuclidean.IsChecked = true;
@@ -307,7 +307,7 @@ namespace VisualChart3D.ConfigWindow
 
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
+            }*/
 
         }
 
@@ -321,7 +321,9 @@ namespace VisualChart3D.ConfigWindow
 
             Engine result = SettFiles;
 
-            if (cbDisSpaceMod.IsChecked.Value)
+            result.AlgorithmType = AlgorithmType.NoAlgorithm;
+
+            /*if (cbDisSpaceMod.IsChecked.Value)
             {
                 result.AlgorithmType = AlgorithmType.DisSpace;
             }
@@ -336,7 +338,7 @@ namespace VisualChart3D.ConfigWindow
             else if (cbKohonenAlg.IsChecked.Value)
             {
                 result.AlgorithmType = AlgorithmType.KohonenMap;
-            }
+            }*/
 
             //result.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
 
@@ -420,7 +422,9 @@ namespace VisualChart3D.ConfigWindow
                 result.NamesObjectSelected = false;
             }
 
-            if (rbMetricEuclidean.IsChecked.Value)
+            result.Metrics = FastMapMetric.Euclidean;
+
+            /*if (rbMetricEuclidean.IsChecked.Value)
             {
                 result.Metrics = FastMapMetric.Euclidean;
             }
@@ -430,7 +434,7 @@ namespace VisualChart3D.ConfigWindow
                 {
                     result.Metrics = FastMapMetric.NonEuclidean;
                 }
-            }
+            }*/
 
             return result;
         }
@@ -959,7 +963,7 @@ namespace VisualChart3D.ConfigWindow
             }
         }
 
-        private void cbFastMapAlg_Checked(object sender, RoutedEventArgs e)
+        /*private void cbFastMapAlg_Checked(object sender, RoutedEventArgs e)
         {
             gbSpaceType.IsEnabled = true;
         }
@@ -967,7 +971,7 @@ namespace VisualChart3D.ConfigWindow
         private void cbFastMapAlg_Unchecked(object sender, RoutedEventArgs e)
         {
             gbSpaceType.IsEnabled = false;
-        }
+        }*/
 
         private void btDataFileBrowse_Click(object sender, RoutedEventArgs e)
         {

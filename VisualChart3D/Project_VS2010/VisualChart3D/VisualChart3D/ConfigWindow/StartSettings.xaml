@@ -73,22 +73,24 @@
             <ListBox Grid.Column="1" Grid.Row="2" Height="92" HorizontalAlignment="Right" Name="lbUniqueClasses" VerticalAlignment="Top" Width="223" ItemsSource="{Binding}" IsEnabled="True" DisplayMemberPath=""  Margin="0,1,2,0" />
             <Label Content="Список классов -&gt;" Grid.Column="1" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="322,34,0,0" Name="label1" VerticalAlignment="Top" VerticalContentAlignment="Center" />
 
-            <GroupBox x:Name="gbAlgoritms" Header="Алгоритм" HorizontalAlignment="Left" Margin="5,89,0,0" VerticalAlignment="Top" Width="144" Height="87" Grid.Row="4" Grid.RowSpan="2">
+            <!-- НЕВИДИМО
+            <GroupBox x:Name="gbAlgoritms" Visibility="Hidden" Header="Алгоритм" HorizontalAlignment="Left" Margin="5,89,0,0" VerticalAlignment="Top" Width="144" Height="87" Grid.Row="4" Grid.RowSpan="2">
                 <StackPanel>
                     <RadioButton Content="FastMap" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbFastMapAlg" VerticalAlignment="Top" Checked="cbFastMapAlg_Checked" Unchecked="cbFastMapAlg_Unchecked"/>
                     <RadioButton Content="Dissimilarity Space" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbDisSpaceMod" VerticalAlignment="Top" Checked="cbDisSpaceMod_Checked" Unchecked="cbDisSpaceMod_Unchecked" />
                     <RadioButton Content="Sammons mapping" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbSammonsAlg" VerticalAlignment="Top" />
                     <RadioButton Content="Kohonen mapping" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbKohonenAlg" VerticalAlignment="Top" />
                 </StackPanel>
-            </GroupBox>
+            </GroupBox>-->
 
-            <GroupBox x:Name="gbSpaceType" Header="Метрика (для FastMap)" HorizontalAlignment="Left" Margin="166,90,0,0" VerticalAlignment="Top" Width="162.697" Height="59" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <!-- НЕВИДИМО
+            <GroupBox x:Name="gbSpaceType" Header="Метрика (для FastMap)" HorizontalAlignment="Left" Margin="166,90,0,0" VerticalAlignment="Top" Width="162.697" Height="59" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Hidden">
                 <StackPanel>
                     <RadioButton Content="Евклидова метрика" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbMetricEuclidean" VerticalAlignment="Top" />
                     <RadioButton Content="Неевклидова метрика" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbMetricNonEuclidean" VerticalAlignment="Top" />
                 </StackPanel>
 
-            </GroupBox>
+            </GroupBox>-->
 
         </Grid>
         <Button x:Name="btSave" Content="OK" Margin="0,0,158,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="btSave_Click"/>
