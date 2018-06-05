@@ -16,15 +16,15 @@ namespace VisualChart3D.ConfigWindow
     /// </summary>
     public partial class StartSettings : Window
     {
-        private const string AdressOfPictureLogFile = "PictureAdressLog.txt";
+        private const string ChooseMediaSubFoldersMessage = "Выберете каталог с подкаталогами мультимедиа объектов соответствующих классов";
+        private const string ChooseMediaFolderMessage = "Выберете папку с мультимедиа объектов";
         private const string GettingClassDataErrorMessage = "Ошибка при выборке данных о классе! {0}";
         private const string DisplayingClassListErrorMessage = "Ошибка при выводе списка классов.";
-        private const string ClassFilesChooseErrorMessage = "Ошибка! Файл с классами объектов не выбран";
+        private const string ClassFilesChooseErrorMessage = "Ошибка! Файл с классами объектов не выбран.";
         private const string ClassDirNotFoundWarningMessage = "Внимание, не найдены директории для классов: {0}. \n Для данных классов выведение изображений объектов недоступно.";
-        private const string PictureDirAdressReadingWarningMessage = "Не удалось чтение адреса директории с изображениями из лог-файла";
-        private const string PictureDirLogFileWarningMessage = "Не удалось создать лог-файл для сохранения выбранного путя к директории с изображениями.";
-        private const string NotImplementedMessage = "Some algorithm has not been implemented";
-        private const string BadInputFileType = "Ошибка чтения выбранного типа файла";
+
+        private const string NotImplementedMessage = "Внимание! Алгоритм не был реализован. Пожалуйста, свяжитесь с разработчиком для прояснения ситуации.";
+        private const string BadInputFileType = "Ошибка чтения выбранного типа файла.";
         private const string ClassObjectsInfoFormat = "Имя класса - {0}; Количество: {1}.";
 
         private int[] _numberOfObjectsOfClass;
@@ -84,78 +84,28 @@ namespace VisualChart3D.ConfigWindow
                     throw new NotImplementedException("");
             }
 
-            /*switch (SettFiles.SourceMatrixType)
-            {
-                case SourceFileMatrixType.MatrixDistance:
-                    rbMatrixDistance.IsChecked = true;
-
-                    tbMatrixDistancePath.Text = SettFiles.SourceMatrixFile;
-                    if (tbMatrixDistancePath.Text != null)
-                    {
-                        cbNamesPictures.IsEnabled = true;
-                    }
-
-                    break;
-
-                case SourceFileMatrixType.ObjectAttribute:
-                    rbObjectAttribute.IsChecked = true;
-                    tbObjectAttributePath.Text = SettFiles.SourceMatrixFile;
-
-                    if (tbMatrixDistancePath.Text != null)
-                    {
-                        cbNamesPictures.IsEnabled = true;
-                    }
-
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
-            /*
-            switch (SettFiles.AlgorithmType)
-            {
-                case AlgorithmType.FastMap:
-                    cbFastMapAlg.IsChecked = true;
-                    break;
-
-                case AlgorithmType.DisSpace:
-                    cbDisSpaceMod.IsChecked = true;
-                    break;
-
-                case AlgorithmType.SammonsMap:
-                    cbSammonsAlg.IsChecked = true;
-                    break;
-
-                case AlgorithmType.KohonenMap:
-                    cbKohonenAlg.IsChecked = true;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(NotImplementedMessage);
-            }
-            */
-            if (SettFiles.isPictureTakenByObjectID)
+            if (SettFiles.MultimediaLoadingType == MultimediaLoadType.ByObjectID)
             {
                 cbNamesPictures.IsChecked = true;
-                rbPicturesById.IsChecked = true;
-                tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
+                rbMultimediaById.IsChecked = true;
+                tbMultimediaFolderPath.IsEnabled = true;
+                tbMultimediaFolderPath.Text = SettFiles.multimediaFolderPath;
             }
 
-            if (SettFiles.isPictureTakenByObjectName)
+            if (SettFiles.MultimediaLoadingType == MultimediaLoadType.ByObjectName)
             {
                 cbNamesPictures.IsChecked = true;
-                rbPicturesByObjectsName.IsChecked = true;
-                tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
+                rbMultimediaByObjectsName.IsChecked = true;
+                tbMultimediaFolderPath.IsEnabled = true;
+                tbMultimediaFolderPath.Text = SettFiles.multimediaFolderPath;
             }
 
-            if (SettFiles.isPictureTakenByClassInterval || SettFiles.isPictureTakenByClassStartObjects)
+            if (SettFiles.MultimediaLoadingType == MultimediaLoadType.ByClassInterval || SettFiles.MultimediaLoadingType == MultimediaLoadType.ByClassStartObjects)
             {
                 cbNamesPictures.IsChecked = true;
-                rbPicturesByClassName.IsChecked = true;
-                tbPictureDirectoryPath.IsEnabled = true;
-                tbPictureDirectoryPath.Text = SettFiles.picFolderAdress;
+                rbMultimediaByClassName.IsChecked = true;
+                tbMultimediaFolderPath.IsEnabled = true;
+                tbMultimediaFolderPath.Text = SettFiles.multimediaFolderPath;
             }
 
             if (SettFiles.ClassObjectSelected)
@@ -195,20 +145,6 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesObject.IsChecked = true;
                 tbNamesObjectPath.Text = SettFiles.NamesObjectFile;
             }
-
-            /*switch (SettFiles.Metrics)
-            {
-                case FastMapMetric.Euclidean:
-                    rbMetricEuclidean.IsChecked = true;
-                    break;
-
-                case FastMapMetric.NonEuclidean:
-                    rbMetricNonEuclidean.IsChecked = true;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
         }
 
         /// <summary>
@@ -216,21 +152,6 @@ namespace VisualChart3D.ConfigWindow
         /// </summary>
 		private void StartForm()
         {
-            /*switch (SettFiles.SourceMatrixType)
-            {
-                case SourceFileMatrixType.MatrixDistance:
-                    rbMatrixDistance_Checked(rbMatrixDistance, new RoutedEventArgs());
-                    rbObjectAttribute_Unchecked(rbObjectAttribute, new RoutedEventArgs());
-                    break;
-
-                case SourceFileMatrixType.ObjectAttribute:
-                    rbObjectAttribute_Checked(rbObjectAttribute, new RoutedEventArgs());
-                    rbMatrixDistance_Unchecked(rbMatrixDistance, new RoutedEventArgs());
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
 
             if (SettFiles.ClassObjectSelected)
             {
@@ -278,37 +199,6 @@ namespace VisualChart3D.ConfigWindow
                 cbNamesObject_Unchecked(cbClassObject, new RoutedEventArgs());
             }
 
-            /*switch (SettFiles.AlgorithmType)
-            {
-                case AlgorithmType.FastMap:
-                    cbFastMapAlg.IsChecked = true;
-                    break;
-
-                case AlgorithmType.DisSpace:
-                    cbFastMapAlg.IsChecked = true;
-                    break;
-
-                case AlgorithmType.KohonenMap:
-                    cbFastMapAlg.IsChecked = true;
-                    break;
-            }*/
-
-            //tbMinkovskiDegree.Value = SettFiles.MinkovskiDegree;
-
-            /*switch (SettFiles.Metrics)
-            {
-                case FastMapMetric.Euclidean:
-                    rbMetricEuclidean.IsChecked = true;
-                    break;
-
-                case FastMapMetric.NonEuclidean:
-                    rbMetricNonEuclidean.IsChecked = true;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }*/
-
         }
 
         /// <summary>
@@ -323,59 +213,54 @@ namespace VisualChart3D.ConfigWindow
 
             result.AlgorithmType = AlgorithmType.NoAlgorithm;
 
-            /*if (cbDisSpaceMod.IsChecked.Value)
+            if ((tbMultimediaFolderPath.Text != null) && (cbNamesPictures.IsChecked == true || cbNamesAudios.IsChecked == true))
             {
-                result.AlgorithmType = AlgorithmType.DisSpace;
-            }
-            else if (cbFastMapAlg.IsChecked.Value)
-            {
-                result.AlgorithmType = AlgorithmType.FastMap;
-            }
-            else if (cbSammonsAlg.IsChecked.Value)
-            {
-                result.AlgorithmType = AlgorithmType.SammonsMap;
-            }
-            else if (cbKohonenAlg.IsChecked.Value)
-            {
-                result.AlgorithmType = AlgorithmType.KohonenMap;
-            }*/
-
-            //result.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
-
-            /*if (rbMatrixDistance.IsChecked.Value)
-            {
-                result.SourceMatrixType = SourceFileMatrixType.MatrixDistance;
-                result.SourceMatrixFile = tbMatrixDistancePath.Text != null
-                    ? tbMatrixDistancePath.Text.ToString()
-                    : string.Empty;
-            }*/
-
-            if ((tbPictureDirectoryPath.Text != null) && (cbNamesPictures.IsChecked == true))
-            {
-                if (((rbPicturesById.IsChecked == true)
-                    || (rbPicturesByObjectsName.IsChecked == true)
-                    || (rbPicturesByClassName.IsChecked == true))
-                        && (!String.IsNullOrEmpty(tbPictureDirectoryPath.Text)))
+                if (((rbMultimediaById.IsChecked == true)
+                    || (rbMultimediaByObjectsName.IsChecked == true)
+                    || (rbMultimediaByClassName.IsChecked == true))
+                        && (!String.IsNullOrEmpty(tbMultimediaFolderPath.Text)))
                 {
-                    result.picFolderAdress = tbPictureDirectoryPath.Text.ToString();
-                    result.isPictureTakenByObjectID = (bool)rbPicturesById.IsChecked;
-                    result.isPictureTakenByObjectName = (bool)rbPicturesByObjectsName.IsChecked;
 
-                    if (rbPicturesByClassName.IsChecked == true)
+                    result.multimediaFolderPath = tbMultimediaFolderPath.Text.ToString();
+
+
+                    if ((bool)rbMultimediaById.IsChecked)
                     {
-                        result.isPictureTakenByClassInterval = (bool)rbClassObjectCountObj.IsChecked;
-                        result.isPictureTakenByClassStartObjects = (bool)rbClassObjectStartObjects.IsChecked;
+                        result.MultimediaLoadingType = MultimediaLoadType.ByObjectID;
                     }
+                    else if ((bool)rbMultimediaByObjectsName.IsChecked)
+                    {
+                        result.MultimediaLoadingType = MultimediaLoadType.ByObjectName;
+                    }
+                    else if (rbMultimediaByClassName.IsChecked == true)
+                    {
+                        if ((bool)rbClassObjectCountObj.IsChecked)
+                        {
+                            result.MultimediaLoadingType = MultimediaLoadType.ByClassInterval;
+                        }
+                        else
+                        {
+                            result.MultimediaLoadingType = MultimediaLoadType.ByClassStartObjects;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    /*result.isMultimediaByObjectID = (bool)rbMultimediaById.IsChecked;
+                    result.isMultimediaByObjectName = (bool)rbMultimediaByObjectsName.IsChecked;
+
+                    if (rbMultimediaByClassName.IsChecked == true)
+                    {
+                        result.isMultimediaByClassInterval = (bool)rbClassObjectCountObj.IsChecked;
+                        result.isMultimediaByClassStartObjects = (bool)rbClassObjectStartObjects.IsChecked;
+                    }*/
+
+                    result.IsMultimediaPicture = (bool)cbNamesPictures.IsChecked;
+                    result.IsMultimediaAudio = (bool)cbNamesAudios.IsChecked;
                 }
             }
-
-            /*if (rbObjectAttribute.IsChecked.Value)
-            {
-                result.SourceMatrixType = SourceFileMatrixType.ObjectAttribute;
-                result.SourceMatrixFile = tbObjectAttributePath.Text != null
-                    ? tbObjectAttributePath.Text.ToString()
-                    : string.Empty;
-            }*/
 
             if (cbClassObject.IsChecked.Value)
             {
@@ -417,12 +302,10 @@ namespace VisualChart3D.ConfigWindow
                     ? tbNamesObjectPath.Text.ToString()
                     : string.Empty;
             }
-            else if(SettFiles.UniversalReader.InputFileType != InputFileType.CSV)
+            else if (SettFiles.UniversalReader.InputFileType != InputFileType.CSV)
             {
                 result.NamesObjectSelected = false;
             }
-
-            result.Metrics = FastMapMetric.Euclidean;
 
             /*if (rbMetricEuclidean.IsChecked.Value)
             {
@@ -443,7 +326,7 @@ namespace VisualChart3D.ConfigWindow
         /// Открыть файл. 
         /// </summary>
         /// <param name="lb">отображение расположения</param>
-        private void OpenFile(System.Windows.Controls.TextBox lb, Boolean switchModeToClassInputChecking)
+        private bool OpenFile(System.Windows.Controls.TextBox lb, Boolean switchModeToClassInputChecking)
         {
             OpenFileDialog ofDlg = new OpenFileDialog
             {
@@ -470,7 +353,8 @@ namespace VisualChart3D.ConfigWindow
                     {
                         Utils.ShowErrorMessage(String.Format(GettingClassDataErrorMessage, errors));
                         lb.Text = String.Empty;
-                        return;
+
+                        return false;
                     }
 
                     lbUniqueClasses.Items.Clear();
@@ -487,8 +371,12 @@ namespace VisualChart3D.ConfigWindow
                         lbUniqueClasses.Items.Add("Имя класса - " + className + " ; Количество: " + _numberOfObjectsOfClass[k]);
                         k++;
                     }
+
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private int[] getNumberOfObjectsOfClass(Engine temp)
@@ -538,7 +426,7 @@ namespace VisualChart3D.ConfigWindow
 
             ClearPreviousSelection();
 
-            if(SettFiles.UniversalReader == null)
+            if (SettFiles.UniversalReader == null)
             {
                 return;
             }
@@ -548,6 +436,13 @@ namespace VisualChart3D.ConfigWindow
                 SwitchEnabledClass(true);
                 SwitchEnabledObject(true);
             }
+
+            SwitchEnabledMultimedia(true);
+        }
+
+        private void SwitchEnabledMultimedia(bool v)
+        {
+            btMultimediaFolderBrowse.IsEnabled = v;
         }
 
         private void ClearPreviousSelection()
@@ -599,10 +494,10 @@ namespace VisualChart3D.ConfigWindow
 
             cbClassEqual.IsEnabled = true;
 
-            rbPicturesByClassName.IsEnabled = false;
-            rbPicturesByClassName.IsChecked = false;
+            rbMultimediaByClassName.IsEnabled = false;
+            rbMultimediaByClassName.IsChecked = false;
 
-            tbPictureDirectoryPath.Text = String.Empty;
+            tbMultimediaFolderPath.Text = String.Empty;
         }
 
         private void cbNamesObject_Checked(object sender, RoutedEventArgs e)
@@ -612,7 +507,7 @@ namespace VisualChart3D.ConfigWindow
 
             if (cbNamesPictures.IsChecked == true)
             {
-                rbPicturesByObjectsName.IsEnabled = true;
+                rbMultimediaByObjectsName.IsEnabled = true;
             }
         }
 
@@ -621,11 +516,11 @@ namespace VisualChart3D.ConfigWindow
             tbNamesObjectPath.Text = String.Empty;
             tbNamesObjectPath.IsEnabled = false;
             btNamesObjectBrowse.IsEnabled = false;
-            rbPicturesByClassName.IsEnabled = false;
+            rbMultimediaByClassName.IsEnabled = false;
 
             if (cbNamesPictures.IsChecked == true)
             {
-                rbPicturesByObjectsName.IsEnabled = false;
+                rbMultimediaByObjectsName.IsEnabled = false;
             }
         }
 
@@ -637,8 +532,8 @@ namespace VisualChart3D.ConfigWindow
 
             if ((cbNamesPictures.IsChecked == true) && ((rbClassObjectCountObj.IsChecked == true) || (rbClassObjectStartObjects.IsChecked == true)))
             {
-                rbPicturesByClassName.IsEnabled = true;
-                rbPicturesByClassName.IsChecked = true;
+                rbMultimediaByClassName.IsEnabled = true;
+                rbMultimediaByClassName.IsChecked = true;
             }
             if (rbClassObjectOneToOne.IsChecked.Value)
             {
@@ -678,7 +573,7 @@ namespace VisualChart3D.ConfigWindow
                 return;
             }
 
-            if(SettFiles.UniversalReader == null)
+            if (SettFiles.UniversalReader == null)
             {
                 Utils.ShowErrorMessage(ClassFilesChooseErrorMessage);
                 return;
@@ -699,7 +594,7 @@ namespace VisualChart3D.ConfigWindow
                 Array.Copy(_numberOfObjectsOfClass, temp.numberOfObjectsOfClass, _numberOfObjectsOfClass.Length);
 
                 temp.ClassObjectSelected = true;
-                temp.ClassObjectFile = SettFiles.UniversalReader.SourceMatrixFile ;
+                temp.ClassObjectFile = SettFiles.UniversalReader.SourceMatrixFile;
             }
 
             if (temp.UniqClassesName == null)
@@ -734,58 +629,83 @@ namespace VisualChart3D.ConfigWindow
 
         private void cbDirPic_Checked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = true;
+            btMultimediaFolderBrowse.IsEnabled = true;
         }
 
         private void cbDirPic_Unchecked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = false;
+            btMultimediaFolderBrowse.IsEnabled = false;
         }
 
         private void btNameFolderPicBrowse_Click(object sender, RoutedEventArgs e)
         {
             FolderBrowserDialog FBD = new FolderBrowserDialog();
 
-            if ((rbPicturesByClassName.IsEnabled == true) && (rbPicturesByClassName.IsChecked == true))
+            if ((rbMultimediaByClassName.IsEnabled == true) && (rbMultimediaByClassName.IsChecked == true))
             {
-                FBD.Description = "Выберете папку с папками изображениями объектов соответствующих классов";
+                FBD.Description = ChooseMediaSubFoldersMessage;
             }
             else
             {
-                FBD.Description = "Выберете папку с изображениями объектов";
+                FBD.Description = ChooseMediaFolderMessage;
             }
 
             FBD.ShowDialog();
             if (FBD.SelectedPath != String.Empty)
             {
-                if ((bool)rbPicturesByClassName.IsChecked)
+                if ((bool)rbMultimediaByClassName.IsChecked)
                 {
-                    checkClassSubfoldersInPictureFolder(FBD.SelectedPath, SettFiles.UniqClassesName);
+                    CheckClassSubfoldersInPictureFolder(FBD.SelectedPath, SettFiles.UniqClassesName);
                 }
 
                 //на событие загрузки матрицы расстояний или попарных сравнений запилить обновление пути к картинкам.
-                tbPictureDirectoryPath.Text = FBD.SelectedPath;
-                if (rbPicturesById.IsChecked == true)
+                tbMultimediaFolderPath.Text = FBD.SelectedPath;
+                if (rbMultimediaById.IsChecked == true)
                 {
-                    WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesById");
+                    Utils.ToSerialize(
+                        SettFiles.UniversalReader.SourceMatrixFile,
+                        new Common.Logs.MultimediaLog((bool)cbNamesPictures.IsChecked, (bool)cbNamesAudios.IsChecked, FBD.SelectedPath, MultimediaLoadType.ByObjectID)
+                    );
+
+                    //WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesById");
                     return;
                 }
 
-                if (rbPicturesByObjectsName.IsChecked == true)
+                else if (rbMultimediaByObjectsName.IsChecked == true)
                 {
-                    WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesByObjectsName");
+                    Utils.ToSerialize(
+                        SettFiles.UniversalReader.SourceMatrixFile,
+                        new Common.Logs.MultimediaLog((bool)cbNamesPictures.IsChecked, (bool)cbNamesAudios.IsChecked, FBD.SelectedPath, MultimediaLoadType.ByObjectName)
+                    );
+
+                    //WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesByObjectsName");
                     return;
                 }
 
-                if (rbPicturesByClassName.IsChecked == true)
+                else if (rbMultimediaByClassName.IsChecked == true)
                 {
-                    WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesByClassName");
+                    if ((bool)rbClassObjectCountObj.IsChecked)
+                    {
+                        Utils.ToSerialize(
+                            SettFiles.UniversalReader.SourceMatrixFile ,
+                            new Common.Logs.MultimediaLog((bool)cbNamesPictures.IsChecked, (bool)cbNamesAudios.IsChecked, FBD.SelectedPath, MultimediaLoadType.ByClassInterval)
+                        );
+                    }
+                    else
+                    {
+                        Utils.ToSerialize(
+                            SettFiles.UniversalReader.SourceMatrixFile,
+                            new Common.Logs.MultimediaLog((bool)cbNamesPictures.IsChecked, (bool)cbNamesAudios.IsChecked, FBD.SelectedPath, MultimediaLoadType.ByClassStartObjects)
+                        );
+                    }
+
+                    //WriteDataToPictureLog(SettFiles.UniversalReader.SourceMatrixFile, FBD.SelectedPath, "PicturesByClassName");
                     return;
                 }
             }
         }
 
-        private void checkClassSubfoldersInPictureFolder(String pictureFolderPath, System.Collections.Generic.List<string> uniqueClassesName)
+        private void CheckClassSubfoldersInPictureFolder(String pictureFolderPath, System.Collections.Generic.List<string> uniqueClassesName)
         {
             string notFoundedClassDirs = String.Empty;
             bool isDirectoryFound;
@@ -796,7 +716,8 @@ namespace VisualChart3D.ConfigWindow
                 isDirectoryFound = false;
                 for (int i = 0; i < dirs.Length; i++)
                 {
-                    if (string.Compare(dirs[i].Name, className, true) == 0)
+                    if (Utils.CompareStrings(dirs[i].Name, className))
+                    //if (string.Compare(dirs[i].Name, className, true) == 0)
                     {
                         isDirectoryFound = true;
                         break;
@@ -818,88 +739,99 @@ namespace VisualChart3D.ConfigWindow
 
         private void cbNamesPictures_Unchecked(object sender, RoutedEventArgs e)
         {
-            rbPicturesByClassName.IsEnabled = false;
-            rbPicturesById.IsEnabled = false;
-            rbPicturesById.IsChecked = false;
-            rbPicturesByObjectsName.IsEnabled = false;
-            rbPicturesByObjectsName.IsChecked = false;
+            if (cbNamesAudios.IsChecked != false || cbNamesAudios.IsEnabled != false)
+            {
+                return;
+            }
 
-            btNameFolderPicBrowse.IsEnabled = false;
+            rbMultimediaByClassName.IsEnabled = false;
+            rbMultimediaById.IsEnabled = false;
+            rbMultimediaById.IsChecked = false;
+            rbMultimediaByObjectsName.IsEnabled = false;
+            rbMultimediaByObjectsName.IsChecked = false;
+
+            btMultimediaFolderBrowse.IsEnabled = false;
+
         }
 
         private void cbNamesPictures_Checked(object sender, RoutedEventArgs e)
         {
-            if (cbNamesObject.IsChecked == true)
+            if (cbNamesAudios.IsChecked == true && cbNamesAudios.IsEnabled == true)
             {
-                rbPicturesByObjectsName.IsEnabled = true;
+                return;
             }
 
-            rbPicturesById.IsEnabled = true;
+            if (cbNamesObject.IsChecked == true)
+            {
+                rbMultimediaByObjectsName.IsEnabled = true;
+            }
+
+            rbMultimediaById.IsEnabled = true;
 
             if ((rbClassObjectStartObjects.IsChecked == true) || (rbClassObjectCountObj.IsChecked == true))
             {
-                rbPicturesByClassName.IsEnabled = true;
+                rbMultimediaByClassName.IsEnabled = true;
             }
         }
 
         private void rbPicturesById_Checked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = true;
+            btMultimediaFolderBrowse.IsEnabled = true;
 
-            if ((rbPicturesByObjectsName.IsChecked == true) && (rbPicturesByObjectsName.IsEnabled == true))
+            if ((rbMultimediaByObjectsName.IsChecked == true) && (rbMultimediaByObjectsName.IsEnabled == true))
             {
-                rbPicturesByObjectsName.IsChecked = false;
+                rbMultimediaByObjectsName.IsChecked = false;
             }
 
-            if ((rbPicturesByClassName.IsChecked == true) && (rbPicturesByClassName.IsEnabled == true))
+            if ((rbMultimediaByClassName.IsChecked == true) && (rbMultimediaByClassName.IsEnabled == true))
             {
-                rbPicturesByClassName.IsChecked = false;
+                rbMultimediaByClassName.IsChecked = false;
             }
             //Пометить отсюда в будущий класс с инфой вариант выбора.
         }
 
         private void rbPicturesByObjectsName_Checked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = true;
-            if ((rbPicturesById.IsChecked == true) && (rbPicturesById.IsEnabled == true))
+            btMultimediaFolderBrowse.IsEnabled = true;
+            if ((rbMultimediaById.IsChecked == true) && (rbMultimediaById.IsEnabled == true))
             {
-                rbPicturesById.IsChecked = false;
+                rbMultimediaById.IsChecked = false;
             }
-            if ((rbPicturesByClassName.IsChecked == true) && (rbPicturesByClassName.IsEnabled == true))
+            if ((rbMultimediaByClassName.IsChecked == true) && (rbMultimediaByClassName.IsEnabled == true))
             {
-                rbPicturesByClassName.IsChecked = false;
+                rbMultimediaByClassName.IsChecked = false;
             }
             //Пометить отсюда в будущий класс с инфой вариант выбора.
         }
 
         private void rbPicturesById_Unchecked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = false;
+            btMultimediaFolderBrowse.IsEnabled = false;
         }
 
         private void rbPicturesByObjectsName_Unchecked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = false;
+            btMultimediaFolderBrowse.IsEnabled = false;
         }
 
         private void rbPicturesByClassName_Checked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = true;
+            btMultimediaFolderBrowse.IsEnabled = true;
         }
 
         private void rbPicturesByClassName_Unchecked(object sender, RoutedEventArgs e)
         {
-            btNameFolderPicBrowse.IsEnabled = false;
+            btMultimediaFolderBrowse.IsEnabled = false;
         }
 
         private void rbClassObjectCountObj_Unchecked(object sender, RoutedEventArgs e)
         {
-            rbPicturesByClassName.IsEnabled = false;
+            rbMultimediaByClassName.IsEnabled = false;
         }
 
         private void rbClassObjectStartObjects_Unchecked(object sender, RoutedEventArgs e)
         {
-            rbPicturesByClassName.IsEnabled = false;
+            rbMultimediaByClassName.IsEnabled = false;
         }
 
         private void cbDisSpaceMod_Checked(object sender, RoutedEventArgs e)
@@ -917,50 +849,6 @@ namespace VisualChart3D.ConfigWindow
             //rbMetricEuclidean.IsEnabled = true;
             //rbMetricNonEuclidean.IsEnabled = true;
 
-        }
-
-        private string[] GetDataFromPictureLogFile(string pathToAnyMatrix)
-        {
-            string[] data;
-            string pathToLogFile = pathToAnyMatrix
-                    .Remove(pathToAnyMatrix.LastIndexOf('\\') + 1) + AdressOfPictureLogFile;
-            try
-            {
-                if (File.Exists(pathToLogFile))
-                {
-                    data = File.ReadAllLines(pathToLogFile);
-                    return data;
-                }
-            }
-            catch
-            {
-                Utils.ShowWarningMessage(PictureDirAdressReadingWarningMessage);
-            }
-
-            return null;
-        }
-
-        private void WriteDataToPictureLog(string pathToAnyMatrix, string pathToPictureFolder, string pictureLoadingType)
-        {
-            if (String.IsNullOrEmpty(pathToAnyMatrix))
-            {
-                return;
-            }
-
-            string pathToPictureContentAdressLog = pathToAnyMatrix.Remove(pathToAnyMatrix.LastIndexOf('\\') + 1)
-                + AdressOfPictureLogFile;
-            try
-            {
-                using (WriteTextToFile file = new WriteTextToFile(pathToPictureContentAdressLog))
-                {
-                    file.WriteLine(pathToPictureFolder);
-                    file.WriteLine(pictureLoadingType);
-                }
-            }
-            catch
-            {
-                Utils.ShowWarningMessage(PictureDirLogFileWarningMessage);
-            }
         }
 
         /*private void cbFastMapAlg_Checked(object sender, RoutedEventArgs e)
@@ -1054,9 +942,10 @@ namespace VisualChart3D.ConfigWindow
 
 
             cbNamesPictures.IsEnabled = true;
-            rbPicturesById.IsEnabled = true;
-            rbPicturesByObjectsName.IsEnabled = true;
-            rbPicturesByClassName.IsEnabled = true;
+            cbNamesAudios.IsEnabled = true;
+            rbMultimediaById.IsEnabled = true;
+            rbMultimediaByObjectsName.IsEnabled = true;
+            rbMultimediaByClassName.IsEnabled = true;
 
             GetDataFromPictureLogger();
 
@@ -1076,28 +965,63 @@ namespace VisualChart3D.ConfigWindow
 
         private void GetDataFromPictureLogger()
         {
-            string[] logData = GetDataFromPictureLogFile(SettFiles.UniversalReader.SourceMatrixFile);
-            if (logData != null)
+            //string[] logData = ReadDataFromPictureLogFile(SettFiles.UniversalReader.SourceMatrixFile);
+            Common.Logs.MultimediaLog multimediaLog = Utils.ToDeserialize<Common.Logs.MultimediaLog>(SettFiles.UniversalReader.SourceMatrixFile);
+            if (multimediaLog == null)
             {
-                cbNamesPictures.IsEnabled = true;
-                cbNamesPictures.IsChecked = true;
-                tbPictureDirectoryPath.Text = logData[0];
-                switch (logData[1])
-                {
-                    case "PicturesById":
-                        rbPicturesById.IsChecked = true;
-                        break;
-                    case "PicturesByObjectsName":
-                        rbPicturesByObjectsName.IsChecked = true;
-                        break;
-                    case "PicturesByClassName":
-                        rbPicturesByClassName.IsChecked = true;
-                        break;
-
-                    default:
-                        break;
-                }
+                return;
             }
+
+            if (multimediaLog.IsPictures)
+            {
+                cbNamesPictures.IsEnabled = multimediaLog.IsPictures;
+                cbNamesPictures.IsChecked = multimediaLog.IsPictures;
+            }
+
+            if (multimediaLog.IsMultimedia)
+            {
+                cbNamesAudios.IsEnabled = multimediaLog.IsMultimedia;
+                cbNamesAudios.IsChecked = multimediaLog.IsMultimedia;
+            }
+
+            tbMultimediaFolderPath.Text = multimediaLog.DataPath;
+
+            switch (multimediaLog.DataLoadType)
+            {
+                case MultimediaLoadType.ByClassInterval:
+                    rbMultimediaByClassName.IsChecked = true;
+                    break;
+                case MultimediaLoadType.ByClassStartObjects:
+                    rbMultimediaByClassName.IsChecked = true;
+                    break;
+                case MultimediaLoadType.ByObjectID:
+                    rbMultimediaById.IsChecked = true;
+                    break;
+                case MultimediaLoadType.ByObjectName:
+                    rbMultimediaByObjectsName.IsChecked = true;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            /*cbNamesPictures.IsEnabled = true;
+            cbNamesPictures.IsChecked = true;
+            tbMultimediaFolderPath.Text = logData[0];
+            switch (logData[1])
+            {
+                case "PicturesById":
+                    rbMultimediaById.IsChecked = true;
+                    break;
+                case "PicturesByObjectsName":
+                    rbMultimediaByObjectsName.IsChecked = true;
+                    break;
+                case "PicturesByClassName":
+                    rbMultimediaByClassName.IsChecked = true;
+                    break;
+
+                default:
+                    break;
+            }*/
         }
 
         private void SwitchCheckedClassCSV(bool isChecked)
@@ -1144,5 +1068,40 @@ namespace VisualChart3D.ConfigWindow
         public Engine SettFiles { get; private set; }
         public bool ResultDialog { get => _resultDialog; set => _resultDialog = value; }
 
+        private void cbNamesAudios_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (cbNamesPictures.IsChecked != false || cbNamesPictures.IsEnabled != false)
+            {
+                return;
+            }
+
+            rbMultimediaByClassName.IsEnabled = false;
+            rbMultimediaById.IsEnabled = false;
+            rbMultimediaById.IsChecked = false;
+            rbMultimediaByObjectsName.IsEnabled = false;
+            rbMultimediaByObjectsName.IsChecked = false;
+
+            btMultimediaFolderBrowse.IsEnabled = false;
+        }
+
+        private void cbNamesAudios_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cbNamesPictures.IsChecked == true && cbNamesPictures.IsEnabled == true)
+            {
+                return;
+            }
+
+            if (cbNamesObject.IsChecked == true)
+            {
+                rbMultimediaByObjectsName.IsEnabled = true;
+            }
+
+            rbMultimediaById.IsEnabled = true;
+
+            if ((rbClassObjectStartObjects.IsChecked == true) || (rbClassObjectCountObj.IsChecked == true))
+            {
+                rbMultimediaByClassName.IsEnabled = true;
+            }
+        }
     }
 }

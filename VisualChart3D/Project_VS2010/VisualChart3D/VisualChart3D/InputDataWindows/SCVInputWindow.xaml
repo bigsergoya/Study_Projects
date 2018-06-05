@@ -29,8 +29,8 @@
             <GroupBox x:Name="gbMatrixType" Header="Тип матрицы" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="172">
                 <StackPanel>
                     <RadioButton Content="Матрица расстояний" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbDistanceMatrix" VerticalAlignment="Top" TabIndex="0" IsChecked="true" Checked="rbDistanceMatrix_Checked"/>
-                    <RadioButton Content="Матрица объект-признак" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix" VerticalAlignment="Top" TabIndex="1"/>
-                    <RadioButton Content="Матрица 3D-координат" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix3D" VerticalAlignment="Top" TabIndex="2"/>
+                    <RadioButton Content="Матрица объект-признак" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix" VerticalAlignment="Top" TabIndex="1" Checked="rbObjectAttributeMatrix_Checked"/>
+                    <RadioButton Content="Матрица 3D-координат" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbObjectAttributeMatrix3D" VerticalAlignment="Top" TabIndex="2" Checked="rbObjectAttributeMatrix3D_Checked"/>
                 </StackPanel>
             </GroupBox>
 

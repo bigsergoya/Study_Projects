@@ -89,9 +89,9 @@
     }
 
     /// <summary>
-    /// Метрика
+    /// Внутренняя метрика Fast Map
     /// </summary>
-    public enum FastMapMetric
+    public enum FastMapMetricType
     {
         /// <summary>
         /// Евклидова метрика
@@ -104,4 +104,8 @@
         NonEuclidean
     }
 
+    /// <summary>
+    /// Тип загрузки мультимедийных данных согласно имеющимся описаниям.
+    /// </summary>
+    public enum MultimediaLoadType { ByObjectID, ByObjectName, ByClassInterval, ByClassStartObjects };
 }

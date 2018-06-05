@@ -25,6 +25,8 @@ namespace VisualChart3D
         private const int LowerSpaceDimensional = 3;
         private const int DoubleClick = 2;
 
+        private const string AlgorithmAlreadySelectedMessage = "Алгоритм уже выбран.";
+        private const string BadAlgorithmSelectedMessage = "Не задан алгоритм.";
         private const string WindowTitleFormat = "Visual Chart 3D. Alg - {0}, {1}";
         private const string PathToHelpFile = @"help\index.htm";
         private const string DataErrorMessage = "Исключительная ситуация. Ошибка исходных данных";
@@ -306,7 +308,7 @@ namespace VisualChart3D
                 ? new FastMap(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.Metrics)
                 : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree), _settFilesCurrent.Metrics);
             */
-            _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics);
+            //_fastMapProjection = new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics);
             //_projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
 
             if (!_fastMapProjection.ToProject())
@@ -450,7 +452,8 @@ namespace VisualChart3D
                 return;
             }
 
-            if ((e.ClickCount == DoubleClick) && (_settFilesCurrent.AlgorithmType != AlgorithmType.DisSpace))
+            if ((e.ClickCount == DoubleClick) 
+                && (_settFilesCurrent.AlgorithmType != AlgorithmType.DisSpace))
             {
                 if (_typePlot == TypePlot.Main && _selectedIndex.Length > 0)
                 {
@@ -466,6 +469,7 @@ namespace VisualChart3D
                     switch (_settFilesCurrent.AlgorithmType)
                     {
                         case AlgorithmType.FastMap:
+                            _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
                             FastMapGeneration();
                             break;
 
@@ -527,12 +531,18 @@ namespace VisualChart3D
                 return;
             }
 
-            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.IterationNumber, _kohonenProjection.IterationLimit);
+            if (_kohonenProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
+            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.IterationsCount, _kohonenProjection.IterationLimit);
             bool? showDialog = kohonenMapConfigWindow.ShowDialog();
 
             if ((bool)showDialog)
             {
-                _kohonenProjection.IterationNumber = kohonenMapConfigWindow.CountOfIteration;
+                _kohonenProjection.IterationsCount = kohonenMapConfigWindow.CountOfIteration;
                 KohonenMapGeneration(_kohonenProjection, true);
                 DrawScatterPlot();
             }
@@ -543,6 +553,12 @@ namespace VisualChart3D
             if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if(_dissimiliaritySpace == null)
+            {                
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
                 return;
             }
 
@@ -557,7 +573,7 @@ namespace VisualChart3D
             if (MnListObjects.IsChecked)
             {
                 _listObjectWindow.setCoords(_projectionCoords);
-                _listObjectWindow.displayObjectCoords(_listObjectWindow.ListBoxObjects.SelectedIndex);
+                _listObjectWindow.DisplayObjectCoords(_listObjectWindow.ListBoxObjects.SelectedIndex);
                 //MnListObjects.IsChecked = false; //допилить сохранение координат и размера. А в теории -
                 //запилить просто без обновления перерасчет координат!
             }
@@ -594,6 +610,7 @@ namespace VisualChart3D
                         Utils.ShowWarningMessage(string.Format(CannotLogDataMessage, path));
                     }
                 }
+
                 DrawScatterPlot();
             }
         }
@@ -700,6 +717,7 @@ namespace VisualChart3D
             switch (_settFilesCurrent.AlgorithmType)
             {
                 case AlgorithmType.FastMap:
+                    _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
                     FastMapGeneration(true);
                     break;
 
@@ -773,6 +791,7 @@ namespace VisualChart3D
                 switch (_settFilesCurrent.AlgorithmType)
                 {
                     case AlgorithmType.FastMap:
+                        _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
                         FastMapGeneration();
                         break;
 
@@ -1013,6 +1032,12 @@ namespace VisualChart3D
                 return;
             }
 
+            if (_sammonsProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
             SammonsMapConfigs sammonsMapConfigs = new SammonsMapConfigs(_sammonsProjection);
             bool? showDialog = sammonsMapConfigs.ShowDialog();
 
@@ -1035,46 +1060,81 @@ namespace VisualChart3D
 
         }
 
-        private void MnFastMap_Click(object sender, RoutedEventArgs e)
+        private bool IsAlgorithmChangeAvailable(AlgorithmType algorithm)
         {
             if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
-                return;
+                return false;
             }
 
-            /*if (_coordCurrent == null || _coordCurrent.Length == 0)
+            if (_settFilesCurrent.AlgorithmType == algorithm)
             {
-                return;
-            }*/
-
-            if (_settFilesCurrent.AlgorithmType == AlgorithmType.FastMap)
-            {
-                return;
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
+                return false;
             }
 
-            _settFilesCurrent.AlgorithmType = AlgorithmType.FastMap;
+            return true;
+        }
+
+        private void ApplyNewAlgorithmType(AlgorithmType buttonAlgorithm)
+        {
+            _settFilesCurrent.AlgorithmType = buttonAlgorithm;
 
             InitializeAlgorithm();
             CreateLogOfProjection();
             InitializeWindow();
         }
 
+        private void ChangeAlgorithm(AlgorithmType buttonAlgorithm)
+        {
+            if (!IsAlgorithmChangeAvailable(buttonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(buttonAlgorithm);
+        }
+
+        private void MnFastMap_Click(object sender, RoutedEventArgs e)
+        {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.FastMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+            _settFilesCurrent.AlgorithmType = ButtonAlgorithm;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();*/
+        }
+
         private void MnDisSpace_Click(object sender, RoutedEventArgs e)
         {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.DisSpace;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+
             if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
                 return;
             }
 
-            /*if (_coordCurrent == null || _coordCurrent.Length == 0)
-            {
-                return;
-            }*/
-
             if (_settFilesCurrent.AlgorithmType == AlgorithmType.DisSpace)
             {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
                 return;
             }
 
@@ -1082,24 +1142,30 @@ namespace VisualChart3D
 
             InitializeAlgorithm();
             CreateLogOfProjection();
-            InitializeWindow();
+            InitializeWindow();*/
         }
 
         private void MnSammonMap_Click(object sender, RoutedEventArgs e)
         {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.SammonsMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+
             if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
                 return;
             }
 
-            /*if (_coordCurrent == null || _coordCurrent.Length == 0)
-            {
-                return;
-            }*/
-
             if (_settFilesCurrent.AlgorithmType == AlgorithmType.SammonsMap)
             {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
                 return;
             }
 
@@ -1107,24 +1173,23 @@ namespace VisualChart3D
 
             InitializeAlgorithm();
             CreateLogOfProjection();
-            InitializeWindow();
+            InitializeWindow();*/
         }
 
         private void MnKohonenMap_Click(object sender, RoutedEventArgs e)
         {
-            if (_settFilesCurrent == null)
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.KohonenMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
                 return;
             }
 
-            /*if (_coordCurrent == null || _coordCurrent.Length == 0)
-            {
-                return;
-            }*/
-
             if (_settFilesCurrent.AlgorithmType == AlgorithmType.KohonenMap)
             {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
                 return;
             }
 
@@ -1132,13 +1197,42 @@ namespace VisualChart3D
 
             InitializeAlgorithm();
             CreateLogOfProjection();
-            InitializeWindow();
+            InitializeWindow();*/
         }
 
         private void MnFastMapSett_Click(object sender, RoutedEventArgs e)
         {
+            //ВЫВЕСТИ ВСЕ ВЫЗОВЫ ОКОН В ОДИН УНИВЕРСАЛЬНЫЙ МЕТОД!!!!!
+            if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if (_fastMapProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
+            VisualChart3D.ConfigWindow.FastMapConfigs fastMapConfigs = new FastMapConfigs(this._fastMapProjection);
+            bool? showDialog = fastMapConfigs.ShowDialog();
+            if ((bool)showDialog)
+            {
+                this._fastMapProjection = fastMapConfigs.FastMapSetts;
+                FastMapGeneration(true);
+                DrawScatterPlot();
+            }
+            /*            SammonsMapConfigs sammonsMapConfigs = new SammonsMapConfigs(_sammonsProjection);
+            bool? showDialog = sammonsMapConfigs.ShowDialog();
+
+            if ((bool)showDialog)
+            {
+                _sammonsProjection = sammonsMapConfigs.SamProjection;
+                SammonsMapGeneration(_sammonsProjection, true);
+                DrawScatterPlot();
+            }*/
 
         }
     }
-
 }

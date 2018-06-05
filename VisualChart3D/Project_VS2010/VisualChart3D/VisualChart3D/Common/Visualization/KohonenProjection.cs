@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace VisualChart3D.Common.Visualization
 {
-    public interface IKohonen: IVisualizer
+    public interface IKohonen : IVisualizer
     {
-        int IterationNumber { get; set; }
+        int IterationsCount { get; set; }
         int IterationLimit { get; }
     }
 
@@ -18,7 +18,7 @@ namespace VisualChart3D.Common.Visualization
     /// </para>
     /// </remarks>
     [Serializable]
-    public class KohonenProjection: BaseVisualizer, IKohonen
+    public class KohonenProjection : BaseVisualizer, IKohonen
     {
         private const string BadInputMessage = "Ошибка исходных данных в методе Kohonen Mapping";
         private const string StringDescriptionFormat = "Kohonen Map, размер данных({0}x{1}, число итераций - {2})";
@@ -33,10 +33,10 @@ namespace VisualChart3D.Common.Visualization
         private int[] _indexesJ;
         private ITimer _timer;
 
-        /// <summary>
+        /*/// <summary>
         /// Current iteration
         /// </summary>
-        private int _iteration;
+        private int _iteration;*/
 
         /// <summary>
         /// The precalculated distance-matrix.
@@ -75,7 +75,7 @@ namespace VisualChart3D.Common.Visualization
 
         public int MaximumDimensionsNumber => MaxAvaibleDimension;
 
-        public int IterationNumber { get => _iteration; set => _iteration = value; }
+        //public int IterationNumber { get => _iteration; set => _iteration = value; }
 
         public int IterationLimit => IterationsLimit;
         #endregion
@@ -146,11 +146,9 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// Reducing lambda depending on iterations.
         /// </summary>
-        private void ReduceLambda()
+        private void ReduceLambda(int iteration)
         {
-            _iteration++;
-
-            double ratio = (double)_iteration / _iterationsCount;
+            double ratio = (double)iteration / _iterationsCount;
 
             _lambda = Math.Pow(0.1, ratio);
         }
@@ -158,7 +156,7 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// Performs one iteration of the (heuristic) algorithm.
         /// </summary>
-        private void Iterate()
+        private void Iterate(int iteration)
         {
             int[] indexI = _indexesI;
             int[] indexJ = _indexesJ;
@@ -210,7 +208,7 @@ namespace VisualChart3D.Common.Visualization
             }
 
             // Reduce lambda monotonically:
-            ReduceLambda();
+            ReduceLambda(iteration);
         }
         #endregion
 
@@ -227,9 +225,9 @@ namespace VisualChart3D.Common.Visualization
 
             _timer.Start(this.ToString());
 
-            for (int i = _iterationsCount; i > 0; i--)
+            for (int i = 0; i < _iterationsCount; i++)
             {
-                this.Iterate();
+                this.Iterate(i);
             }
 
             _timer.Stop();
@@ -239,7 +237,7 @@ namespace VisualChart3D.Common.Visualization
 
         public override string ToString()
         {
-            return String.Format(StringDescriptionFormat, Count, Count, _iterationsCount);
+            return String.Format(StringDescriptionFormat, Count, Count, IterationsCount);
         }
         #endregion        
     }

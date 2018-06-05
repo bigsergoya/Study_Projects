@@ -19,6 +19,7 @@ namespace VisualChart3D.InputDataWindows
         private const string BadColumnChoiseMessage = "Ошибка выбора стобцов в качестве имен классов и объектов.";
         private const string BadParsingMessage = "Ошибка при чтении файла. Дальнейшее чтение невозможно.";
         private const string CannotIgnoreColumn = "Нельзя игнорировать уже выбранный в качестве имен объектов или имен классов столбец";
+        private const string RefreshFilePathMessage = "Задайте путь к файлу";
 
         private const int SingleSelectedElementIndex = 0;
         private const InputFileType WindowFileType = InputFileType.CSV;
@@ -26,17 +27,17 @@ namespace VisualChart3D.InputDataWindows
         private IUniversalReader _reader;
         private SourceFileMatrixType _inputMatrixType;
 
-        /// <summary>
+        /*/// <summary>
         /// Блокирование повторного вызова обработчика смены индекса комбобокса при возврате к старому индексу.
         /// </summary>
-        private bool _loopBlocking;
+        private bool _loopBlocking;*/
 
         private Common.DataBinding.ColumnDataViewModel _columnDataViewModel;
 
         public SCVInputWindow(IUniversalReader reader = null)
         {
             InitializeComponent();
-            _loopBlocking = false;
+            //_loopBlocking = false;
             _columnDataViewModel = new Common.DataBinding.ColumnDataViewModel();
 
             DataContext = _columnDataViewModel;
@@ -64,6 +65,11 @@ namespace VisualChart3D.InputDataWindows
 
         private void btChooseFile_Click(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             bool result = Utils.OpenFile(tbDataMatrixPath);
 
             if (!result)
@@ -79,7 +85,7 @@ namespace VisualChart3D.InputDataWindows
             }
             else
             {
-                tbDataMatrixPath.Text = String.Empty;
+                tbDataMatrixPath.Text = RefreshFilePathMessage;
             }
 
         }
@@ -137,7 +143,7 @@ namespace VisualChart3D.InputDataWindows
 
             _columnDataViewModel.ActiveItems = new ObservableCollection<string>(universalReader.FirstLine);
 
-            
+
             _columnDataViewModel.FirstLineItems = new ObservableCollection<string>(universalReader.FirstLine);
 
             cbClassNumberColumn.IsEnabled = true;
@@ -180,6 +186,14 @@ namespace VisualChart3D.InputDataWindows
             {
                 rbObjectAttributeMatrix.IsChecked = true;
             }
+            else if (_reader.SourceMatrixType == SourceFileMatrixType.ObjectAttribute3D)
+            {
+                rbObjectAttributeMatrix3D.IsChecked = true;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
 
             if (!String.IsNullOrEmpty(_reader.SourceMatrixFile))
             {
@@ -190,7 +204,7 @@ namespace VisualChart3D.InputDataWindows
         }
 
         private IUniversalReader InitializeReader()
-        {            
+        {
             IUniversalReader reader = new FastSCVDataReader(WindowFileType);
             //IUniversalReader reader = new SCVDataReader(WindowFileType);
             return reader;
@@ -198,10 +212,13 @@ namespace VisualChart3D.InputDataWindows
 
         private void rbDistanceMatrix_Checked(object sender, RoutedEventArgs e)
         {
-            if (tbMinkovskiDegree == null)
+            if (!this.IsLoaded)
+            //if (tbMinkovskiDegree == null)
             {
                 return;
             }
+
+            tbDataMatrixPath.Text = RefreshFilePathMessage;
 
             if (tbMinkovskiDegree.IsEnabled)
             {
@@ -212,7 +229,7 @@ namespace VisualChart3D.InputDataWindows
         private void btSave_Click(object sender, RoutedEventArgs e)
         {
             //bool isBadChoise = CheckSelectedIndexes();
-        
+
             Reader.MinkovskiDegree = (int)tbMinkovskiDegree.Value;
 
             bool isIndexNotInitialize = CheckIInitialzedIndexes();
@@ -303,23 +320,24 @@ namespace VisualChart3D.InputDataWindows
 
             string transferedColumn = _columnDataViewModel.ActiveItems[lbAllColumns.SelectedIndex];
 
-            if ((bool)cbClassNumberColumn.IsChecked)
+            if ((bool)cbClassNumberColumn.IsChecked || (bool)cbObjectNameColumn.IsChecked)
             {
-                if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
+                if (Utils.CompareStrings(transferedColumn, cmbCLassNumberColumn.SelectedValue.ToString()))
+                //if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
                 {
                     Utils.ShowWarningMessage(CannotIgnoreColumn);
                     return;
                 }
             }
 
-            if ((bool)cbObjectNameColumn.IsChecked)
+            /*if ((bool)cbObjectNameColumn.IsChecked)
             {
-                if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
+               if (transferedColumn.CompareTo(cmbCLassNumberColumn.SelectedValue.ToString()) == 0)
                 {
                     Utils.ShowWarningMessage(CannotIgnoreColumn);
                     return;
                 }
-            }
+            }*/
 
             _columnDataViewModel.ActiveItems.Remove(transferedColumn);
             _columnDataViewModel.IgnoredItems.Add(transferedColumn);
@@ -350,14 +368,19 @@ namespace VisualChart3D.InputDataWindows
 
         private void Column_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             string removedItem;
             string addedItem;
 
-            if (_loopBlocking)
-            {
-                _loopBlocking = false;
-                return;
-            }
+            //if (_loopBlocking)
+            //{
+            //    _loopBlocking = false;
+            //    return;
+            //}
 
             if ((e.RemovedItems.Count != SingleSelectedElementIndex) && (e.AddedItems.Count != SingleSelectedElementIndex))
             {
@@ -366,11 +389,15 @@ namespace VisualChart3D.InputDataWindows
 
                 if (isIdenticalColumns)
                 {
+                    var x = sender as ComboBox;
+                    x.SelectionChanged -= Column_SelectionChanged;
+
                     Utils.ShowErrorMessage(BadColumnChoiseMessage);
-                    _loopBlocking = true;
+                    //_loopBlocking = true;
+
 
                     RestoreLastValue(sender as ComboBox, removedItem);
-
+                    x.SelectionChanged += Column_SelectionChanged;
                     return;
                 }
 
@@ -395,7 +422,7 @@ namespace VisualChart3D.InputDataWindows
         }
 
         private void RestoreLastValue(ComboBox comboBox, string lastItem)
-        {            
+        {
             comboBox.SelectedItem = lastItem;
             DeleteItemFromItems(lastItem);
         }
@@ -438,12 +465,22 @@ namespace VisualChart3D.InputDataWindows
 
         private void cbClassNumberColumn_Checked(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             DeleteItemFromItems(cmbCLassNumberColumn.SelectedItem.ToString());
             cmbCLassNumberColumn.IsEnabled = true;
         }
 
         private void cbClassNumberColumn_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             string selectedItem = cmbCLassNumberColumn.SelectedItem.ToString();
             RestoreItem(selectedItem);
             cmbCLassNumberColumn.IsEnabled = false;
@@ -459,15 +496,35 @@ namespace VisualChart3D.InputDataWindows
 
         private void cbObjectNameColumn_Checked(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             DeleteItemFromItems(cmbObjectNameColumn.SelectedItem.ToString());
             cmbObjectNameColumn.IsEnabled = true;
         }
 
         private void cbObjectNameColumn_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
             string selectedItem = cmbObjectNameColumn.SelectedItem.ToString();
             RestoreItem(selectedItem);
             cmbObjectNameColumn.IsEnabled = false;
+        }
+
+        private void rbObjectAttributeMatrix_Checked(object sender, RoutedEventArgs e)
+        {
+            tbDataMatrixPath.Text = RefreshFilePathMessage;
+        }
+
+        private void rbObjectAttributeMatrix3D_Checked(object sender, RoutedEventArgs e)
+        {
+            tbDataMatrixPath.Text = RefreshFilePathMessage;
         }
     }
 }
