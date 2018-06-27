@@ -53,45 +53,44 @@ namespace VisualChart3D
             int countOfObjects = CountObjects;
             double[,] arraySource = base.ArraySource;
 
-            switch (UniversalReader.SourceMatrixType)
+            if (UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance)
             {
-                case SourceFileMatrixType.MatrixDistance:
-                    result = new double[countOfObjects, countOfObjects];
+                result = new double[countOfObjects, countOfObjects];
 
-                    for (int i = 0; i < countOfObjects; i++)
+                for (int i = 0; i < countOfObjects; i++)
+                {
+                    for (int j = 0; j < countOfObjects; j++)
                     {
-                        for (int j = 0; j < countOfObjects; j++)
+                        if (i == j)
                         {
-                            if (i == j)
-                            {
-                                result[i, j] = 0;
-                            }
-                            else
-                            {
-                                result[i, j] = arraySource[_selectedIdx[i], _selectedIdx[j]];
-                            }
+                            result[i, j] = 0;
+                        }
+                        else
+                        {
+                            result[i, j] = arraySource[_selectedIdx[i], _selectedIdx[j]];
                         }
                     }
+                }
 
-                    break;
+            }
+            else if (UniversalReader.SourceMatrixType == SourceFileMatrixType.ObjectAttribute
+                || UniversalReader.SourceMatrixType == SourceFileMatrixType.ObjectAttribute3D)
+            {
+                int countColumn = arraySource.GetLength(1);
+                result = new double[countOfObjects, countColumn];
 
-                case SourceFileMatrixType.ObjectAttribute:
-                    //int countColumn = arraySource.Length / base.CountObjects;
-                    int countColumn = arraySource.GetLength(1);
-                    result = new double[countOfObjects, countColumn];
-
-                    for (int i = 0; i < countOfObjects; i++)
+                for (int i = 0; i < countOfObjects; i++)
+                {
+                    for (int j = 0; j < countColumn; j++)
                     {
-                        for (int j = 0; j < countColumn; j++)
-                        {
-                            result[i, j] = arraySource[_selectedIdx[i], j];
-                        }
+                        result[i, j] = arraySource[_selectedIdx[i], j];
                     }
+                }
 
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
             }
 
             string fileName = UniversalReader.SourceMatrixFile + SavingMatrixFileFormat;
@@ -99,41 +98,38 @@ namespace VisualChart3D
             {
                 using (WriteTextToFile file = new WriteTextToFile(fileName))
                 {
-                    switch (UniversalReader.SourceMatrixType)
+                    if (UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance)
                     {
-                        case SourceFileMatrixType.MatrixDistance:
+                        for (int i = 0; i < countOfObjects; i++)
+                        {
+                            StringBuilder str = new StringBuilder(CountObjects * CapacityConstant);
 
-                            for (int i = 0; i < countOfObjects; i++)
+                            for (int j = 0; j < countOfObjects; j++)
                             {
-                                StringBuilder str = new StringBuilder(CountObjects * CapacityConstant);
-
-                                for (int j = 0; j < countOfObjects; j++)
-                                {
-                                    str.Append(result[i, j].ToString() + '\t');
-                                }
-                                file.WriteLine(str.ToString());
+                                str.Append(result[i, j].ToString() + '\t');
                             }
+                            file.WriteLine(str.ToString());
+                        }
+                    }
+                    else if (UniversalReader.SourceMatrixType == SourceFileMatrixType.ObjectAttribute
+                        || UniversalReader.SourceMatrixType == SourceFileMatrixType.ObjectAttribute3D)
+                    {
+                        //int countColumn = arraySource.Length / base.CountObjects;
+                        int countColumn = arraySource.GetLength(1);
 
-                            break;
-
-                        case SourceFileMatrixType.ObjectAttribute:
-                            //int countColumn = arraySource.Length / base.CountObjects;
-                            int countColumn = arraySource.GetLength(1);
-
-                            for (int i = 0; i < countOfObjects; i++)
+                        for (int i = 0; i < countOfObjects; i++)
+                        {
+                            StringBuilder str = new StringBuilder(countColumn * CapacityConstant);
+                            for (int j = 0; j < countColumn; j++)
                             {
-                                StringBuilder str = new StringBuilder(countColumn * CapacityConstant);
-                                for (int j = 0; j < countColumn; j++)
-                                {
-                                    str.Append(result[i, j].ToString() + '\t');
-                                }
-                                file.WriteLine(str.ToString());
+                                str.Append(result[i, j].ToString() + '\t');
                             }
-
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                            file.WriteLine(str.ToString());
+                        }
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException();
                     }
                 }
             }

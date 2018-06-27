@@ -25,6 +25,9 @@ namespace VisualChart3D
         private const int LowerSpaceDimensional = 3;
         private const int DoubleClick = 2;
 
+        private const string AlgorithmAlreadySelectedMessage = "Алгоритм уже выбран.";
+        private const string BadAlgorithmSelectedMessage = "Не задан алгоритм.";
+        private const string WindowTitleFormat = "Visual Chart 3D. Alg - {0}, {1}";
         private const string PathToHelpFile = @"help\index.htm";
         private const string DataErrorMessage = "Исключительная ситуация. Ошибка исходных данных";
         private const string CreatingGraphicErrorMessage = "Ошибка при построении графика\n {0} \n {1} \n {2}";
@@ -42,6 +45,7 @@ namespace VisualChart3D
         private DisSpace _dissimiliaritySpace;
         private IKohonen _kohonenProjection;
         private ISammon _sammonsProjection;
+        private IFastMap _fastMapProjection;
 
         /// <summary>
         /// Тип визуализации
@@ -182,12 +186,9 @@ namespace VisualChart3D
             }
         }
 
-        private bool KohonenMapGeneration(IKohonen projection, bool firstGeneration = false)
+        //МИХАЛЫЧ! НАДО НАКОНЕЦ ТО С МАССИВАМИ ДАННЫХ РАЗОБРАТЬСЯ, ДАБЫ ИЗБЕЖАТЬ ДУБЛИРОВАНИЕ КОДА!!!!!!!
+        private bool KohonenMapGeneration(IVisualizer projection, bool firstGeneration = false)
         {
-            //SammonsProjection projection = new SammonsProjection(
-            //    Utils.GetAnotherStyleOfData(_settFilesCurrent.ArraySource),
-            //    3,
-            //    1000);
             if (!projection.ToProject())
             {
                 return false;
@@ -218,14 +219,9 @@ namespace VisualChart3D
 
             return true;
         }
-
+        
         private bool SammonsMapGeneration(IVisualizer visualizer, bool firstGeneration = false)
         {
-            //SammonsProjection projection = new SammonsProjection(
-            //    Utils.GetAnotherStyleOfData(_settFilesCurrent.ArraySource),
-            //    3,
-            //    1000);
-
             if (!_sammonsProjection.ToProject())
             {
                 return false;
@@ -233,7 +229,7 @@ namespace VisualChart3D
 
             int countCords = visualizer.Projection.GetLength(0);
             _projectionCoords = Utils.GetNormalizedData(visualizer.Projection);
-            //_currentCoords = Utils.ExchangeDataMax(projection.Projection, countCords, projection.OutputDimension);
+
             _coordCurrent = new Vertex3D[countCords];
 
             if (!firstGeneration)
@@ -305,19 +301,24 @@ namespace VisualChart3D
 
         }
 
-        private void FastMapGeneration(bool firstGeneration = false)
+        private bool FastMapGeneration(bool firstGeneration = false)
         {
             int countCords = 0;
             /*FastMap fastMap = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance
                 ? new FastMap(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.Metrics)
                 : new FastMap(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree), _settFilesCurrent.Metrics);
             */
-            FastMap fastMap = new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics);
+            //_fastMapProjection = new FastMap(_settFilesCurrent.ArraySource, _settFilesCurrent.Metrics);
             //_projectionCoords = fastMap.GetCoordinates(fastMap.CountOfProjection);
 
-            _projectionCoords = Utils.GetNormalizedData(fastMap.ToProject(fastMap.CountOfProjection));
+            if (!_fastMapProjection.ToProject())
+            {
+                return false;
+            }
 
-            countCords = _projectionCoords.Length / fastMap.CountOfProjection;
+            _projectionCoords = Utils.GetNormalizedData(_fastMapProjection.Projection);
+
+            countCords = _fastMapProjection.Projection.GetLength(0);
 
             _coordCurrent = new Vertex3D[countCords];
 
@@ -338,6 +339,8 @@ namespace VisualChart3D
                 _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
                 SaveResultsAsFile(countCords);
             }
+
+            return true;
         }
 
         /// <summary>
@@ -449,7 +452,8 @@ namespace VisualChart3D
                 return;
             }
 
-            if ((e.ClickCount == DoubleClick) && (_settFilesCurrent.AlgorithmType != AlgorithmType.DisSpace))
+            if ((e.ClickCount == DoubleClick) 
+                && (_settFilesCurrent.AlgorithmType != AlgorithmType.DisSpace))
             {
                 if (_typePlot == TypePlot.Main && _selectedIndex.Length > 0)
                 {
@@ -465,6 +469,7 @@ namespace VisualChart3D
                     switch (_settFilesCurrent.AlgorithmType)
                     {
                         case AlgorithmType.FastMap:
+                            _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
                             FastMapGeneration();
                             break;
 
@@ -479,13 +484,17 @@ namespace VisualChart3D
                             break;
 
                         case AlgorithmType.SammonsMap:
-                            _sammonsProjection = new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.ArraySource);
+                            _sammonsProjection = new SammonsProjection(_settFilesCurrent.ArraySource, LowerSpaceDimensional);
                             if (!SammonsMapGeneration(_sammonsProjection))
                             {
                                 _settFilesCurrent = _settFilesMain;
                                 _typePlot = TypePlot.Main;
                             }                            
 
+                            break;
+
+                        case AlgorithmType.NoAlgorithm:
+                            NoAlgorithmGeneration();
                             break;
 
                         default:
@@ -522,12 +531,18 @@ namespace VisualChart3D
                 return;
             }
 
-            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.IterationNumber, _kohonenProjection.IterationLimit);
+            if (_kohonenProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
+            KohonenMapConfigs kohonenMapConfigWindow = new KohonenMapConfigs(_kohonenProjection.IterationsCount, _kohonenProjection.IterationLimit);
             bool? showDialog = kohonenMapConfigWindow.ShowDialog();
 
             if ((bool)showDialog)
             {
-                _kohonenProjection.IterationNumber = kohonenMapConfigWindow.CountOfIteration;
+                _kohonenProjection.IterationsCount = kohonenMapConfigWindow.CountOfIteration;
                 KohonenMapGeneration(_kohonenProjection, true);
                 DrawScatterPlot();
             }
@@ -538,6 +553,12 @@ namespace VisualChart3D
             if (_settFilesCurrent == null)
             {
                 Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if(_dissimiliaritySpace == null)
+            {                
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
                 return;
             }
 
@@ -552,7 +573,7 @@ namespace VisualChart3D
             if (MnListObjects.IsChecked)
             {
                 _listObjectWindow.setCoords(_projectionCoords);
-                _listObjectWindow.displayObjectCoords(_listObjectWindow.ListBoxObjects.SelectedIndex);
+                _listObjectWindow.DisplayObjectCoords(_listObjectWindow.ListBoxObjects.SelectedIndex);
                 //MnListObjects.IsChecked = false; //допилить сохранение координат и размера. А в теории -
                 //запилить просто без обновления перерасчет координат!
             }
@@ -589,6 +610,7 @@ namespace VisualChart3D
                         Utils.ShowWarningMessage(string.Format(CannotLogDataMessage, path));
                     }
                 }
+
                 DrawScatterPlot();
             }
         }
@@ -603,114 +625,123 @@ namespace VisualChart3D
                 _typePlot = TypePlot.Main;
                 _settFilesCurrent = startSettingsWindow.SettFiles;
 
-                //System.Windows.Forms.PictureBox animationBox = new System.Windows.Forms.PictureBox();
-                //System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(animationBox.Image);
-                //System.Drawing.Image img = new System.Drawing.Bitmap("Resources/AnimationForWaiting.gif");
-                //animationBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-                //animationBox.ClientSize = new System.Drawing.Size(100, 100);
-                //animationBox.ImageLocation = "Resources/AnimationForWaiting.gif";
-                //animationBox.Location = new System.Drawing.Point(22, 12);
-                //animationBox.Size = new System.Drawing.Size(346, 327);
-                //animationBox.TabIndex = 0;
-                //animationBox.TabStop = false;
-                //animationBox.Visible = true;
-                //Создать контрол
-                //animationBox.Show();
-                //animationBox.Dispose();
+                SetActiveAlgorithms(_settFilesCurrent.UniversalReader.SourceMatrixType);
+                //InitializeAlgorithm();
+                CreateLogOfProjection();
+                InitializeWindow();
+            }
+            else
+                _settFilesCurrent = null;
+        }
 
+        private void InitializeWindow()
+        {
+            Title = String.Format(WindowTitleFormat, _settFilesCurrent.AlgorithmType.ToString(), Path.GetFileName(_settFilesCurrent.UniversalReader.SourceMatrixFile));
+            DrawScatterPlot();
+        }
 
-                //CustomControlls.AnimationControll animationControll = new CustomControlls.AnimationControll();
+        private void SetActiveAlgorithms(SourceFileMatrixType sourceMatrixType)
+        {
+            switch (sourceMatrixType)
+            {
+                case SourceFileMatrixType.MatrixDistance:
+                    MnDisSpace.IsEnabled = true;
+                    MnFastMap.IsEnabled = true;
+                    MnSammonMap.IsEnabled = true;
+                    MnKohonenMap.IsEnabled = true;
+                    break;
 
-                //this.AddVisualChild(animationControll);
-                //Animate();
+                case SourceFileMatrixType.ObjectAttribute:
+                    MnDisSpace.IsEnabled = true;
+                    MnFastMap.IsEnabled = true;
+                    MnSammonMap.IsEnabled = true;
+                    MnKohonenMap.IsEnabled = true;
+                    break;
 
-                switch (_settFilesCurrent.AlgorithmType)
+                case SourceFileMatrixType.ObjectAttribute3D:
+                    MnDisSpace.IsEnabled = false;
+                    MnFastMap.IsEnabled = false;
+                    MnSammonMap.IsEnabled = false;
+                    MnKohonenMap.IsEnabled = false;
+
+                    //Если данные не требуют обработки, то пусть сразу выведутся.
+                    InitializeAlgorithm();
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private void CreateLogOfProjection()
+        {
+            try
+            {
+                string pathXml = _settFilesCurrent.ClassObjectSelected
+                    ? _settFilesCurrent.ClassObjectFile + ExtColorSchema
+                    : String.Empty;
+
+                if (File.Exists(pathXml))
                 {
-                    case AlgorithmType.FastMap:
-                        FastMapGeneration(true);
-                        break;
+                    System.Xml.Serialization.XmlSerializer reader =
+                        new System.Xml.Serialization.XmlSerializer(typeof(ClassVisualisationSettings));
+                    StreamReader file = new StreamReader(
+                        pathXml);
+                    _settingsClasses = new ClassVisualisationSettings();
+                    _settingsClasses = (ClassVisualisationSettings)reader.Deserialize(file);
 
-                    case AlgorithmType.DisSpace:
-                        /*_dissimiliaritySpace = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
-                            ? new DisSpace(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects) 
-                            : new DisSpace(
-                                CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree),
-                                _settFilesCurrent.CountObjects);*/
-
-                        _dissimiliaritySpace = new DisSpace(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects);
-
-                        DissimilitarySpaceGeneration(_dissimiliaritySpace, true);
-                        break;
-
-                    case AlgorithmType.KohonenMap:
-                        /*_kohonenProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
-                            ? new KohonenProjection(Utils.GetAnotherStyleOfData(_settFilesCurrent.UniversalReader.ArraySource), LowerSpaceDimensional) 
-                            : new KohonenProjection(Utils.GetAnotherStyleOfData(CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree)),
-                            LowerSpaceDimensional);*/
-
-                        _kohonenProjection = new KohonenProjection(_settFilesCurrent.ArraySource, LowerSpaceDimensional);
-
-                        KohonenMapGeneration(_kohonenProjection, true);
-                        break;
-
-                    case AlgorithmType.SammonsMap:
-
-                        /*_sammonsProjection = _settFilesCurrent.UniversalReader.SourceMatrixType == SourceFileMatrixType.MatrixDistance 
-                            ? new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.UniversalReader.ArraySource) 
-                            : new SammonsProjection(LowerSpaceDimensional,
-                            CommonMatrix.ObjectAttributeToDistance(_settFilesCurrent.UniversalReader.ArraySource, _settFilesCurrent.CountObjects, _settFilesCurrent.UniversalReader.MinkovskiDegree));
-                        */
-
-                        _sammonsProjection = new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.ArraySource);
-
-                        SammonsMapGeneration(_sammonsProjection, true);
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-
-                try
-                {
-                    string pathXml = _settFilesCurrent.ClassObjectSelected
-                        ? _settFilesCurrent.ClassObjectFile + ExtColorSchema
-                        : String.Empty;
-
-                    if (File.Exists(pathXml))
+                    if ((_settingsClasses.ArrayClass.Length == 0) && (_settFilesCurrent?.UniqClassesName.Count > 0))
                     {
-                        System.Xml.Serialization.XmlSerializer reader =
-                            new System.Xml.Serialization.XmlSerializer(typeof(ClassVisualisationSettings));
-                        StreamReader file = new StreamReader(
-                            pathXml);
-                        _settingsClasses = new ClassVisualisationSettings();
-                        _settingsClasses = (ClassVisualisationSettings)reader.Deserialize(file);
-
-                        if ((_settingsClasses.ArrayClass.Length == 0) && (_settFilesCurrent?.UniqClassesName.Count > 0))
-                        {
-                            //Потеря данных ((( Исправить на точечное исправление именно названий классов
-                            _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
-                        }
-
-                        file.Close();
-
-                    }
-                    else
-                    {
+                        //Потеря данных ((( Исправить на точечное исправление именно названий классов
                         _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
-                        SizeDetection();
                     }
+
+                    file.Close();
+
                 }
-                catch
+                else
                 {
                     _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
                     SizeDetection();
                 }
-
-                Title = "Visual Chart 3D " + System.IO.Path.GetFileName(_settFilesCurrent.UniversalReader.SourceMatrixFile);
-                DrawScatterPlot();
             }
-            else
-                _settFilesCurrent = null;
+            catch
+            {
+                _settingsClasses = new ClassVisualisationSettings(_settFilesCurrent.UniqClassesName);
+                SizeDetection();
+            }
+        }
+
+        private void InitializeAlgorithm()
+        {
+            switch (_settFilesCurrent.AlgorithmType)
+            {
+                case AlgorithmType.FastMap:
+                    _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
+                    FastMapGeneration(true);
+                    break;
+
+                case AlgorithmType.DisSpace:
+                    _dissimiliaritySpace = new DisSpace(_settFilesCurrent.ArraySource, _settFilesCurrent.CountObjects);
+                    DissimilitarySpaceGeneration(_dissimiliaritySpace, true);
+                    break;
+
+                case AlgorithmType.KohonenMap:
+                    _kohonenProjection = new KohonenProjection(_settFilesCurrent.ArraySource, LowerSpaceDimensional);
+                    KohonenMapGeneration(_kohonenProjection, true);
+                    break;
+
+                case AlgorithmType.SammonsMap:
+                    _sammonsProjection = new SammonsProjection(_settFilesCurrent.ArraySource, LowerSpaceDimensional);
+                    SammonsMapGeneration(_sammonsProjection, true);
+                    break;
+
+                case AlgorithmType.NoAlgorithm:
+                    NoAlgorithmGeneration(true);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private void MnExit_Click(object sender, RoutedEventArgs e)
@@ -760,6 +791,7 @@ namespace VisualChart3D
                 switch (_settFilesCurrent.AlgorithmType)
                 {
                     case AlgorithmType.FastMap:
+                        _fastMapProjection = new FastMap(_settFilesCurrent.ArraySource);
                         FastMapGeneration();
                         break;
 
@@ -769,8 +801,12 @@ namespace VisualChart3D
                         break;
 
                     case AlgorithmType.SammonsMap:
-                        _sammonsProjection = new SammonsProjection(LowerSpaceDimensional, _settFilesCurrent.ArraySource);
+                        _sammonsProjection = new SammonsProjection(_settFilesCurrent.ArraySource, LowerSpaceDimensional);
                         SammonsMapGeneration(_sammonsProjection);
+                        break;
+
+                    case AlgorithmType.NoAlgorithm:
+                        NoAlgorithmGeneration();
                         break;
 
                     default:
@@ -784,6 +820,33 @@ namespace VisualChart3D
             {
                 _transformMatrix.OnKeyDown(e);
                 TransformChart();
+            }
+        }
+
+        private void NoAlgorithmGeneration(bool firstGeneration = false)
+        {
+
+            int countCords = _settFilesCurrent.ArraySource.GetLength(0);
+            _projectionCoords = Utils.GetNormalizedData(_settFilesCurrent.ArraySource);
+
+            _coordCurrent = new Vertex3D[countCords];
+
+            if (!firstGeneration)
+            {
+                for (int i = 0; i < countCords; i++)
+                {
+                    _coordCurrent[i] = new Vertex3D
+                    {
+                        X = _projectionCoords[i, 0],
+                        Y = _projectionCoords[i, 1],
+                        Z = _projectionCoords[i, 2]
+                    };
+                }
+            }
+            else
+            {
+                _selectRect.OnMouseDown(new Point(0, 0), MainViewport, _nRectModelIndex);
+                SaveResultsAsFile(countCords);
             }
         }
 
@@ -845,6 +908,13 @@ namespace VisualChart3D
                 case AlgorithmType.SammonsMap:
                     MnSamMapSett.IsEnabled = true;
                     MnDisSpaceSett.IsEnabled = false;
+                    MnKohonenMapSett.IsEnabled = false;
+                    break;
+
+                case AlgorithmType.NoAlgorithm:
+                    MnDisSpaceSett.IsEnabled = false;
+                    MnFastMapSett.IsEnabled = false;
+                    MnSamMapSett.IsEnabled = false;
                     MnKohonenMapSett.IsEnabled = false;
                     break;
 
@@ -962,6 +1032,12 @@ namespace VisualChart3D
                 return;
             }
 
+            if (_sammonsProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
             SammonsMapConfigs sammonsMapConfigs = new SammonsMapConfigs(_sammonsProjection);
             bool? showDialog = sammonsMapConfigs.ShowDialog();
 
@@ -983,6 +1059,180 @@ namespace VisualChart3D
             }*/
 
         }
-    }
 
+        private bool IsAlgorithmChangeAvailable(AlgorithmType algorithm)
+        {
+            if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return false;
+            }
+
+            if (_settFilesCurrent.AlgorithmType == algorithm)
+            {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ApplyNewAlgorithmType(AlgorithmType buttonAlgorithm)
+        {
+            _settFilesCurrent.AlgorithmType = buttonAlgorithm;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();
+        }
+
+        private void ChangeAlgorithm(AlgorithmType buttonAlgorithm)
+        {
+            if (!IsAlgorithmChangeAvailable(buttonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(buttonAlgorithm);
+        }
+
+        private void MnFastMap_Click(object sender, RoutedEventArgs e)
+        {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.FastMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+            _settFilesCurrent.AlgorithmType = ButtonAlgorithm;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();*/
+        }
+
+        private void MnDisSpace_Click(object sender, RoutedEventArgs e)
+        {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.DisSpace;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+
+            if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if (_settFilesCurrent.AlgorithmType == AlgorithmType.DisSpace)
+            {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
+                return;
+            }
+
+            _settFilesCurrent.AlgorithmType = AlgorithmType.DisSpace;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();*/
+        }
+
+        private void MnSammonMap_Click(object sender, RoutedEventArgs e)
+        {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.SammonsMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (!IsAlgorithmChangeAvailable(ButtonAlgorithm))
+            {
+                return;
+            }
+
+            ApplyNewAlgorithmType(ButtonAlgorithm);
+
+            if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if (_settFilesCurrent.AlgorithmType == AlgorithmType.SammonsMap)
+            {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
+                return;
+            }
+
+            _settFilesCurrent.AlgorithmType = AlgorithmType.SammonsMap;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();*/
+        }
+
+        private void MnKohonenMap_Click(object sender, RoutedEventArgs e)
+        {
+            const AlgorithmType ButtonAlgorithm = AlgorithmType.KohonenMap;
+            ChangeAlgorithm(ButtonAlgorithm);
+
+            /*if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if (_settFilesCurrent.AlgorithmType == AlgorithmType.KohonenMap)
+            {
+                Utils.ShowWarningMessage(AlgorithmAlreadySelectedMessage);
+                return;
+            }
+
+            _settFilesCurrent.AlgorithmType = AlgorithmType.KohonenMap;
+
+            InitializeAlgorithm();
+            CreateLogOfProjection();
+            InitializeWindow();*/
+        }
+
+        private void MnFastMapSett_Click(object sender, RoutedEventArgs e)
+        {
+            //ВЫВЕСТИ ВСЕ ВЫЗОВЫ ОКОН В ОДИН УНИВЕРСАЛЬНЫЙ МЕТОД!!!!!
+            if (_settFilesCurrent == null)
+            {
+                Utils.ShowWarningMessage(NotInitializedDataErrorMessage);
+                return;
+            }
+
+            if (_fastMapProjection == null)
+            {
+                Utils.ShowWarningMessage(BadAlgorithmSelectedMessage);
+                return;
+            }
+
+            VisualChart3D.ConfigWindow.FastMapConfigs fastMapConfigs = new FastMapConfigs(this._fastMapProjection);
+            bool? showDialog = fastMapConfigs.ShowDialog();
+            if ((bool)showDialog)
+            {
+                this._fastMapProjection = fastMapConfigs.FastMapSetts;
+                FastMapGeneration(true);
+                DrawScatterPlot();
+            }
+            /*            SammonsMapConfigs sammonsMapConfigs = new SammonsMapConfigs(_sammonsProjection);
+            bool? showDialog = sammonsMapConfigs.ShowDialog();
+
+            if ((bool)showDialog)
+            {
+                _sammonsProjection = sammonsMapConfigs.SamProjection;
+                SammonsMapGeneration(_sammonsProjection, true);
+                DrawScatterPlot();
+            }*/
+
+        }
+    }
 }

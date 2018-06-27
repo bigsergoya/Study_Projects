@@ -69,6 +69,9 @@
     <Reference Include="Microsoft.Maps.MapControl.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Maps.MapControl.WPF.1.0.0.3\lib\net40-Client\Microsoft.Maps.MapControl.WPF.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -126,18 +129,23 @@
     <Compile Include="Common\CustomTimer.cs" />
     <Compile Include="Common\DataBinding\BaseViewModel.cs" />
     <Compile Include="Common\DataBinding\ColumnDataViewModel.cs" />
+    <Compile Include="Common\DataBinding\ObjectsListViewModel.cs" />
     <Compile Include="Common\DataBinding\ReferencedObjectsViewModel.cs" />
     <Compile Include="Common\DataReader\FastSCVDataReader.cs" />
     <Compile Include="Common\DataReader\IDataReader.cs" />
     <Compile Include="Common\DataReader\StandartDataReader.cs" />
     <Compile Include="Common\Enums.cs" />
+    <Compile Include="Common\Logs\MultimediaLog.cs" />
+    <Compile Include="Common\Multimedia\MediaDataMaster.cs" />
     <Compile Include="Common\Visualization\IVisualizer.cs" />
     <Compile Include="Common\Visualization\SammonsProjection.cs" />
-    <Compile Include="Common\PictureMaster\BaseImageMaster.cs" />
+    <Compile Include="Common\Multimedia\BaseMultimediaDataMaster.cs" />
     <Compile Include="Common\Visualization\DisSpace.cs" />
-    <Compile Include="Common\ReferencedObjects.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\Visualization\KohonenProjection.cs" />
+    <Compile Include="ConfigWindow\FastMapConfigs.xaml.cs">
+      <DependentUpon>FastMapConfigs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConfigWindow\KohonenMapConfigs.xaml.cs">
       <DependentUpon>KohonenMapConfigs.xaml</DependentUpon>
     </Compile>
@@ -187,6 +195,10 @@
       <DependentUpon>DissimilaritySpaceConfigs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\EngineSubsidiary.cs" />
+    <Page Include="ConfigWindow\FastMapConfigs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ConfigWindow\SammonsMapConfigs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,6 +269,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

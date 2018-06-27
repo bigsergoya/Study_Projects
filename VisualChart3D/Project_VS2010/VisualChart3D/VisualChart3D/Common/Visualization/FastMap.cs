@@ -4,7 +4,12 @@ using System;
 
 namespace VisualChart3D.Common.Visualization
 {
-    public class FastMap
+    public interface IFastMap : IVisualizer
+    {
+        FastMapMetricType Metric { get; set; }
+    }
+
+    public class FastMap: BaseVisualizer, IFastMap
     {
         private const string StringDescriptionFormat = "Fast Map, размер данных({0}x{1})";
 
@@ -54,9 +59,9 @@ namespace VisualChart3D.Common.Visualization
         /// <summary>
         /// Структура для хранения двух индексов
         /// </summary>
-        private struct TwoElement
+        private struct TwoObjects
         {
-            public TwoElement(int idxa, int idxb)
+            public TwoObjects(int idxa, int idxb)
             {
                 Idxa = idxa;
                 Idxb = idxb;
@@ -66,43 +71,63 @@ namespace VisualChart3D.Common.Visualization
             public int Idxb;
         }
 
-        private FastMapMetric _metric;
+        private FastMapMetricType _metric;
 
         public int CountOfProjection
         {
-            get => _countOfProjection == 0 ? OptimumSizeOfSpace : _countOfProjection;
+            get => _countOfProjection == 0 ? MaxAvaibleDimension : _countOfProjection;
             set => _countOfProjection = value;
         }
+
+        public int Dimensions => throw new NotImplementedException();
+
+        public double[,] Projection => _arrCoord;
+
+        public int MaximumDimensionsNumber => MaxAvaibleDimension;
+
+        public FastMapMetricType Metric { get => _metric; set => _metric = value; }
+
+        //protected static int MinimalCalculatingObjects => MinimalCalculatingObjects;
 
         /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="distanceArr">Матрица расстояний</param>
+        /// <param name="cntProjection">кол-во осей</param>
         /// <param name="metric">Метрика</param>
-        public FastMap(double[,] distanceArr, FastMapMetric metric)
+        public FastMap(double[,] distanceArr, int cntProjection = MaxAvaibleDimension)
         {
+            CountOfProjection = cntProjection;
+
             _timer = new CustomTimer();
             _distanceMatrix = distanceArr;
-            _countElements = (int)Math.Sqrt(distanceArr.Length);
+            _countElements = distanceArr.GetLength(0);
             _distanceFunc = (idx1, idx2) => (float)_distanceMatrix[idx1, idx2];
-            _metric = metric;
+            _metric = FastMapMetricType.Euclidean;
         }
 
         /// <summary>
         /// Вычислить координаты
         /// </summary>
-        /// <param name="cntProjection">кол-во осей</param>
+        
         /// <returns>Массив координат</returns>
-        public double[,] ToProject(int cntProjection)
-        {
-            _arrCoord = new double[_countElements, cntProjection];
+        public bool ToProject()
+        {          
+            int _countOfObjects = _distanceMatrix.GetLength(0);
+
+            if (IsObjectsCountLessThenMinimal(_countOfObjects))
+            {
+                return false;
+            }
+
+            _arrCoord = new double[_countElements, CountOfProjection];
             _currentColumn = 0;
 
             _timer.Start(this.ToString());
-            FastMapAlghoritm(cntProjection, _distanceFunc);
+            FastMapAlghoritm(CountOfProjection, _distanceFunc);
             _timer.Stop();
 
-            return _arrCoord;
+            return true;
         }
         
         /// <summary>
@@ -117,7 +142,7 @@ namespace VisualChart3D.Common.Visualization
                 return;
             }
 
-            TwoElement two = ChoseDistanceObject(dist);
+            TwoObjects two = ChoseDistanceObject(dist);
             if (Math.Abs(dist(two.Idxa, two.Idxb)) < 0.0001)
             {
                 for (int i = 0; i < _countElements; i++)
@@ -140,10 +165,10 @@ namespace VisualChart3D.Common.Visualization
 
                 switch (_metric)
                 {
-                    case FastMapMetric.Euclidean:
+                    case FastMapMetricType.Euclidean:
                         xi[i] = ((Math.Pow(dai, 2) + Math.Pow(dab, 2) - Math.Pow(dbi, 2)) / (2 * dab));
                         break;
-                    case FastMapMetric.NonEuclidean:
+                    case FastMapMetricType.NonEuclidean:
                         xi[i] = (Math.Pow(dai, 2) - Math.Pow(dbi, 2)) / Math.Pow(dab, 2);
                         break;
                     default:
@@ -163,7 +188,7 @@ namespace VisualChart3D.Common.Visualization
         /// </summary>
         /// <param name="dist">Функция для вычисления расстояния между элементами</param>
         /// <returns>индексы опорных элементов</returns>
-        private TwoElement ChoseDistanceObject(Dist dist)
+        private TwoObjects ChoseDistanceObject(Dist dist)
         {
 
             float max = 0;
@@ -178,7 +203,7 @@ namespace VisualChart3D.Common.Visualization
                         b = j;
                     }
                 }
-            return new TwoElement(a, b);
+            return new TwoObjects(a, b);
         }
 
         public override string ToString()

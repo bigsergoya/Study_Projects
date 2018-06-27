@@ -20,7 +20,7 @@
         <CheckBox Content="Объект 3" Height="28" Margin="316,57,12,0" Name="Is3DSpace" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" FlowDirection="LeftToRight" Background="White" BorderBrush="#FF061200" HorizontalAlignment="Stretch" DataContext="{Binding}" ClickMode="Release" OverridesDefaultStyle="False" Checked="Is3DSpace_Checked" Unchecked="Is3DSpace_Unchecked" />
         <CheckBox Content="Инвертировать цвет базисных объектов" Height="18" Margin="12,120,0,0" Name="cbBasisObjectColorMode" VerticalAlignment="Top" HorizontalAlignment="Left" Width="275" />
         <Label Content="Подобранные эталонные объекты:" Height="26" HorizontalAlignment="Left" Margin="78,253,0,0" Name="cbAutomaticlySettingUpOfReference" VerticalAlignment="Top" Width="203" />
-        <ListBox Height="57" HorizontalAlignment="Left" Margin="30,283,0,0" Name="lbReferencedObjects" VerticalAlignment="Top" Width="394" ItemsSource="{Binding ReferedObjectsInfo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <ListBox Height="57" HorizontalAlignment="Left" Margin="30,283,0,0" Name="lbReferencedObjects" VerticalAlignment="Top" Width="394" ItemsSource="{Binding ReferedObjectsInfo, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
         <Button Content="Обновить" Height="23" HorizontalAlignment="Left" Margin="311,256,0,0" Name="btRefreshReferenceObjects" VerticalAlignment="Top" Width="75" Click="btRefreshReferenceObjects_Click" />
     </Grid>
 </Window>

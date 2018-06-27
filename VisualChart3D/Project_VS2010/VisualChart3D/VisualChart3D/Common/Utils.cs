@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Windows.Media.Imaging;
 
 namespace VisualChart3D.Common
 {
@@ -8,7 +9,9 @@ namespace VisualChart3D.Common
         private const string WarningMessageStandartTitle = "Внимание!";
         private const string ErrorMessageStandartTitle = "Ошибка!";
         private const string ExceptionMessageFormat = "{0} Стек вызовов: {1}";
-
+        private const string AdressOfPictureLogFile = "PictureAdressLog.txt";
+        private const string PictureDirAdressReadingWarningMessage = "Не удалось чтение мультимедиа лог-файла.";
+        private const string PictureDirLogFileWarningMessage = "Не удалось создать мультимедиа лог-файл.";
         public const string BadMatrixType = "Ошибка. Тип исходных данных не соответствует выбранному типу входной матрицы.";
 
         public static T[,] SafeAllocateMemory<T>(int rows, int columns)
@@ -18,7 +21,7 @@ namespace VisualChart3D.Common
                 T[,] value = new T[rows, columns];
                 return value;
             }
-            catch(OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 Utils.ShowExceptionMessage(e);
                 return null;
@@ -102,21 +105,6 @@ namespace VisualChart3D.Common
             return returnedArray;
         }
 
-        /*public static double[,] ExchangeData(double[][] oldArray, int firstDim, int secondDim)
-        {
-            double[,] outputArray = new double[firstDim, secondDim];
-
-            for (int i = 0; i < firstDim; i++)
-            {
-                for (int j = 0; j < secondDim; j++)
-                {
-                    outputArray[i, j] = oldArray[i][j]; /// maxValue;
-                }
-            }
-
-            return outputArray;
-        }*/
-
         public static double[,] GetNormalizedData(double[,] array)
         {
             int firstDim = array.GetLength(0);
@@ -189,7 +177,7 @@ namespace VisualChart3D.Common
 
         public static void ShowExceptionMessage(Exception e)
         {
-            ShowErrorMessage(String.Format(ExceptionMessageFormat,e.Message, e.StackTrace));
+            ShowErrorMessage(String.Format(ExceptionMessageFormat, e.Message, e.StackTrace));
         }
 
         private static void GetMinAndMax(double[][] array, int firstDim, int secondDim, out double min, out double max)
@@ -343,8 +331,141 @@ namespace VisualChart3D.Common
 
             return false;
         }
-    }
 
+        public static bool CompareStrings(string A, string B)
+        {
+            return (string.Compare(A, B, true) == 0);
+        }
+
+
+        /// <summary>
+        /// Загрузка изображения по представленному пути как BitmapImage
+        /// </summary>
+        /// <param name="sourcePath">Путь к файлу с картинкой</param>
+        /// <returns>Картинка в формате BitmapImage</returns>
+        public static BitmapImage GetPictureFromSource(string sourcePath)
+        {
+            BitmapImage bitImage = new BitmapImage();
+
+            bitImage.BeginInit();
+
+            bitImage.UriSource = new Uri(sourcePath, UriKind.RelativeOrAbsolute);
+
+            bitImage.EndInit();
+
+            return bitImage;
+        }
+
+
+        /*public static string[] ReadDataFromMultimediaLogFile(string pathToAnyMatrix)
+        {
+            string[] data;
+            string pathToLogFile = System.IO.Path.GetPathRoot(pathToAnyMatrix) + AdressOfPictureLogFile;
+            try
+            {
+                if (System.IO.File.Exists(pathToLogFile))
+                {
+                    data = System.IO.File.ReadAllLines(pathToLogFile);
+                    return data;
+                }
+            }
+            catch
+            {
+                Utils.ShowWarningMessage(PictureDirAdressReadingWarningMessage);
+            }
+
+            return null;
+        }
+
+        public static void WriteDataToMultimediaLog(string pathToAnyMatrix, string pathToPictureFolder, string pictureLoadingType)
+        {
+            if (String.IsNullOrEmpty(pathToAnyMatrix))
+            {
+                return;
+            }
+
+
+            string pathToPictureContentAdressLog = System.IO.Path.GetPathRoot(pathToAnyMatrix) + AdressOfPictureLogFile;
+
+            //string pathToPictureContentAdressLog = pathToAnyMatrix.Remove(pathToAnyMatrix.LastIndexOf('\\') + 1)
+            //    + AdressOfPictureLogFile;
+            try
+            {
+                using (WriteTextToFile file = new WriteTextToFile(pathToPictureContentAdressLog))
+                {
+                    file.WriteLine(pathToPictureFolder);
+                    file.WriteLine(pictureLoadingType);
+                }
+            }
+            catch
+            {
+                Utils.ShowWarningMessage(PictureDirLogFileWarningMessage);
+            }
+        }*/
+
+        /// <summary>
+        /// Создание десериализованной копии объекта типа Т из json-файла
+        /// </summary>
+        /// <typeparam name="T">Тип десериализованного объекта</typeparam>
+        /// <param name="pathToAnyMatrix">Путь к файлу с сериализованным представлением объекта</param>
+        /// <returns>Десериализованная копия объекта</returns>
+        public static T ToDeserialize<T>(string pathToAnyMatrix)
+        {
+            if (String.IsNullOrEmpty(pathToAnyMatrix))
+            {
+                return default(T);
+            }
+
+            string fileContent = String.Empty;
+            string pathToLogFile = System.IO.Path.GetDirectoryName(pathToAnyMatrix) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension(pathToAnyMatrix) + AdressOfPictureLogFile;
+
+            try
+            {
+                if (System.IO.File.Exists(pathToLogFile))
+                {
+                    fileContent = System.IO.File.ReadAllText(pathToLogFile);
+                }
+                else
+                {
+                    return default(T);
+                }
+            }
+            catch
+            {
+                Utils.ShowWarningMessage(PictureDirAdressReadingWarningMessage);
+                return default(T);
+            }
+
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(fileContent);
+        }
+
+        /// <summary>
+        /// Создание сериализованной копии объекта и ее сохранение в json-файл
+        /// </summary>
+        /// <param name="pathToAnyMatrix">Путь к любой из матрицы данных для создания файла в этой же папке</param>
+        /// <param name="serializeableObject">Объект, подвергающийся сериализации</param>
+        public static void ToSerialize(string pathToAnyMatrix, object serializeableObject)
+        {
+            if (String.IsNullOrEmpty(pathToAnyMatrix))
+            {
+                return;
+            }
+
+            //string pathToLogFile = System.IO.Path.GetPathRoot(pathToAnyMatrix) + AdressOfPictureLogFile;
+            string pathToLogFile = System.IO.Path.GetDirectoryName(pathToAnyMatrix) + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileNameWithoutExtension(pathToAnyMatrix) + AdressOfPictureLogFile;
+            string fileContent = Newtonsoft.Json.JsonConvert.SerializeObject(serializeableObject);
+
+            try
+            {
+                System.IO.File.WriteAllText(pathToLogFile, fileContent);
+            }
+            catch
+            {
+                ShowWarningMessage(PictureDirLogFileWarningMessage);
+                return;
+            }
+        }
+    }
     /// <summary>
     /// Compare y and x in reverse order
     /// </summary>

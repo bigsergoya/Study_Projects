@@ -149,7 +149,7 @@ namespace VisualChart3D.Common.DataReader
         private void CalculateCountOfDeletedColumns(out int n, out int m)
         {
             n = _numberOfLinesInFile - Compensation;
-            m = _firstColumn.Count - _dataColumn.Count;
+            m = _firstColumn.Count - _dataColumn.Count - _ignoredColumns.Count;
             //m = _firstColumn.Count - Convert.ToInt32(IsNull(_classNameColumn)) - Convert.ToInt32(IsNull(_objectNameColumn));
         }
 
@@ -201,6 +201,7 @@ namespace VisualChart3D.Common.DataReader
 
             if (this.SourceMatrixType == SourceFileMatrixType.ObjectAttribute)
             {
+ 
                 _arraySource = CommonMatrix.ObjectAttributeToDistance(_arraySource, _minkovskiDegree);
                 _inputMatrixType = SourceFileMatrixType.MatrixDistance;
             }

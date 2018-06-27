@@ -53,7 +53,7 @@ namespace VisualChart3D.Common.DataReader
     /// <summary>
     /// Костыль из-за февральского дедлайна. Решить позже отдельными классами для имен и тип-классов объектов
     /// </summary>
-    public interface IUniversalReader: IDataReader, ICSVReader
+    public interface IUniversalReader: ICSVReader
     {
  
     }

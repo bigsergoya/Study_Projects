@@ -11,8 +11,8 @@
                 <RowDefinition Height="69*" />
                 <RowDefinition Height="94*" />
                 <RowDefinition Height="44*" />
-                <RowDefinition Height="88*" />
-                <RowDefinition Height="49*" />
+                <RowDefinition Height="105*" />
+                <RowDefinition Height="30*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="286"/>
@@ -59,36 +59,46 @@
 
             <CheckBox x:Name="cbNamesObject" Grid.Row="4" Grid.Column="0" Content="Файл с именами объектов" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="cbNamesObject_Checked" Unchecked="cbNamesObject_Unchecked" IsEnabled="false" />
             <TextBox x:Name="tbNamesObjectPath" Grid.Row="4" Grid.Column="1" Text=""  HorizontalAlignment="Left"  Margin="84,0,0,0" VerticalAlignment="Top" IsReadOnly="True" />
-            <Button x:Name="btNamesObjectBrowse" Grid.Row="4" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"   VerticalAlignment="Bottom" Width="75" Click="btNamesObjectBrowse_Click" Visibility="Visible" Margin="0,0,0,97" IsEnabled="false"/>
+            <Button x:Name="btNamesObjectBrowse" Grid.Row="3" Grid.Column="1" Content="Обзор" HorizontalAlignment="Left"   VerticalAlignment="Bottom" Width="75" Click="btNamesObjectBrowse_Click" Visibility="Visible" Margin="0,0,0,123" IsEnabled="false" Grid.RowSpan="2"/>
 
             <!--<RadioButton x:Name="rbMetricEuclidean" Margin="173,21,0,0" GroupName="Metric"  Grid.Row="5" Content="Евклидова метрика" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
             <RadioButton x:Name="rbMetricNonEuclidean" Margin="173,36,0,0" GroupName="Metric"  Grid.Row="5" Content="Неевклидова метрика" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2" />
             -->
-            <Button x:Name="btNameFolderPicBrowse" Content="Обзор" Grid.Column="1" HorizontalAlignment="Left" Margin="0,39,0,0" Grid.Row="4" VerticalAlignment="Top" Width="75" Click="btNameFolderPicBrowse_Click" IsEnabled="False"/>
-            <CheckBox x:Name="cbNamesPictures" Content="Папка с изображениями" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Row="4" VerticalAlignment="Top" Unchecked="cbNamesPictures_Unchecked" Checked="cbNamesPictures_Checked" IsEnabled="False" />
-            <RadioButton Content="Загрузка изображений по номерам объектов" IsEnabled ="False" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,39,0,0" Name="rbPicturesById" VerticalAlignment="Top" Grid.ColumnSpan="2" Checked="rbPicturesById_Checked" Unchecked="rbPicturesById_Unchecked" />
-            <RadioButton Content="Загрузка изображений по именам объектов" IsEnabled ="False" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,53,0,0" Name="rbPicturesByObjectsName" VerticalAlignment="Top" Grid.ColumnSpan="2" Grid.RowSpan="2" Checked="rbPicturesByObjectsName_Checked" Unchecked="rbPicturesByObjectsName_Unchecked" />
-            <TextBox Grid.Column="1" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="81,41,0,0" Name="tbPictureDirectoryPath" VerticalAlignment="Top" Width="Auto" Visibility="Visible" FontWeight="Bold" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
-            <RadioButton Content="Загрузка изображений по именам классов" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,68,0,0" Name="rbPicturesByClassName" VerticalAlignment="Top" Width="261" IsEnabled="False" Checked="rbPicturesByClassName_Checked" Unchecked="rbPicturesByClassName_Unchecked" />
+            <Button x:Name="btMultimediaFolderBrowse" Content="Обзор" Grid.Column="1" HorizontalAlignment="Left" Margin="0,91,0,0" Grid.Row="4" VerticalAlignment="Top" Width="75" Click="btNameFolderPicBrowse_Click" IsEnabled="False"/>
+
+            <CheckBox x:Name="cbNamesPictures" HorizontalAlignment="Left" Margin="0,20,0,0" Grid.Row="4" VerticalAlignment="Top" Unchecked="cbNamesPictures_Unchecked" Checked="cbNamesPictures_Checked" IsEnabled="False" >
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap">Мультимедийное представление в виде изображения</TextBlock>
+            </CheckBox>
+            <CheckBox x:Name="cbNamesAudios" HorizontalAlignment="Left" Margin="0,50,0,0" Grid.Row="4" VerticalAlignment="Top" Unchecked="cbNamesAudios_Unchecked" Checked="cbNamesAudios_Checked"  IsEnabled="False" >
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap" Height="36" Width="222">Мультимедийное представление в виде аудио/видео</TextBlock>
+            </CheckBox>
+
+            <RadioButton Content="Загрузка мультимедиа по номерам объектов" IsEnabled ="False" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,91,0,0" Name="rbMultimediaById" VerticalAlignment="Top" Checked="rbPicturesById_Checked" Unchecked="rbPicturesById_Unchecked" />
+            <RadioButton Content="Загрузка мультимедиа по именам объектов" IsEnabled ="False" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,105,0,0" Name="rbMultimediaByObjectsName" VerticalAlignment="Top" Checked="rbPicturesByObjectsName_Checked" Unchecked="rbPicturesByObjectsName_Unchecked" />
+            <RadioButton Content="Загрузка мультимедиа по именам классов" Grid.Row="4" Height="16" HorizontalAlignment="Left" Margin="10,120,0,0" Name="rbMultimediaByClassName" VerticalAlignment="Top" Width="261" IsEnabled="False" Checked="rbPicturesByClassName_Checked" Unchecked="rbPicturesByClassName_Unchecked" />
+
+            <TextBox Grid.Column="1" Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Margin="81,93,0,0" Name="tbMultimediaFolderPath" VerticalAlignment="Top" Width="Auto" Visibility="Visible" FontWeight="Bold" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" />
             <ListBox Grid.Column="1" Grid.Row="2" Height="92" HorizontalAlignment="Right" Name="lbUniqueClasses" VerticalAlignment="Top" Width="223" ItemsSource="{Binding}" IsEnabled="True" DisplayMemberPath=""  Margin="0,1,2,0" />
             <Label Content="Список классов -&gt;" Grid.Column="1" Grid.Row="2" Height="28" HorizontalAlignment="Left" Margin="322,34,0,0" Name="label1" VerticalAlignment="Top" VerticalContentAlignment="Center" />
 
-            <GroupBox x:Name="gbAlgoritms" Header="Алгоритм" HorizontalAlignment="Left" Margin="5,89,0,0" VerticalAlignment="Top" Width="144" Height="87" Grid.Row="4" Grid.RowSpan="2">
+            <!-- НЕВИДИМО
+            <GroupBox x:Name="gbAlgoritms" Visibility="Hidden" Header="Алгоритм" HorizontalAlignment="Left" Margin="5,89,0,0" VerticalAlignment="Top" Width="144" Height="87" Grid.Row="4" Grid.RowSpan="2">
                 <StackPanel>
                     <RadioButton Content="FastMap" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbFastMapAlg" VerticalAlignment="Top" Checked="cbFastMapAlg_Checked" Unchecked="cbFastMapAlg_Unchecked"/>
                     <RadioButton Content="Dissimilarity Space" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbDisSpaceMod" VerticalAlignment="Top" Checked="cbDisSpaceMod_Checked" Unchecked="cbDisSpaceMod_Unchecked" />
                     <RadioButton Content="Sammons mapping" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbSammonsAlg" VerticalAlignment="Top" />
                     <RadioButton Content="Kohonen mapping" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="cbKohonenAlg" VerticalAlignment="Top" />
                 </StackPanel>
-            </GroupBox>
+            </GroupBox>-->
 
-            <GroupBox x:Name="gbSpaceType" Header="Метрика (для FastMap)" HorizontalAlignment="Left" Margin="166,90,0,0" VerticalAlignment="Top" Width="162.697" Height="59" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <!-- НЕВИДИМО
+            <GroupBox x:Name="gbSpaceType" Header="Метрика (для FastMap)" HorizontalAlignment="Left" Margin="166,90,0,0" VerticalAlignment="Top" Width="162.697" Height="59" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Hidden">
                 <StackPanel>
                     <RadioButton Content="Евклидова метрика" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbMetricEuclidean" VerticalAlignment="Top" />
                     <RadioButton Content="Неевклидова метрика" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0" x:Name="rbMetricNonEuclidean" VerticalAlignment="Top" />
                 </StackPanel>
 
-            </GroupBox>
+            </GroupBox>-->
 
         </Grid>
         <Button x:Name="btSave" Content="OK" Margin="0,0,158,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="btSave_Click"/>

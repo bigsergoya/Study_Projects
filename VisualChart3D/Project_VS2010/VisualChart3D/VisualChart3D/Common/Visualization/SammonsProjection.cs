@@ -12,28 +12,8 @@ namespace VisualChart3D.Common.Visualization
         List<double> CalculatedCriteria { get; }
     }
     
-    public abstract class BaseVisualizer
-    {
-        private const string MinimalOjectsCountFormat = "Выбраное число объектов, равное {0}, менее минимального значения, равного {1}";
-
-        protected const int MaxAvaibleDimension = 3;
-        protected const int minimalCalculatingObjects = 3;
-
-        protected bool IsObjectsCountLessThenMinimal(int objectsCount)
-        {
-            if (objectsCount < minimalCalculatingObjects)
-            {
-                Utils.ShowWarningMessage(string.Format(MinimalOjectsCountFormat, objectsCount, minimalCalculatingObjects));
-                return true;
-            }
-
-            return false;
-        }
-    }
-
     public class SammonsProjection : BaseVisualizer, ISammon
     {
-
         private const string VisualizationErrorFormat = "Ошибка при работе алгоритма визуализации методом Сэммона: {0}";
         private const string StringDescriptionFormat = "Sammons Map, размер данных({0}x{1}, число итераций - {2} )";
         private const double StartStep = 1000.0;
@@ -55,7 +35,7 @@ namespace VisualChart3D.Common.Visualization
 
         private List<Double> _calculatedCriteria;
 
-        public SammonsProjection(int dimensions, double[,] distMatrix)
+        public SammonsProjection(double[,] distMatrix, int dimensions)
         {
             if (dimensions < 1)
             {
@@ -144,7 +124,7 @@ namespace VisualChart3D.Common.Visualization
 
         public double[,] Projection { get => _projection; }
         public double IterationStep { get => _iterationStep; set => _iterationStep = value; }
-        public double[,] DistMatrix { get => _distanceMatrix; set => _distanceMatrix = value; }
+        //public double[,] DataMatrix { get => _distanceMatrix; set => _distanceMatrix = value; }
 
         public List<double> CalculatedCriteria => _calculatedCriteria;
 

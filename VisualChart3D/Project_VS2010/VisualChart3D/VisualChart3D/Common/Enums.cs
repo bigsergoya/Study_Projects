@@ -22,7 +22,8 @@
     public enum SourceFileMatrixType
     {
         MatrixDistance,
-        ObjectAttribute
+        ObjectAttribute,
+        ObjectAttribute3D
     };
 
     /// <summary>
@@ -42,7 +43,8 @@
         FastMap,
         DisSpace,
         KohonenMap,
-        SammonsMap
+        SammonsMap,
+        NoAlgorithm
     };
 
     public enum Shapes
@@ -87,9 +89,9 @@
     }
 
     /// <summary>
-    /// Метрика
+    /// Внутренняя метрика Fast Map
     /// </summary>
-    public enum FastMapMetric
+    public enum FastMapMetricType
     {
         /// <summary>
         /// Евклидова метрика
@@ -101,4 +103,9 @@
         /// </summary>
         NonEuclidean
     }
+
+    /// <summary>
+    /// Тип загрузки мультимедийных данных согласно имеющимся описаниям.
+    /// </summary>
+    public enum MultimediaLoadType { ByObjectID, ByObjectName, ByClassInterval, ByClassStartObjects };
 }

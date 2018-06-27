@@ -99,11 +99,14 @@ namespace VisualChart3D
         /// </summary>
         public int[] numberOfObjectsOfClass;
 
-        public string picFolderAdress = null;
-        public bool isPictureTakenByObjectID = false;  //добавить обнуление
-        public bool isPictureTakenByObjectName = false;  //добавить обнуление
-        public bool isPictureTakenByClassInterval = false;  //добавить обнуление
-        public bool isPictureTakenByClassStartObjects = false;  //добавить обнуление
+        public string multimediaFolderPath = null;
+
+        public MultimediaLoadType MultimediaLoadingType { get; set; }
+
+        //public bool isMultimediaByObjectID = false;  //добавить обнуление
+        //public bool isMultimediaByObjectName = false;  //добавить обнуление
+        //public bool isMultimediaByClassInterval = false;  //добавить обнуление
+        //public bool isMultimediaByClassStartObjects = false;  //добавить обнуление
         public List<String> classStartPosition;
 
         public int[] GetClassPositionsOnOneToOneMode(List<String> uniqueClassesNames)
@@ -235,10 +238,10 @@ namespace VisualChart3D
             set { }
         }
 
-        /// <summary>
+        /*/// <summary>
         ///  Получить или задать тип метрики для построения
         /// </summary>
-        public FastMapMetric Metrics { get; set; } //= MetricsEnum.Euclidean;
+        public FastMapMetricType Metrics { get; set; } //= MetricsEnum.Euclidean;*/
 
         /// <summary>
         /// Тип используемого алгоритма для визуализации данных
@@ -255,6 +258,9 @@ namespace VisualChart3D
                 _algorithmType = value;
             }
         }
+
+        public bool IsMultimediaAudio { get; internal set; }
+        public bool IsMultimediaPicture { get; internal set; }
 
         /// <summary>
         /// число объектов в классе
@@ -291,12 +297,18 @@ namespace VisualChart3D
         {
             UniversalReader = engine.UniversalReader;
             AlgorithmType = engine.AlgorithmType;
-            isPictureTakenByObjectID = engine.isPictureTakenByObjectID;
-            isPictureTakenByObjectName = engine.isPictureTakenByObjectName;
-            isPictureTakenByClassInterval = engine.isPictureTakenByClassInterval;
-            isPictureTakenByClassStartObjects = engine.isPictureTakenByClassStartObjects;
+            MultimediaLoadingType = engine.MultimediaLoadingType;
+            IsMultimediaPicture = engine.IsMultimediaPicture;
+            IsMultimediaAudio = engine.IsMultimediaAudio;
+
+
+            /*isMultimediaByObjectID = engine.isMultimediaByObjectID;
+            isMultimediaByObjectName = engine.isMultimediaByObjectName;
+            isMultimediaByClassInterval = engine.isMultimediaByClassInterval;
+            isMultimediaByClassStartObjects = engine.isMultimediaByClassStartObjects;*/
+
             classStartPosition = engine.classStartPosition;
-            picFolderAdress = engine.picFolderAdress;
+            multimediaFolderPath = engine.multimediaFolderPath;
             ClassObjectSelected = engine.ClassObjectSelected;
             ArrayClassesOneToOne = engine.ArrayClassesOneToOne;
             ArrayClassesCountObj = engine.ArrayClassesCountObj;
@@ -304,7 +316,6 @@ namespace VisualChart3D
             ClassObjectFile = engine.ClassObjectFile;
             NamesObjectSelected = engine.NamesObjectSelected;
             NamesObjectFile = engine.NamesObjectFile;
-            Metrics = engine.Metrics;
             _namesObjects = engine._namesObjects;
             _uniqClassesName = engine._uniqClassesName;
             _arrayNames = engine._arrayNames;
